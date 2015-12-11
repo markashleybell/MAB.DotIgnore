@@ -6,7 +6,7 @@
         <authors>Mark Bell</authors>
         <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
         <requireLicenseAcceptance>true</requireLicenseAcceptance>
-        <description>Check whether a file path should be ignored based on a .gitignore file</description>
+        <description>Check whether a file path should be ignored, based on a .gitignore file</description>
         <summary />
         <releaseNotes>0.1.0.0: Initial release</releaseNotes>
         <copyright>2015 Mark Bell</copyright>
