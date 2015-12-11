@@ -1,0 +1,1 @@
+NuGet pack IgnoreSharp.nuspec -OutputDirectory IgnoreSharp\bin\Release

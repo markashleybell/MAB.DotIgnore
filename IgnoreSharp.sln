@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IgnoreSharp", "IgnoreSharp\IgnoreSharp.csproj", "{FED27394-3783-46A4-9449-8EDF1FF197E4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IgnoreSharp.Tests", "IgnoreSharp.Tests\IgnoreSharp.Tests.csproj", "{03096302-2AF3-468B-B412-69F27DEE43D8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FED27394-3783-46A4-9449-8EDF1FF197E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FED27394-3783-46A4-9449-8EDF1FF197E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FED27394-3783-46A4-9449-8EDF1FF197E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FED27394-3783-46A4-9449-8EDF1FF197E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03096302-2AF3-468B-B412-69F27DEE43D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03096302-2AF3-468B-B412-69F27DEE43D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03096302-2AF3-468B-B412-69F27DEE43D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03096302-2AF3-468B-B412-69F27DEE43D8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

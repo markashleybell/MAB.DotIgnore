@@ -1,0 +1,7 @@
+﻿    # Sample .gitignore
+
+ cms/ignore/
+ignore.cs 
+  !cms/include/ignore.cs
+
+README
