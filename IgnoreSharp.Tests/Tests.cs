@@ -11,8 +11,8 @@ namespace IgnoreSharp.Tests
     {
         private string _basePath;
 
-        [TestFixtureSetUp]
-        public void TestFixtureSetup()
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
         {
             _basePath = AppDomain.CurrentDomain.BaseDirectory;
         }
@@ -24,32 +24,83 @@ namespace IgnoreSharp.Tests
         }
 
         [Test]
-        public void Ignore_List()
+        public void Load_Rules_From_File()
         {
-            var files = new List<string> {
-                @"cms\ignore\test.cs",
-                @"cms\include\Ignore.cs",
-                @"cms\test\Test.cs",
-                @"cms\test\ignore.cs",
-                @"cms\test\subfolder\test.cs",
-                @"web\data.cs",
-                @"web\test\test1.cs",
-                @"web\test\test2.cs",
-                @"web\test\README",
-                @"web\test\subfolder\test.cs",
-                @"data.cs",
-                @"README"
-            };
+            var ignoreList = new IgnoreList(_basePath + @"\loadfromfile.gitignore");
 
-            var ignoreList = new IgnoreList(_basePath + @"\test.gitignore");
+            Assert.IsFalse(ignoreList.IsMatch("test.jpg"));
+            Assert.IsTrue(ignoreList.IsMatch("test.cs"));
+        }
 
-            var ignoredFiles = files.Where(f => ignoreList.IsMatch(f));
+        [Test]
+        public void Load_Rules_From_List()
+        {
+            var ignoreList = new IgnoreList(new List<string> { "*.cs" });
 
-            Assert.IsTrue(ignoredFiles.Count() == 4);
+            Assert.IsFalse(ignoreList.IsMatch("test.jpg"));
+            Assert.IsTrue(ignoreList.IsMatch("test.cs"));
+        }
+
+        [Test]
+        public void Ignore_File_Or_Dir_By_Name()
+        {
+            var ignoreList = new IgnoreList(new List<string> { "README" });
+            
+            Assert.IsTrue(ignoreList.IsMatch("README"));
+            Assert.IsTrue(ignoreList.IsMatch("sub1/README"));
+            Assert.IsTrue(ignoreList.IsMatch("sub1/sub2/README"));
+            Assert.IsTrue(ignoreList.IsMatch("sub1/README/sub2"));
+            Assert.IsTrue(ignoreList.IsMatch("README/test.txt"));
+            Assert.IsTrue(ignoreList.IsMatch("readme"));
+        }
+
+        [Test]
+        public void Ignore_File_By_Name()
+        {
+            var ignoreList = new IgnoreList(new List<string> { "README.txt" });
+
+            Assert.IsTrue(ignoreList.IsMatch("README.txt"));
+            Assert.IsTrue(ignoreList.IsMatch("sub1/README.txt"));
+            Assert.IsTrue(ignoreList.IsMatch("sub1/sub2/README.txt"));
+            Assert.IsFalse(ignoreList.IsMatch("sub1/README/sub2"));
+            Assert.IsFalse(ignoreList.IsMatch("README/test.txt"));
+            Assert.IsTrue(ignoreList.IsMatch("readme.txt"));
+        }
+
+        [Test]
+        public void Ignore_Dir_By_Name()
+        {
+            var ignoreList = new IgnoreList(new List<string> { "README/" });
+
+            Assert.IsFalse(ignoreList.IsMatch("README"));
+            Assert.IsFalse(ignoreList.IsMatch("sub1/README"));
+            Assert.IsFalse(ignoreList.IsMatch("sub1/sub2/README"));
+            Assert.IsTrue(ignoreList.IsMatch("sub1/README/sub2"));
+            Assert.IsTrue(ignoreList.IsMatch("README/test.txt"));
+            Assert.IsFalse(ignoreList.IsMatch("readme"));
+        }
+
+        [Test]
+        public void Ignore_File_By_Wildcard()
+        {
+            var ignoreList = new IgnoreList(new List<string> { "*.txt", "!sub1/README.txt" });
+
+            Assert.IsTrue(ignoreList.IsMatch("README.txt"));
+            Assert.IsFalse(ignoreList.IsMatch("sub1/README.txt"));
+            Assert.IsTrue(ignoreList.IsMatch("sub1/sub2/README.txt"));
+            Assert.IsFalse(ignoreList.IsMatch("sub1/README/sub2"));
+            Assert.IsTrue(ignoreList.IsMatch("README/test.txt"));
+            Assert.IsTrue(ignoreList.IsMatch("readme.txt"));
         }
 
         [TearDown]
         public void TearDown()
+        {
+
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
         {
 
         }

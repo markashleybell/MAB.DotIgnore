@@ -36,7 +36,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Glob.cs" />
     <Compile Include="IgnoreList.cs" />
     <Compile Include="IgnoreRule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

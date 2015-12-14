@@ -47,6 +47,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="loadfromfile.gitignore">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="test.gitignore">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

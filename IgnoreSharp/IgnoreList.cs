@@ -11,23 +11,26 @@ namespace IgnoreSharp
     {
         private IEnumerable<IgnoreRule> _rules;
 
+        public IgnoreList(IEnumerable<string> rules)
+        {
+            InitialiseRules(CleanRules(rules));
+        }
+
         public IgnoreList(string ignoreFilePath)
         {
-            // Read all lines which aren't comments or whitespace
-            var lines = File.ReadAllLines(ignoreFilePath)
-                            .Select(line => line.Trim())
-                            .Where(line => line.Length > 0 && !line.StartsWith("#"))
-                            .ToList();
+            InitialiseRules(CleanRules(File.ReadAllLines(ignoreFilePath)));
+        }
 
-            _rules = lines.Select(line => {
-                var isExclude = !line.StartsWith("!");
-                return new IgnoreRule {
-                    Pattern = line,
-                    Exclude = isExclude,
-                    DirectoryOnly = line.EndsWith("/"),  // !line.Contains(".")
-                    Glob = new Glob(isExclude ? line : line.TrimStart('!'))
-                };
-            });
+        private IEnumerable<string> CleanRules(IEnumerable<string> rules)
+        {
+            // Exclude all comment or whitespace lines
+            return rules.Select(line => line.Trim())
+                        .Where(line => line.Length > 0 && !line.StartsWith("#"));
+        }
+
+        private void InitialiseRules(IEnumerable<string> rules)
+        {
+            _rules = rules.Select(line => new IgnoreRule(line));
         }
 
         public bool IsMatch(string input)
@@ -40,7 +43,7 @@ namespace IgnoreSharp
 
             foreach (var rule in _rules)
             {
-                if (rule.Exclude != ignore && rule.Glob.IsMatch(input))
+                if (rule.Exclude != ignore && rule.IsMatch(input))
                 {
                     ignore = rule.Exclude;
                 }
