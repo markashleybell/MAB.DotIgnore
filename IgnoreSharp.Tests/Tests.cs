@@ -93,6 +93,18 @@ namespace IgnoreSharp.Tests
             Assert.IsTrue(ignoreList.IsMatch("readme.txt"));
         }
 
+        [Test]
+        public void Ignore_Files_In_Dir_By_Wildcard()
+        {
+            var ignoreList = new IgnoreList(new List<string> { "sub1/sub2/*.txt" });
+
+            Assert.IsFalse(ignoreList.IsMatch("README1.txt"));
+            Assert.IsFalse(ignoreList.IsMatch("README2.txt"));
+            Assert.IsTrue(ignoreList.IsMatch("sub1/sub2/README3.txt"));
+            Assert.IsTrue(ignoreList.IsMatch("sub1/sub2/README4.txt"));
+            Assert.IsFalse(ignoreList.IsMatch("sub1/sub2/README5.md"));
+        }
+
         [TearDown]
         public void TearDown()
         {
