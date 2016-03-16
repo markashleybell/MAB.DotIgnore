@@ -7,16 +7,31 @@ namespace IgnoreSharp
 {
     public class IgnoreList
     {
-        private IEnumerable<IgnoreRule> _rules;
+        private List<IgnoreRule> _rules = new List<IgnoreRule>();
 
         public IgnoreList(IEnumerable<string> rules)
         {
-            InitialiseRules(CleanRules(rules));
+            AddRules(rules);
         }
 
         public IgnoreList(string ignoreFilePath)
         {
-            InitialiseRules(CleanRules(File.ReadAllLines(ignoreFilePath)));
+            AddRules(File.ReadAllLines(ignoreFilePath));
+        }
+
+        public void AddRule(string rule)
+        {
+            AddRules(new string[] { rule });
+        }
+
+        public void AddRules(IEnumerable<string> rules)
+        {
+            _rules.AddRange(CleanRules(rules).Select(line => new IgnoreRule(line)));
+        }
+
+        public void RemoveRule(string rule)
+        {
+            _rules.RemoveAll(r => r.Pattern == rule.Trim());
         }
 
         private IEnumerable<string> CleanRules(IEnumerable<string> rules)
@@ -24,11 +39,6 @@ namespace IgnoreSharp
             // Exclude all comment or whitespace lines
             return rules.Select(line => line.Trim())
                         .Where(line => line.Length > 0 && !line.StartsWith("#", StringComparison.OrdinalIgnoreCase));
-        }
-
-        private void InitialiseRules(IEnumerable<string> rules)
-        {
-            _rules = rules.Select(line => new IgnoreRule(line));
         }
 
         public bool IsMatch(string input)

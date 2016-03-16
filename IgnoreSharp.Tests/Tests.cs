@@ -105,6 +105,33 @@ namespace IgnoreSharp.Tests
             Assert.IsFalse(ignoreList.IsMatch("sub1/sub2/README5.md"));
         }
 
+        [Test]
+        public void Ignore_After_Dynamic_Add()
+        {
+            var ignoreList = new IgnoreList(new List<string> { "README1.txt" });
+
+            ignoreList.AddRule("README2.txt");
+            ignoreList.AddRules(new List<string> { "README3.txt", "README4.txt" });
+
+            Assert.IsTrue(ignoreList.IsMatch("README1.txt"));
+            Assert.IsTrue(ignoreList.IsMatch("README2.txt"));
+            Assert.IsTrue(ignoreList.IsMatch("README3.txt"));
+            Assert.IsTrue(ignoreList.IsMatch("README4.txt"));
+        }
+
+        [Test]
+        public void Ignore_After_Dynamic_Remove()
+        {
+            var ignoreList = new IgnoreList(new List<string> { "README1.txt", "README2.txt", "README3.txt", "README4.txt" });
+
+            ignoreList.RemoveRule("README2.txt");
+
+            Assert.IsTrue(ignoreList.IsMatch("README1.txt"));
+            Assert.IsFalse(ignoreList.IsMatch("README2.txt"));
+            Assert.IsTrue(ignoreList.IsMatch("README3.txt"));
+            Assert.IsTrue(ignoreList.IsMatch("README4.txt"));
+        }
+
         [TearDown]
         public void TearDown()
         {
