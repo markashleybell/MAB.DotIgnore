@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -15,11 +13,11 @@ namespace IgnoreSharp
 
         public IgnoreRule(string pattern)
         {
-            var isExclude = !pattern.StartsWith("!");
+            var isExclude = !pattern.StartsWith("!", StringComparison.OrdinalIgnoreCase);
 
             Pattern = pattern;
             Exclude = isExclude;
-            DirectoryOnly = pattern.EndsWith("/");  // !line.Contains(".")
+            DirectoryOnly = pattern.EndsWith("/", StringComparison.OrdinalIgnoreCase);
             RegularExpression = GlobPatternToRegex(isExclude ? pattern : pattern.TrimStart('!'));
         }
 
@@ -34,17 +32,16 @@ namespace IgnoreSharp
         {
             StringBuilder regexPattern = new StringBuilder(pattern);
 
-            string[] globLiterals = new string[] { "\\", ".", "$", "^", "{", "(", "|", ")", "+" };
+            string[] globLiterals = { "\\", ".", "$", "^", "{", "(", "|", ")", "+" };
+
             foreach (string globLiteral in globLiterals)
             {
                 regexPattern.Replace(globLiteral, @"\" + globLiteral);
             }
+
             regexPattern.Replace("*", ".*");
             regexPattern.Replace("?", ".");
-
-            //regexPattern.Insert(0, "^");
-            //regexPattern.Append("$");
-
+            
             // TODO: Is this supposed to be case-sensitive? 
             // Glob on Unix is case-sensitive, but running tests on Windows it seems that the casing of .gitignore rules makes no difference...
             return new Regex(regexPattern.ToString(), RegexOptions.IgnoreCase);

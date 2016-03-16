@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Linq;
 
 namespace IgnoreSharp
@@ -25,7 +23,7 @@ namespace IgnoreSharp
         {
             // Exclude all comment or whitespace lines
             return rules.Select(line => line.Trim())
-                        .Where(line => line.Length > 0 && !line.StartsWith("#"));
+                        .Where(line => line.Length > 0 && !line.StartsWith("#", StringComparison.OrdinalIgnoreCase));
         }
 
         private void InitialiseRules(IEnumerable<string> rules)
