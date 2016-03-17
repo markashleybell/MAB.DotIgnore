@@ -24,6 +24,11 @@ namespace IgnoreSharp
             AddRules(new string[] { rule });
         }
 
+        public void AddRules(string ignoreFilePath)
+        {
+            _rules.AddRange(CleanRules(File.ReadAllLines(ignoreFilePath)).Select(line => new IgnoreRule(line)));
+        }
+
         public void AddRules(IEnumerable<string> rules)
         {
             _rules.AddRange(CleanRules(rules).Select(line => new IgnoreRule(line)));

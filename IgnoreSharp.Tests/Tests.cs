@@ -132,6 +132,18 @@ namespace IgnoreSharp.Tests
             Assert.IsTrue(ignoreList.IsMatch("README4.txt"));
         }
 
+        [Test]
+        public void Add_Rules_From_File()
+        {
+            var ignoreList = new IgnoreList(new string[] { "README.txt" });
+
+            ignoreList.AddRules(_basePath + @"\loadfromfile.gitignore");
+
+            Assert.IsTrue(ignoreList.IsMatch("README.txt"));
+            Assert.IsFalse(ignoreList.IsMatch("test.jpg"));
+            Assert.IsTrue(ignoreList.IsMatch("test.cs"));
+        }
+
         [TearDown]
         public void TearDown()
         {
