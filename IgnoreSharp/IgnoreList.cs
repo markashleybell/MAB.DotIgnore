@@ -64,5 +64,10 @@ namespace IgnoreSharp
 
             return ignore;
         }
+
+        public IgnoreList Clone()
+        {
+            return new IgnoreList(_rules.Select(x => x.Pattern));
+        }
     }
 }

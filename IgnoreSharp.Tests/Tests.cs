@@ -144,6 +144,18 @@ namespace IgnoreSharp.Tests
             Assert.IsTrue(ignoreList.IsMatch("test.cs"));
         }
 
+        [Test]
+        public void Clone()
+        {
+            var original = new IgnoreList(new string[] { "README1.txt", "README2.txt" });
+
+            var clone = original.Clone();
+
+            Assert.IsTrue(clone.IsMatch("README1.txt"));
+            Assert.IsTrue(clone.IsMatch("README2.txt"));
+            Assert.IsFalse(clone.IsMatch("README3.txt"));
+        }
+
         [TearDown]
         public void TearDown()
         {
