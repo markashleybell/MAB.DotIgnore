@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 
@@ -8,6 +9,8 @@ namespace IgnoreSharp
     public class IgnoreList
     {
         private List<IgnoreRule> _rules = new List<IgnoreRule>();
+
+        public ReadOnlyCollection<IgnoreRule> Rules { get { return _rules.AsReadOnly(); } }
 
         public IgnoreList(IEnumerable<string> rules)
         {
