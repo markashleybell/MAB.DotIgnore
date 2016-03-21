@@ -30,6 +30,7 @@ namespace IgnoreSharp.Tests
 
             Assert.IsFalse(ignoreList.IsMatch("test.jpg"));
             Assert.IsTrue(ignoreList.IsMatch("test.cs"));
+            Assert.IsFalse(ignoreList.IsMatch("test.cshtml"));
         }
 
         [Test]
@@ -39,38 +40,27 @@ namespace IgnoreSharp.Tests
 
             Assert.IsFalse(ignoreList.IsMatch("test.jpg"));
             Assert.IsTrue(ignoreList.IsMatch("test.cs"));
-        }
-
-        [Test]
-        public void Ignore_File_Or_Dir_By_Name()
-        {
-            var ignoreList = new IgnoreList(new List<string> { "README" });
-            
-            Assert.IsTrue(ignoreList.IsMatch("README"));
-            Assert.IsTrue(ignoreList.IsMatch("sub1/README"));
-            Assert.IsTrue(ignoreList.IsMatch("sub1/sub2/README"));
-            Assert.IsTrue(ignoreList.IsMatch("sub1/README/sub2"));
-            Assert.IsTrue(ignoreList.IsMatch("README/test.txt"));
-            Assert.IsTrue(ignoreList.IsMatch("readme"));
+            Assert.IsFalse(ignoreList.IsMatch("test.cshtml"));
         }
 
         [Test]
         public void Ignore_File_By_Name()
         {
-            var ignoreList = new IgnoreList(new List<string> { "README.txt" });
+            var ignoreList = new IgnoreList(new List<string> { "**README.txt" });
 
             Assert.IsTrue(ignoreList.IsMatch("README.txt"));
             Assert.IsTrue(ignoreList.IsMatch("sub1/README.txt"));
+            Assert.IsFalse(ignoreList.IsMatch("sub1/README.txtfile"));
             Assert.IsTrue(ignoreList.IsMatch("sub1/sub2/README.txt"));
-            Assert.IsFalse(ignoreList.IsMatch("sub1/README/sub2"));
             Assert.IsFalse(ignoreList.IsMatch("README/test.txt"));
             Assert.IsTrue(ignoreList.IsMatch("readme.txt"));
+            Assert.IsFalse(ignoreList.IsMatch("readme.txtfile"));
         }
 
         [Test]
         public void Ignore_Dir_By_Name()
         {
-            var ignoreList = new IgnoreList(new List<string> { "README/" });
+            var ignoreList = new IgnoreList(new List<string> { "**README/" });
 
             Assert.IsFalse(ignoreList.IsMatch("README"));
             Assert.IsFalse(ignoreList.IsMatch("sub1/README"));
@@ -91,6 +81,7 @@ namespace IgnoreSharp.Tests
             Assert.IsFalse(ignoreList.IsMatch("sub1/README/sub2"));
             Assert.IsTrue(ignoreList.IsMatch("README/test.txt"));
             Assert.IsTrue(ignoreList.IsMatch("readme.txt"));
+            Assert.IsFalse(ignoreList.IsMatch("readme.txtfile"));
         }
 
         [Test]
@@ -102,6 +93,7 @@ namespace IgnoreSharp.Tests
             Assert.IsFalse(ignoreList.IsMatch("README2.txt"));
             Assert.IsTrue(ignoreList.IsMatch("sub1/sub2/README3.txt"));
             Assert.IsTrue(ignoreList.IsMatch("sub1/sub2/README4.txt"));
+            Assert.IsFalse(ignoreList.IsMatch("sub1/sub2/README4.txtfile"));
             Assert.IsFalse(ignoreList.IsMatch("sub1/sub2/README5.md"));
         }
 
