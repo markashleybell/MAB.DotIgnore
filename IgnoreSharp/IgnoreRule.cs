@@ -40,6 +40,7 @@ namespace IgnoreSharp
             if (!pattern.Contains("/"))
             {
                 // If there are no path separators in the rule, treat asterisks the same way as double asterisks
+                // This handles wildcards for file extensions (e.g. *.txt)
                 pattern = Regex.Replace(pattern, @"\*+", ".*");
             }
             else
@@ -55,13 +56,18 @@ namespace IgnoreSharp
 
             pattern = Regex.Replace(pattern, @"\?", ".");
 
-            // Match start of line
-            pattern = "^" + pattern;
-
-            // If this is a directory ignore rule, we want to match anything which *starts* with the rule as well
-            // as literal matches, so only add the end of line token if this is a file rule
-            if(!directoryOnly)
+            // If this is a directory ignore rule, we want to match anything which *starts* with the rule (as well
+            // as literal matches), so only add the end of line token if this is a file rule
+            if (directoryOnly)
+            {
+                // Replace the final trailing slash with a rule that matches either that *or* the end of the path
+                pattern = pattern.Remove(pattern.Length - 1);
+                pattern = pattern + @"(?:/|$)";
+            }
+            else
+            {
                 pattern = pattern + "$";
+            }
 
             // TODO: Is this supposed to be case-sensitive? 
             // Glob on Unix is case-sensitive, but running tests on Windows it seems that the casing of .gitignore rules makes no difference...
