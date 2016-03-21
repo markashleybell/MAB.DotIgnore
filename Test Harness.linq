@@ -6,19 +6,19 @@
 void Main()
 {
 
-    var ignoreList = new IgnoreList(new List<string> { "*.txt", "!**/test2/*.txt" });
+    var ignoreList = new IgnoreList(new List<string> { "folder/" });
 
     ignoreList.Rules.Dump();
 
     var paths = new List<string> { 
-        "README.txt",
-        "test/README.txt",
-        "test/test2/README.txt",
-        "test1/test3/test2/README.txt",
-        "test1/test3/test2/README",
-        "test2/README/readme.txt",
-        "test3/test4/README/readme.txt",
-        "README.TXT"
+        "folder",
+        "folders",
+        "sub1/folder",
+        "sub1/folders",
+        "sub1/sub2/folder",
+        "sub1/sub2/folders",
+        "sub1/folder/sub2",
+        "sub1/folders/sub2"
     };
 
     paths.ForEach(path => ignoreList.IsMatch(path).Dump("Match '" + path + "'"));
