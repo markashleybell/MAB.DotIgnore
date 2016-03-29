@@ -250,6 +250,32 @@ namespace IgnoreSharp.Tests
             Assert.IsFalse(clone.IsMatch("README3.txt"));
         }
 
+        [Test]
+        public void Respect_Rule_Overrides()
+        {
+            var ignoreList = new IgnoreList(new string[] { "*.txt", "!sub1/*.txt", "sub1/README2.txt" });
+
+            var matched = new List<IgnoreRule>();
+            
+            Assert.IsTrue(ignoreList.IsMatch("README1.txt"));
+            Assert.IsFalse(ignoreList.IsMatch("sub1/README1.txt"));
+            Assert.IsTrue(ignoreList.IsMatch("sub1/README2.txt"));
+        }
+
+        [Test]
+        public void Log_Matched_Rules()
+        {
+            var ignoreList = new IgnoreList(new string[] { "*.txt", "!sub1/*.txt", "sub1/README2.txt" });
+
+            var log = new List<string>();
+            ignoreList.IsMatch("sub1/README2.txt", log);
+
+            Assert.IsTrue(log.Count == 3);
+            Assert.IsTrue(log[0] == "Ignored by ");
+            Assert.IsFalse(log[1] == "Included by ");
+            Assert.IsTrue(log[2] == "Ignored by ");
+        }
+
         [TearDown]
         public void TearDown()
         {
