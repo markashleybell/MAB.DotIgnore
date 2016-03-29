@@ -28,7 +28,7 @@ namespace IgnoreSharp
 
         public override string ToString()
         {
-            return RegularExpression.ToString();
+            return string.Format("{0}", RegularExpression);
         }
 
         // Modified from the Glob class in the Unity Application Block
