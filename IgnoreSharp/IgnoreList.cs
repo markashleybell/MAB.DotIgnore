@@ -51,6 +51,11 @@ namespace IgnoreSharp
 
         public bool IsMatch(string input)
         {
+            return IsMatch(input, null);
+        }
+
+        public bool IsMatch(string input, List<string> log)
+        {
             // .gitignore files use Unix paths (with a forward slash separator), so make sure our input also uses forward slashes
             input = input.Replace(Path.DirectorySeparatorChar.ToString(), "/").Trim();
 
@@ -62,6 +67,11 @@ namespace IgnoreSharp
                 if (rule.Exclude != ignore && rule.IsMatch(input))
                 {
                     ignore = rule.Exclude;
+
+                    if (log != null)
+                    {
+                        log.Add(string.Format("{0} by {1}", (rule.Exclude ? "Ignored" : "Included"), rule.Pattern));
+                    }
                 }
             }
 
