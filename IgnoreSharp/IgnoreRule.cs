@@ -26,6 +26,11 @@ namespace IgnoreSharp
             return RegularExpression.IsMatch(s);
         }
 
+        public override string ToString()
+        {
+            return RegularExpression.ToString();
+        }
+
         // Modified from the Glob class in the Unity Application Block
         // https://github.com/unitycontainer/unity/blob/4fc7c789aecf4415db2688753dabe18421296222/source/Unity.Interception/Src/Utilities/Glob.cs
         private Regex GlobPatternToRegex(string pattern, bool directoryOnly)
