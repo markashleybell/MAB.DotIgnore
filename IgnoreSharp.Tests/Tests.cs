@@ -271,9 +271,9 @@ namespace IgnoreSharp.Tests
             ignoreList.IsMatch("sub1/README2.txt", log);
 
             Assert.IsTrue(log.Count == 3);
-            Assert.IsTrue(log[0] == "Ignored by ");
-            Assert.IsFalse(log[1] == "Included by ");
-            Assert.IsTrue(log[2] == "Ignored by ");
+            Assert.IsTrue(log[0] == "Ignored by *.txt");
+            Assert.IsTrue(log[1] == "Included by !sub1/*.txt");
+            Assert.IsTrue(log[2] == "Ignored by sub1/README2.txt");
         }
 
         [TearDown]
