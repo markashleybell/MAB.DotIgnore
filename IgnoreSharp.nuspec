@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>IgnoreSharp</id>
-        <version>0.4.0.0</version>
+        <version>0.5.0.0</version>
         <authors>Mark Ashley Bell</authors>
         <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
         <requireLicenseAcceptance>true</requireLicenseAcceptance>
@@ -11,7 +11,8 @@
         <releaseNotes>0.1.0.0: Initial release
 0.2.0.0: Rework ignore matching
 0.3.0.0: Bug fixes
-0.4.0.0: Rule match logging</releaseNotes>
+0.4.0.0: Rule match logging
+0.5.0.0: Wildcard bug fix</releaseNotes>
         <copyright>2015 Mark Ashley Bell</copyright>
         <language>en-GB</language>
     </metadata>
