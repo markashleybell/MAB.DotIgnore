@@ -198,3 +198,6 @@ FakesAssemblies/
 # Opencover reports
 TestResult.xml
 reports
+
+# Util scripts
+push_package.cmd
