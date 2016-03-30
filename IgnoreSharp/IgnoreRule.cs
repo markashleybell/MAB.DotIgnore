@@ -39,7 +39,7 @@ namespace IgnoreSharp
 
             foreach (string globLiteral in globLiterals)
             {
-                pattern.Replace(globLiteral, @"\" + globLiteral);
+                pattern = pattern.Replace(globLiteral, @"\" + globLiteral);
             }
 
             if (!pattern.Contains("/"))

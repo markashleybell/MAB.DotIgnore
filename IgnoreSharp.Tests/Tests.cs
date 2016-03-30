@@ -78,6 +78,7 @@ namespace IgnoreSharp.Tests
             Assert.IsFalse(ignoreList.IsMatch("test1.txtfile"));
             Assert.IsTrue(ignoreList.IsMatch("folder/test1.txt"));
             Assert.IsTrue(ignoreList.IsMatch("folder/test2.txt"));
+            Assert.IsFalse(ignoreList.IsMatch("folder/txt"));
             Assert.IsFalse(ignoreList.IsMatch("folder/test3.cs"));
             Assert.IsFalse(ignoreList.IsMatch("folder/test1.txtfile"));
             Assert.IsTrue(ignoreList.IsMatch("folder/sub1/test1.txt"));
@@ -97,10 +98,12 @@ namespace IgnoreSharp.Tests
             Assert.IsFalse(ignoreList.IsMatch("test1.txtfile"));
             Assert.IsFalse(ignoreList.IsMatch("folder/test1.txt"));
             Assert.IsFalse(ignoreList.IsMatch("folder/test2.txt"));
+            Assert.IsFalse(ignoreList.IsMatch("folder/txt"));
             Assert.IsFalse(ignoreList.IsMatch("folder/test3.cs"));
             Assert.IsFalse(ignoreList.IsMatch("folder/test1.txtfile"));
             Assert.IsTrue(ignoreList.IsMatch("folder/sub1/test1.txt"));
             Assert.IsTrue(ignoreList.IsMatch("folder/sub1/test2.txt"));
+            Assert.IsFalse(ignoreList.IsMatch("folder/sub1/txt"));
             Assert.IsFalse(ignoreList.IsMatch("folder/sub1/test3.cs"));
             Assert.IsFalse(ignoreList.IsMatch("folder/sub1/test1.txtfile"));
         }
