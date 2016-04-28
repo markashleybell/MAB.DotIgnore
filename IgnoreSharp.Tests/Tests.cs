@@ -279,6 +279,18 @@ namespace IgnoreSharp.Tests
             Assert.IsTrue(log[2] == "Ignored by sub1/README2.txt");
         }
 
+        [Test]
+        public void Dont_Match_File_With_Directory_Rule()
+        {
+            var ignoreList = new IgnoreList(new string[] { "prefix.name*/" });
+
+            var log = new List<string>();
+
+            Assert.IsTrue(ignoreList.IsMatch("prefix.name", log));
+            Assert.IsTrue(ignoreList.IsMatch("prefix.name/test.txt", log));
+            Assert.IsFalse(ignoreList.IsMatch("prefix.name.txt", log));
+        }
+
         [TearDown]
         public void TearDown()
         {
