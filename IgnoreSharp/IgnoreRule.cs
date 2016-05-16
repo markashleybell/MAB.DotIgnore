@@ -6,21 +6,68 @@ namespace IgnoreSharp
 {
     public class IgnoreRule
     {
-        private string _pattern;
-        private MatchFlags _matchFlags;
-        private PatternFlags _patternFlags;
+        private bool _negation;
+        private bool _singleAsteriskMatchesSlashes;
+        private int _wildcardIndex;
 
-        public string Pattern { get { return _pattern; } }
-        public MatchFlags MatchFlags { get { return _matchFlags; } }
-        public PatternFlags PatternFlags { get { return _patternFlags; } }
+        public string Pattern { get; private set; }
+        public MatchFlags MatchFlags { get; private set; }
+        public PatternFlags PatternFlags { get; private set; }
 
         public IgnoreRule(string pattern, MatchFlags matchFlags = MatchFlags.IGNORE_CASE | MatchFlags.PATHNAME)
         {
             if(Utils.IsNullOrWhiteSpace(pattern))
                 throw new ArgumentNullException("pattern");
+            
+            Pattern = pattern;
+            MatchFlags = matchFlags;
 
-            _pattern = pattern;
-            _matchFlags = matchFlags;
+            // If PATHNAME is set, a single asterisk should not match forward slashes
+            // If not, a single asterisk in the pattern becomes equivalent to **
+            _singleAsteriskMatchesSlashes = !MatchFlags.HasFlag(MatchFlags.PATHNAME);
+
+            // First, let's figure out some things about the pattern and set flags to pass to our match function
+            PatternFlags = PatternFlags.NONE;
+    
+            // If the pattern starts with an exclamation mark, it's a negation pattern
+            // Once we know that, we can remove the exclamation mark (so the pattern behaves just like any other),
+            // then just negate the match result when we return it
+            var _negation = Pattern.StartsWith("!");
+
+            if (_negation)
+                Pattern = Pattern.Substring(1);
+
+            // If the pattern starts with a forward slash, it should only match an absolute path
+            if (Pattern.StartsWith("/"))
+                PatternFlags |= PatternFlags.ABSOLUTE_PATH;
+    
+            // If the pattern ends with a forward slash, it should only match a directory
+            // Again though, once we know that we can remove the slash to normalise the pattern
+            if (Pattern.EndsWith("/"))
+            {
+                PatternFlags |= PatternFlags.DIRECTORY;
+                Pattern = Pattern.Substring(0, Pattern.Length - 1);
+            }
+
+            _wildcardIndex = Pattern.IndexOfAny(new char[] { '*','[','?' });
+    
+            // Set some more pattern flags depending on which glob wildcards appear in the pattern, and where
+            if (_wildcardIndex != -1)
+            {
+                PatternFlags |= PatternFlags.WILD;
+    
+                if (Pattern.Contains("**"))
+                {
+                    PatternFlags |= PatternFlags.WILD2;
+            
+                    if (Pattern.StartsWith("**"))
+                        PatternFlags |= PatternFlags.WILD2_PREFIX;
+                }
+            }
+
+            // If we're passing IGNORE_CASE, uppercase the pattern
+            if (MatchFlags.HasFlag(MatchFlags.IGNORE_CASE))
+                Pattern = Pattern.ToUpperInvariant();
         }
 
         //    PATTERN FORMAT
@@ -78,86 +125,32 @@ namespace IgnoreSharp
             // If the pattern or the path are null empty, there is nothing to match
             if(Utils.IsNullOrWhiteSpace(path))
                 throw new ArgumentNullException("path");
-
-            // First, let's figure out some things about the pattern and set flags to pass to our match function
-    
-            _patternFlags = PatternFlags.NONE;
-    
-            // If the pattern starts with an exclamation mark, it's a negation pattern
-            // Once we know that, we can remove the exclamation mark (so the pattern behaves just like any other),
-            // then just negate the match result when we return it
-            var negation = _pattern.StartsWith("!");
-
-            if (negation)
-                _pattern = _pattern.Substring(1);
-
-            // If the pattern starts with a forward slash, it should only match an absolute path
-            if (_pattern.StartsWith("/"))
-                _patternFlags |= PatternFlags.ABSOLUTE_PATH;
-    
-            // If the pattern ends with a forward slash, it should only match a directory
-            // Again though, once we know that we can remove the slash to normalise the pattern
-            if (_pattern.EndsWith("/"))
-            {
-                _patternFlags |= PatternFlags.DIRECTORY;
-                _pattern = _pattern.Substring(0, _pattern.Length - 1);
-            }
-
-            var wildcardIndex = _pattern.IndexOfAny(new char[] { '*','[','?' });
-    
-            // Set some more pattern flags depending on which glob wildcards appear in the pattern, and where
-            if (wildcardIndex != -1)
-            {
-                _patternFlags |= PatternFlags.WILD;
-    
-                if (_pattern.Contains("**"))
-                {
-                    _patternFlags |= PatternFlags.WILD2;
             
-                    if (_pattern.StartsWith("**"))
-                        _patternFlags |= PatternFlags.WILD2_PREFIX;
-                }
-            }
-    
-            //pattern.Dump();
-            //_patternFlags.Dump();
+            // Shortcut return if the pattern is directory-only and the path isn't a directory
+            // This has to be determined by the OS (at least that's the only reliable way), 
+            // so we pass that information in as a boolean so the consuming code can provide it
+            if (PatternFlags.HasFlag(PatternFlags.DIRECTORY) && pathIsDirectory == false)
+                return _negation != false;
 
-            // If we're passing IGNORE_CASE (equivalent to WM_CASEFOLD in wildmatch.c)
-            // then uppercase both the pattern and the path
-            if (_matchFlags.HasFlag(MatchFlags.IGNORE_CASE))
-            {
-                _pattern = _pattern.ToUpperInvariant();
+            // If we're passing IGNORE_CASE, uppercase the pattern
+            if (MatchFlags.HasFlag(MatchFlags.IGNORE_CASE))
                 path = path.ToUpperInvariant();
-            }
 
-            // If PATHNAME is set, a single asterisk should not match forward slashes
-            // If not, a single asterisk in the pattern becomes equivalent to **
-            var singleAsteriskMatchesSlashes = !_matchFlags.HasFlag(MatchFlags.PATHNAME);
-    
             // If the pattern is an absolute path pattern, the path must start with the part of the pattern
             // before any wildcards occur. If it doesn't, we can just return a negative match
-            var patternBeforeFirstWildcard = wildcardIndex != -1 ? _pattern.Substring(0, wildcardIndex) : _pattern;
+            var patternBeforeFirstWildcard = _wildcardIndex != -1 ? Pattern.Substring(0, _wildcardIndex) : Pattern;
     
-            if (_patternFlags.HasFlag(PatternFlags.ABSOLUTE_PATH) && !path.StartsWith(patternBeforeFirstWildcard))
-                return negation != false;
+            if (PatternFlags.HasFlag(PatternFlags.ABSOLUTE_PATH) && !path.StartsWith(patternBeforeFirstWildcard))
+                return _negation != false;
 
             // If the pattern is *not* an absolute path pattern and there are no wildcards in the pattern, 
             // then we know that the path must actually end with the pattern in order to be a match
-            if (!_patternFlags.HasFlag(PatternFlags.ABSOLUTE_PATH) && wildcardIndex == -1)
-            {
-                var endMatch = path.EndsWith(_pattern);
-                return negation != endMatch;
-            }
+            if (!PatternFlags.HasFlag(PatternFlags.ABSOLUTE_PATH) && _wildcardIndex == -1)
+                return _negation != path.EndsWith(Pattern);
     
-            // Shortcut return if the pattern is a directory-only pattern and the path isn't a directory
-            // This has to be determined by the OS (at least that's the only reliable way), so we pass
-            // that information in as a boolean so the consumer can provide it
-            if (_patternFlags.HasFlag(PatternFlags.DIRECTORY) && !pathIsDirectory)
-                return negation ? true : false;
-
-            var match = Match(_pattern.ToCharArray(), 0, path.ToCharArray(), 0, singleAsteriskMatchesSlashes);
+            var match = Match(Pattern.ToCharArray(), 0, path.ToCharArray(), 0, _singleAsteriskMatchesSlashes);
     
-            var isMatch = negation != match;
+            var isMatch = _negation != match;
     
             //(isMatch ? "MATCHED" : "NOT MATCHED").Dump();
             //"--------------".Dump();
