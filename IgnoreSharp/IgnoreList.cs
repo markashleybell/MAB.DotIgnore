@@ -62,18 +62,18 @@ namespace IgnoreSharp
             // This pattern modified from https://github.com/henon/GitSharp/blob/master/GitSharp/IgnoreRules.cs
             var ignore = false;
 
-            foreach (var rule in _rules)
-            {
-                if (rule.Exclude != ignore && rule.IsMatch(input))
-                {
-                    ignore = rule.Exclude;
+            //foreach (var rule in _rules)
+            //{
+            //    if (rule.Exclude != ignore && rule.IsMatch(input))
+            //    {
+            //        ignore = rule.Exclude;
 
-                    if (log != null)
-                    {
-                        log.Add(string.Format("{0} by {1}", (rule.Exclude ? "Ignored" : "Included"), rule.Pattern));
-                    }
-                }
-            }
+            //        if (log != null)
+            //        {
+            //            log.Add(string.Format("{0} by {1}", (rule.Exclude ? "Ignored" : "Included"), rule.Pattern));
+            //        }
+            //    }
+            //}
 
             return ignore;
         }
