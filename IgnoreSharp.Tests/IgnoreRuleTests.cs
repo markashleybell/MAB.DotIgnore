@@ -26,29 +26,45 @@ namespace IgnoreSharp.Tests
         [Test]
         public void Match_File_Relative_No_Wildcards()
         {
-            var rule = new IgnoreRule("XXXXX");
-            Assert.IsTrue(rule.IsMatch("YYYYY", false));
+            var rule = new IgnoreRule("test.txt");
+            Assert.IsTrue(rule.IsMatch("/test.txt", false));
+            Assert.IsTrue(rule.IsMatch("/sub1/test.txt", false));
+            Assert.IsTrue(rule.IsMatch("/sub1/sub2/test.txt", false));
+            // Should match directory as well
+            Assert.IsTrue(rule.IsMatch("/test.txt", true));
         }
 
         [Test]
         public void Match_File_Absolute_No_Wildcards()
         {
-            var rule = new IgnoreRule("XXXXX");
-            Assert.IsTrue(rule.IsMatch("YYYYY", false));
+            var rule = new IgnoreRule("/test.txt");
+            Assert.IsTrue(rule.IsMatch("/test.txt", false));
+            Assert.IsFalse(rule.IsMatch("/sub1/test.txt", false));
+            Assert.IsFalse(rule.IsMatch("/sub1/sub2/test.txt", false));
+            // Should match directory as well
+            Assert.IsTrue(rule.IsMatch("/test.txt", true));
         }
 
         [Test]
         public void Match_Directory_Relative_No_Wildcards()
         {
-            var rule = new IgnoreRule("XXXXX");
-            Assert.IsTrue(rule.IsMatch("YYYYY", true));
+            var rule = new IgnoreRule("test/");
+            Assert.IsTrue(rule.IsMatch("/test", true));
+            Assert.IsTrue(rule.IsMatch("/sub1/test", true));
+            Assert.IsTrue(rule.IsMatch("/sub1/sub2/test", true));
+            // Should not match file called 'test' with no extension
+            Assert.IsFalse(rule.IsMatch("/test", false));
         }
 
         [Test]
         public void Match_Directory_Absolute_No_Wildcards()
         {
-            var rule = new IgnoreRule("XXXXX");
-            Assert.IsTrue(rule.IsMatch("YYYYY", true));
+            var rule = new IgnoreRule("/test/");
+            Assert.IsTrue(rule.IsMatch("/test", true));
+            Assert.IsFalse(rule.IsMatch("/sub1/test", true));
+            Assert.IsFalse(rule.IsMatch("/sub1/sub2/test", true));
+            // Should not match file called 'test' with no extension
+            Assert.IsFalse(rule.IsMatch("/test", false));
         }
 
         [TearDown]
