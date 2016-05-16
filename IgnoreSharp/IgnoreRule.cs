@@ -139,7 +139,7 @@ namespace IgnoreSharp
             var patternBeforeFirstWildcard = wildcardIndex != -1 ? _pattern.Substring(0, wildcardIndex) : _pattern;
     
             if (_patternFlags.HasFlag(PatternFlags.ABSOLUTE_PATH) && !path.StartsWith(patternBeforeFirstWildcard))
-                return !negation;
+                return negation != false;
 
             // If the pattern is *not* an absolute path pattern and there are no wildcards in the pattern, 
             // then we know that the path must actually end with the pattern in order to be a match
