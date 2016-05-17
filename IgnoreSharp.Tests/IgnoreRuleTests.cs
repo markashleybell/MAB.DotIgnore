@@ -111,6 +111,15 @@ namespace IgnoreSharp.Tests
             Assert.IsTrue(rule.IsMatch("/test", false));
         }
 
+        [Test]
+        public void BASIC_WILDCARD()
+        {
+            var rule = new IgnoreRule("*.txt");
+            Assert.IsTrue(rule.IsMatch("/test.txt", true));
+            //Assert.IsTrue(rule.IsMatch("/sub1/test.txt", true));
+            //Assert.IsTrue(rule.IsMatch("/sub1/sub2/test.txt", true));
+        }
+
         [TearDown]
         public void TearDown()
         {

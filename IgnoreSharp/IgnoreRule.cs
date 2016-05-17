@@ -124,6 +124,8 @@ namespace IgnoreSharp
             // .gitignore files use Unix paths (with a forward slash separator), so make sure our input also uses forward slashes
             // path = path.Replace(Path.DirectorySeparatorChar.ToString(), "/").Trim();
 
+            path = path.TrimStart('/');
+
             // If the pattern or the path are null empty, there is nothing to match
             if(Utils.IsNullOrWhiteSpace(path))
                 throw new ArgumentNullException(nameof(path));
@@ -160,14 +162,22 @@ namespace IgnoreSharp
             return isMatch;
         }
 
+        private bool IsGlobSpecialChar(char c)
+        {
+            return  c == '*' || c == '?' || c == '[' || c == '\\';
+        }
+
         public bool Match(char[] pattern, int patternIndex, char[] text, int textIndex, bool singleAsteriskMatchesSlashes)
         {
+            var plen = pattern.Length;
+            var tlen = text.Length;
+
             // Iterate over the characters of the pattern and the text in parallel
-            for (int p = patternIndex, t = textIndex; p < pattern.Length; p++, t++)
+            for (int p = patternIndex, t = textIndex; p < plen; p++, t++)
             {
                 char pchar = pattern[p];
                 char tchar = text[t];
-
+                
                 switch (pchar)
                 {
                     case '\\':
@@ -175,12 +185,101 @@ namespace IgnoreSharp
                         pchar = pattern[++p];
                         goto default;
                     default:
-                        // If the text character doesn't match, 
+                        // If the text character doesn't match the pattern character, this can't be a match
                         if (tchar != pchar)
                             return false;
                         continue;
-                    case '*':
-                        continue;
+                    case '*':					
+                        if (pattern[++p] == '*')
+                        {
+                            int prev_idx = p - 2;
+                            char prev = pattern[prev_idx];
+                            while (pattern[++p] == '*') {}
+
+                            if ((prev_idx < plen || prev == '/') && (pattern[++p] == plen || pattern[++p] == '/' || (pattern[0] == '\\' && pattern[1] == '/')))
+                            {
+                                /*
+                                 * Assuming we already match 'foo/' and are at
+                                 * <star star slash>, just assume it matches
+                                 * nothing and go ahead match the rest of the
+                                 * pattern with the remaining string. This
+                                 * helps make foo/<*><*>/bar (<> because
+                                 * otherwise it breaks C comment syntax) match
+                                 * both foo/bar and foo/a/bar.
+                                 */
+                                if (pattern[0] == '/' && Match(pattern, p + 1, text, t, singleAsteriskMatchesSlashes))
+                                    return true;
+                            }
+
+                            return false;
+                        }
+
+                        if (p == plen)
+                        {
+                            /* Trailing "**" matches everything.  Trailing "*" matches
+                             * only if there are no more slash characters. */
+                            if (!singleAsteriskMatchesSlashes && Array.IndexOf(text, '/', t) != -1)
+                                return false;
+
+                            return true;
+                        }
+                        else if (!singleAsteriskMatchesSlashes && pattern[p] == '/')
+                        {
+                            /*
+                             * _one_ asterisk followed by a slash
+                             * with WM_PATHNAME matches the next
+                             * directory
+                             */
+                            int slash = Array.IndexOf(text, '/', t);
+
+                            if (slash == -1)
+                                return false;
+
+                            t = slash;
+                            /* the slash is consumed by the top-level for loop */
+                            break;
+                        }
+                        while (true)
+                        {
+                            if (t == tlen)
+                                break;
+                            /*
+                             * Try to advance faster when an asterisk is
+                             * followed by a literal. We know in this case
+                             * that the the string before the literal
+                             * must belong to "*".
+                             * If match_slash is false, do not look past
+                             * the first slash as it cannot belong to '*'.
+                             */
+                            if (!IsGlobSpecialChar(pattern[p]))
+                            {
+                                pchar = pattern[p];
+                                
+                                while ((tchar = text[t]) != '\0' && (singleAsteriskMatchesSlashes || tchar != '/'))
+                                {
+                                    if (tchar == pchar)
+                                        break;
+
+                                    t++;
+                                }
+
+                                if (tchar != pchar)
+                                    return false;
+                            }
+
+                            bool matched = Match(pattern, p, text, t, singleAsteriskMatchesSlashes);
+
+                            if(!singleAsteriskMatchesSlashes)
+                            {
+                                if(tchar == '/')
+                                    return false;
+
+                                return matched;
+                            }
+
+                            tchar = text[++t];
+                        }
+                        return false;
                 }
             }
     
