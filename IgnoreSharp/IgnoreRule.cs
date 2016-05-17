@@ -41,7 +41,10 @@ namespace IgnoreSharp
 
             // If the pattern starts with a forward slash, it should only match an absolute path
             if (Pattern.StartsWith("/", sc))
+            { 
                 PatternFlags |= PatternFlags.ABSOLUTE_PATH;
+                Pattern = Pattern.Substring(1);
+            }
     
             // If the pattern ends with a forward slash, it should only match a directory
             // Again though, once we know that we can remove the slash to normalise the pattern
