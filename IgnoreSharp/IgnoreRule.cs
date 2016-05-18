@@ -6,6 +6,12 @@ namespace IgnoreSharp
 {
     public class IgnoreRule
     {
+        private const int WM_ABORT_MALFORMED = 2;
+        private const int WM_NOMATCH = 1;
+        private const int WM_MATCH = 0;
+        private const int WM_ABORT_ALL = -1;
+        private const int WM_ABORT_TO_STARSTAR = -2;
+
         private bool _negation;
         private bool _singleAsteriskMatchesSlashes;
         private int _wildcardIndex;
@@ -159,8 +165,8 @@ namespace IgnoreSharp
             // then we know that the path must actually end with the pattern in order to be a match
             if (!PatternFlags.HasFlag(PatternFlags.ABSOLUTE_PATH) && _wildcardIndex == -1)
                 return _negation != path.EndsWith(Pattern, sc);
-    
-            var match = Match(Pattern.ToCharArray(), 0, path.ToCharArray(), 0, _singleAsteriskMatchesSlashes);
+
+            var match = Match(Pattern.ToCharArray(), 0, path.ToCharArray(), 0, _singleAsteriskMatchesSlashes) == WM_MATCH;
     
             var isMatch = _negation != match;
     
@@ -175,7 +181,7 @@ namespace IgnoreSharp
             return  c == '*' || c == '?' || c == '[' || c == '\\';
         }
 
-        public bool Match(char[] pattern, int patternIndex, char[] text, int textIndex, bool singleAsteriskMatchesSlashes)
+        public int Match(char[] pattern, int patternIndex, char[] text, int textIndex, bool singleAsteriskMatchesSlashes)
         {
             var plen = pattern.Length;
             var tlen = text.Length;
@@ -195,7 +201,7 @@ namespace IgnoreSharp
                     default:
                         // If the text character doesn't match the pattern character, this can't be a match
                         if (tchar != pchar)
-                            return false;
+                            return WM_NOMATCH;
                         continue;
                     case '*':					
                         if (pattern[++p] == '*')
@@ -215,11 +221,11 @@ namespace IgnoreSharp
                                  * otherwise it breaks C comment syntax) match
                                  * both foo/bar and foo/a/bar.
                                  */
-                                if (pattern[0] == '/' && Match(pattern, p + 1, text, t, singleAsteriskMatchesSlashes))
-                                    return true;
+                                if (pattern[0] == '/' && Match(pattern, p + 1, text, t, singleAsteriskMatchesSlashes) == WM_MATCH)
+                                    return WM_MATCH;
                             }
 
-                            return false;
+                            return WM_NOMATCH;
                         }
 
                         if (p == plen)
@@ -227,9 +233,9 @@ namespace IgnoreSharp
                             /* Trailing "**" matches everything.  Trailing "*" matches
                              * only if there are no more slash characters. */
                             if (!singleAsteriskMatchesSlashes && Array.IndexOf(text, '/', t) != -1)
-                                return false;
+                                return WM_NOMATCH;
 
-                            return true;
+                            return WM_MATCH;
                         }
                         else if (!singleAsteriskMatchesSlashes && pattern[p] == '/')
                         {
@@ -241,12 +247,13 @@ namespace IgnoreSharp
                             int slash = Array.IndexOf(text, '/', t);
 
                             if (slash == -1)
-                                return false;
+                                return WM_NOMATCH;
 
                             t = slash;
                             /* the slash is consumed by the top-level for loop */
                             break;
                         }
+
                         while (true)
                         {
                             if (t == tlen)
@@ -272,26 +279,29 @@ namespace IgnoreSharp
                                 }
 
                                 if (tchar != pchar)
-                                    return false;
+                                    return WM_NOMATCH;
                             }
 
-                            bool matched = Match(pattern, p, text, t, singleAsteriskMatchesSlashes);
+                            int matched;
 
-                            if(!singleAsteriskMatchesSlashes)
+                            if ((matched = Match(pattern, p, text, t, singleAsteriskMatchesSlashes)) != WM_NOMATCH)
                             {
-                                if(tchar == '/')
-                                    return false;
-
-                                return matched;
+                                if (!singleAsteriskMatchesSlashes || matched != WM_ABORT_TO_STARSTAR)
+                                    return matched;
+                            }
+                            else if (!singleAsteriskMatchesSlashes && tchar == '/')
+                            { 
+                                return WM_ABORT_TO_STARSTAR;
                             }
 
                             tchar = text[++t];
                         }
-                        return false;
+
+                        return WM_ABORT_ALL;
                 }
             }
     
-            return true;
+            return WM_MATCH;
         }
 
         public override string ToString()
