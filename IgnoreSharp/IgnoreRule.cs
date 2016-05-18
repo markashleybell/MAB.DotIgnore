@@ -23,11 +23,7 @@ namespace IgnoreSharp
             
             Pattern = pattern;
             MatchFlags = matchFlags;
-
-            // If PATHNAME is set, a single asterisk should not match forward slashes
-            // If not, a single asterisk in the pattern becomes equivalent to **
-            _singleAsteriskMatchesSlashes = !MatchFlags.HasFlag(MatchFlags.PATHNAME);
-
+            
             // First, let's figure out some things about the pattern and set flags to pass to our match function
             PatternFlags = PatternFlags.NONE;
     
@@ -69,6 +65,15 @@ namespace IgnoreSharp
                         PatternFlags |= PatternFlags.WILD2_PREFIX;
                 }
             }
+
+            // If the pattern does not contain any slashes, it should match any occurence anywhere
+            // within the path (e.g. 'temp', '*.jpg', '**.png', '?doc'), so set PATHNAME accordingly
+            if(!Pattern.Contains("/"))
+                MatchFlags &= ~MatchFlags.PATHNAME;
+
+            // If PATHNAME is set, a single asterisk should not match forward slashes
+            // If not, a single asterisk in the pattern becomes equivalent to **
+            _singleAsteriskMatchesSlashes = !MatchFlags.HasFlag(MatchFlags.PATHNAME);
 
             // If we're passing IGNORE_CASE, uppercase the pattern
             if (MatchFlags.HasFlag(MatchFlags.IGNORE_CASE))
