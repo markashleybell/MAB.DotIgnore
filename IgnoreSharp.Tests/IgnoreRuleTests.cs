@@ -112,12 +112,25 @@ namespace IgnoreSharp.Tests
         }
 
         [Test]
-        public void BASIC_WILDCARD()
+        public void Match_Global_Wildcards()
         {
             var rule = new IgnoreRule("*.txt");
+            Assert.IsTrue(rule.IsMatch("/test.txt", false));
+            Assert.IsTrue(rule.IsMatch("/sub1/test.txt", false));
+            Assert.IsTrue(rule.IsMatch("/sub1/sub2/test.txt", false));
+            // Should match directory as well
             Assert.IsTrue(rule.IsMatch("/test.txt", true));
-            //Assert.IsTrue(rule.IsMatch("/sub1/test.txt", true));
-            //Assert.IsTrue(rule.IsMatch("/sub1/sub2/test.txt", true));
+        }
+
+        [Test]
+        public void Negated_Match_Global_Wildcards()
+        {
+            var rule = new IgnoreRule("!*.txt");
+            Assert.IsFalse(rule.IsMatch("/test.txt", false));
+            Assert.IsFalse(rule.IsMatch("/sub1/test.txt", false));
+            Assert.IsFalse(rule.IsMatch("/sub1/sub2/test.txt", false));
+            // Should match directory as well
+            Assert.IsFalse(rule.IsMatch("/test.txt", true));
         }
 
         [TearDown]
