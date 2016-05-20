@@ -214,7 +214,7 @@ namespace IgnoreSharp.Tests
         [Test]
         public void Match_Directory_Relative_Star_Star_Wildcard()
         {
-            var rule = new IgnoreRule("sub1/**/test");
+            var rule = new IgnoreRule("sub1/**/test/");
             Assert.IsFalse(rule.IsMatch("/test", true));
             Assert.IsFalse(rule.IsMatch("/sub1/test", true));
             Assert.IsTrue(rule.IsMatch("/sub1/sub2/test", true));
@@ -225,7 +225,7 @@ namespace IgnoreSharp.Tests
         [Test]
         public void Match_Directory_Absolute_Star_Star_Wildcard()
         {
-            var rule = new IgnoreRule("/sub1/**.txt");
+            var rule = new IgnoreRule("/sub1/**.txt/");
             Assert.IsFalse(rule.IsMatch("/test.txt", true));
             Assert.IsTrue(rule.IsMatch("/sub1/test.txt", true));
             Assert.IsTrue(rule.IsMatch("/sub1/sub2/test.txt", true));
@@ -237,7 +237,7 @@ namespace IgnoreSharp.Tests
         [Test]
         public void Match_Directory_Trailing_Star_Star_Wildcard()
         {
-            var rule = new IgnoreRule("sub1/**");
+            var rule = new IgnoreRule("sub1/**/");
             Assert.IsFalse(rule.IsMatch("/test.txt", true));
             Assert.IsTrue(rule.IsMatch("/sub1/test.txt", true));
             Assert.IsTrue(rule.IsMatch("/sub1/sub2/test.txt", true));
