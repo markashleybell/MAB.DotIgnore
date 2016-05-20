@@ -6,12 +6,7 @@ namespace IgnoreSharp
 {
     public class IgnoreRule
     {
-        private const int WM_ABORT_MALFORMED = 2;
-        private const int WM_NOMATCH = 1;
-        private const int WM_MATCH = 0;
-        private const int WM_ABORT_ALL = -1;
-        private const int WM_ABORT_TO_STARSTAR = -2;
-
+        private string _originalPattern;
         private bool _negation;
         private bool _singleAsteriskMatchesSlashes;
         private int _wildcardIndex;
@@ -21,12 +16,16 @@ namespace IgnoreSharp
         public string Pattern { get; private set; }
         public MatchFlags MatchFlags { get; private set; }
         public PatternFlags PatternFlags { get; private set; }
+        public Regex Regex { get; private set; }
 
         public IgnoreRule(string pattern, MatchFlags matchFlags = MatchFlags.IGNORE_CASE | MatchFlags.PATHNAME)
         {
             if(Utils.IsNullOrWhiteSpace(pattern))
                 throw new ArgumentNullException(nameof(pattern));
             
+            // Keep track of the original pattern before modifications
+            _originalPattern = pattern;
+
             Pattern = pattern;
             MatchFlags = matchFlags;
             
@@ -84,6 +83,9 @@ namespace IgnoreSharp
             // If we're passing IGNORE_CASE, uppercase the pattern
             if (MatchFlags.HasFlag(MatchFlags.IGNORE_CASE))
                 Pattern = Pattern.ToUpperInvariant();
+
+            // Translate the glob pattern into a regular expression, in case simple string matching isn't enough
+            Regex = GlobPatternToRegex(Pattern, _singleAsteriskMatchesSlashes);
         }
 
         //    PATTERN FORMAT
@@ -135,15 +137,15 @@ namespace IgnoreSharp
 
         public bool IsMatch(string path, bool pathIsDirectory)
         {
+            // If the pattern or the path are null empty, there is nothing to match
+            if(Utils.IsNullOrWhiteSpace(path))
+                throw new ArgumentNullException(nameof(path));
+
             // .gitignore files use Unix paths (with a forward slash separator), so make sure our input also uses forward slashes
             // path = path.Replace(Path.DirectorySeparatorChar.ToString(), "/").Trim();
 
             path = path.TrimStart('/');
 
-            // If the pattern or the path are null empty, there is nothing to match
-            if(Utils.IsNullOrWhiteSpace(path))
-                throw new ArgumentNullException(nameof(path));
-            
             // Shortcut return if the pattern is directory-only and the path isn't a directory
             // This has to be determined by the OS (at least that's the only reliable way), 
             // so we pass that information in as a boolean so the consuming code can provide it
@@ -166,147 +168,49 @@ namespace IgnoreSharp
             if (!PatternFlags.HasFlag(PatternFlags.ABSOLUTE_PATH) && _wildcardIndex == -1)
                 return _negation != path.EndsWith(Pattern, sc);
 
-            var match = Match(Pattern.ToCharArray(), 0, path.ToCharArray(), 0, _singleAsteriskMatchesSlashes) == WM_MATCH;
+            // If we got this far, we can't figure out the match with simple string matching, 
+            // so we'll use the regular expression we built from the original glob pattern
     
-            var isMatch = _negation != match;
-    
-            //(isMatch ? "MATCHED" : "NOT MATCHED").Dump();
-            //"--------------".Dump();
-    
-            return isMatch;
+            // Return the regex match result, taking negation into account
+            return _negation != Regex.IsMatch(path);
         }
 
-        private bool IsGlobSpecialChar(char c)
+        private Regex GlobPatternToRegex(string globPattern, bool singleAsteriskMatchesSlashes)
         {
-            return  c == '*' || c == '?' || c == '[' || c == '\\';
-        }
+            var regexBuilder = new StringBuilder(globPattern);
 
-        public int Match(char[] pattern, int patternIndex, char[] text, int textIndex, bool singleAsteriskMatchesSlashes)
-        {
-            var plen = pattern.Length;
-            var tlen = text.Length;
+            string[] globLiterals = { "\\", ".", "$", "^", "{", "(", "|", ")", "+" };
 
-            // Iterate over the characters of the pattern and the text in parallel
-            for (int p = patternIndex, t = textIndex; p < plen; p++, t++)
+            foreach (string globLiteral in globLiterals)
+                regexBuilder.Replace(globLiteral, @"\" + globLiteral);
+
+            var regexPattern = regexBuilder.ToString();
+
+            if (singleAsteriskMatchesSlashes)
             {
-                char pchar = pattern[p];
-                char tchar = text[t];
-                
-                switch (pchar)
-                {
-                    case '\\':
-                        // Literal match with following character
-                        pchar = pattern[++p];
-                        goto default;
-                    default:
-                        // If the text character doesn't match the pattern character, this can't be a match
-                        if (tchar != pchar)
-                            return WM_NOMATCH;
-                        continue;
-                    case '*':					
-                        if (pattern[++p] == '*')
-                        {
-                            int prev_idx = p - 2;
-                            char prev = pattern[prev_idx];
-                            while (pattern[++p] == '*') {}
-
-                            if ((prev_idx < plen || prev == '/') && (pattern[++p] == plen || pattern[++p] == '/' || (pattern[0] == '\\' && pattern[1] == '/')))
-                            {
-                                /*
-                                 * Assuming we already match 'foo/' and are at
-                                 * <star star slash>, just assume it matches
-                                 * nothing and go ahead match the rest of the
-                                 * pattern with the remaining string. This
-                                 * helps make foo/<*><*>/bar (<> because
-                                 * otherwise it breaks C comment syntax) match
-                                 * both foo/bar and foo/a/bar.
-                                 */
-                                if (pattern[0] == '/' && Match(pattern, p + 1, text, t, singleAsteriskMatchesSlashes) == WM_MATCH)
-                                    return WM_MATCH;
-                            }
-
-                            return WM_NOMATCH;
-                        }
-
-                        if (p == plen)
-                        {
-                            /* Trailing "**" matches everything.  Trailing "*" matches
-                             * only if there are no more slash characters. */
-                            if (!singleAsteriskMatchesSlashes && Array.IndexOf(text, '/', t) != -1)
-                                return WM_NOMATCH;
-
-                            return WM_MATCH;
-                        }
-                        else if (!singleAsteriskMatchesSlashes && pattern[p] == '/')
-                        {
-                            /*
-                             * _one_ asterisk followed by a slash
-                             * with WM_PATHNAME matches the next
-                             * directory
-                             */
-                            int slash = Array.IndexOf(text, '/', t);
-
-                            if (slash == -1)
-                                return WM_NOMATCH;
-
-                            t = slash;
-                            /* the slash is consumed by the top-level for loop */
-                            break;
-                        }
-
-                        while (true)
-                        {
-                            if (t == tlen)
-                                break;
-                            /*
-                             * Try to advance faster when an asterisk is
-                             * followed by a literal. We know in this case
-                             * that the the string before the literal
-                             * must belong to "*".
-                             * If match_slash is false, do not look past
-                             * the first slash as it cannot belong to '*'.
-                             */
-                            if (!IsGlobSpecialChar(pattern[p]))
-                            {
-                                pchar = pattern[p];
-                                
-                                while ((tchar = text[t]) != '\0' && (singleAsteriskMatchesSlashes || tchar != '/'))
-                                {
-                                    if (tchar == pchar)
-                                        break;
-
-                                    t++;
-                                }
-
-                                if (tchar != pchar)
-                                    return WM_NOMATCH;
-                            }
-
-                            int matched;
-
-                            if ((matched = Match(pattern, p, text, t, singleAsteriskMatchesSlashes)) != WM_NOMATCH)
-                            {
-                                if (!singleAsteriskMatchesSlashes || matched != WM_ABORT_TO_STARSTAR)
-                                    return matched;
-                            }
-                            else if (!singleAsteriskMatchesSlashes && tchar == '/')
-                            { 
-                                return WM_ABORT_TO_STARSTAR;
-                            }
-
-                            tchar = text[++t];
-                        }
-
-                        return WM_ABORT_ALL;
-                }
+                // If there are no path separators in the rule, treat asterisks the same way as double asterisks
+                // This handles wildcards for file extensions (e.g. *.txt)
+                regexPattern = Regex.Replace(regexPattern, @"\*+", ".*");
             }
-    
-            return WM_MATCH;
-        }
+            else
+            { 
+                // Two consecutive asterisks should translate into .*
+                // Replace any occurrences with a placeholder, so that we can match single asterisks differently with the next pass
+                regexPattern = Regex.Replace(regexPattern, @"\*\*", ".{@}");
+                // Now replace single asterisks - should match everything except forward slashes
+                regexPattern = Regex.Replace(regexPattern, @"\*", "[^/]+");
+                // Now single asterisks have been dealt with, replace any double-asterisk placeholders with the correct regex pattern
+                regexPattern = Regex.Replace(regexPattern, @"\.\{\@\}", ".*");
+            }
 
+            regexPattern = Regex.Replace(regexPattern, @"\?", ".");
+
+            return new Regex(regexPattern, MatchFlags.HasFlag(MatchFlags.IGNORE_CASE) ? RegexOptions.IgnoreCase : RegexOptions.None);
+        }
+        
         public override string ToString()
         {
-            return string.Format("{0}", Pattern);
+            return string.Format("{0} > {1} > {2}", _originalPattern, Pattern, Regex);
         }
     }
 }
