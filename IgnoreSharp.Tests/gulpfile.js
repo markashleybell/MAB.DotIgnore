@@ -43,7 +43,7 @@ var reportGeneratorArgs = [
 
 var reportGeneratorCommand = reportGeneratorExecutable + ' ' + reportGeneratorArgs.join(' ');
 
-gulp.task('task', function (callback) {
+gulp.task('opencover-reports', function (callback) {
     exec(openCoverCommand, { cwd: solutionFolder }, function (ocerr, ocstdout, ocstderr) {
         console.log(ocstdout);
         console.log(ocstderr);
