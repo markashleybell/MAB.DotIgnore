@@ -166,6 +166,17 @@ namespace IgnoreSharp.Tests
         }
 
         [Test]
+        public void Match_Leading_Star_Star_Wildcard()
+        {
+            var rule = new IgnoreRule("**/test");
+            Assert.IsFalse(rule.IsMatch("/test", true));
+            Assert.IsTrue(rule.IsMatch("/sub1/test", true));
+            Assert.IsTrue(rule.IsMatch("/sub1/sub2/test", true));
+            // Should match directory as well
+            Assert.IsTrue(rule.IsMatch("/sub1/sub2/test", false));
+        }
+
+        [Test]
         public void Match_Relative_Star_Star_Wildcard()
         {
             var rule = new IgnoreRule("sub2/**.txt");
@@ -255,6 +266,17 @@ namespace IgnoreSharp.Tests
             Assert.IsFalse(rule.IsMatch("/sub1/sub2/test.txt", false));
             // Should match directory as well
             Assert.IsFalse(rule.IsMatch("/test.txt", true));
+        }
+
+        [Test]
+        public void Negated_Match_Leading_Star_Star_Wildcard()
+        {
+            var rule = new IgnoreRule("!**/test");
+            Assert.IsTrue(rule.IsMatch("/test", true));
+            Assert.IsFalse(rule.IsMatch("/sub1/test", true));
+            Assert.IsFalse(rule.IsMatch("/sub1/sub2/test", true));
+            // Should match directory as well
+            Assert.IsFalse(rule.IsMatch("/sub1/sub2/test", false));
         }
 
         [Test]
