@@ -45,6 +45,14 @@ namespace IgnoreSharp.Tests
         }
 
         [Test]
+        public void Case_Sensitive_Match()
+        {
+            var rule = new IgnoreRule("test.txt", MatchFlags.PATHNAME);
+            Assert.IsTrue(rule.IsMatch("test.txt", true));
+            Assert.IsFalse(rule.IsMatch("TEST.TXT", true));
+        }
+
+        [Test]
         public void Match_Relative_No_Wildcards()
         {
             var rule = new IgnoreRule("test.txt");

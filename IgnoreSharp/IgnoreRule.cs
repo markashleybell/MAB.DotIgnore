@@ -11,7 +11,7 @@ namespace IgnoreSharp
         private bool _singleAsteriskMatchesSlashes;
         private int _wildcardIndex;
 
-        private StringComparison sc = StringComparison.OrdinalIgnoreCase;
+        private StringComparison sc = StringComparison.Ordinal;
 
         public string Pattern { get; private set; }
         public MatchFlags MatchFlags { get; private set; }
@@ -80,9 +80,12 @@ namespace IgnoreSharp
             // If not, a single asterisk in the pattern becomes equivalent to **
             _singleAsteriskMatchesSlashes = !MatchFlags.HasFlag(MatchFlags.PATHNAME);
 
-            // If we're passing IGNORE_CASE, uppercase the pattern
+            // If we're passing IGNORE_CASE, uppercase the pattern and set string comparisons to ignore case too
             if (MatchFlags.HasFlag(MatchFlags.IGNORE_CASE))
+            { 
                 Pattern = Pattern.ToUpperInvariant();
+                sc = StringComparison.OrdinalIgnoreCase;
+            }
 
             // Translate the glob pattern into a regular expression, in case simple string matching isn't enough
             Regex = GlobPatternToRegex(Pattern, _singleAsteriskMatchesSlashes);
