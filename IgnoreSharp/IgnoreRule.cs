@@ -6,28 +6,30 @@ namespace IgnoreSharp
 {
     public class IgnoreRule
     {
-        private string _originalPattern;
         private bool _negation;
         private bool _singleAsteriskMatchesSlashes;
         private int _wildcardIndex;
 
         private StringComparison sc = StringComparison.Ordinal;
 
+        public string OriginalPattern { get; private set; }
         public string Pattern { get; private set; }
         public MatchFlags MatchFlags { get; private set; }
         public PatternFlags PatternFlags { get; private set; }
         public Regex Regex { get; private set; }
+        public bool Exclude { get; private set; }
 
         public IgnoreRule(string pattern, MatchFlags matchFlags = MatchFlags.IGNORE_CASE | MatchFlags.PATHNAME)
         {
             if(Utils.IsNullOrWhiteSpace(pattern))
                 throw new ArgumentNullException(nameof(pattern));
             
-            // Keep track of the original pattern before modifications
-            _originalPattern = pattern;
+            // Keep track of the original pattern before modifications (for display purposes)
+            OriginalPattern = pattern;
 
             Pattern = pattern;
             MatchFlags = matchFlags;
+            Exclude = true;
             
             // First, let's figure out some things about the pattern and set flags to pass to our match function
             PatternFlags = PatternFlags.NONE;
@@ -38,7 +40,10 @@ namespace IgnoreSharp
             _negation = Pattern.StartsWith("!", sc);
 
             if (_negation)
+            { 
+                Exclude = false;
                 Pattern = Pattern.Substring(1);
+            }
 
             // If the pattern starts with a forward slash, it should only match an absolute path
             if (Pattern.StartsWith("/", sc))
@@ -213,7 +218,7 @@ namespace IgnoreSharp
         
         public override string ToString()
         {
-            return string.Format("{0} > {1} > {2}", _originalPattern, Pattern, Regex);
+            return string.Format("{0} > {1} > {2}", OriginalPattern, Pattern, Regex);
         }
     }
 }
