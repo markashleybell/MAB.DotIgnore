@@ -14,7 +14,7 @@ namespace IgnoreSharp.Tests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _basePath = AppDomain.CurrentDomain.BaseDirectory;
+            _basePath = AppDomain.CurrentDomain.BaseDirectory + @"\test_content";
         }
 
         [SetUp]
