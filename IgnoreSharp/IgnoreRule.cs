@@ -144,6 +144,16 @@ namespace IgnoreSharp
         //    
         //    - Other consecutive asterisks are considered invalid.
 
+        public bool IsMatch(FileInfo file)
+        {
+            return IsMatch(file.FullName, false);
+        }
+
+        public bool IsMatch(DirectoryInfo directory)
+        {
+            return IsMatch(directory.FullName, true);
+        }
+
         public bool IsMatch(string path, bool pathIsDirectory)
         {
             // If the pattern or the path are null empty, there is nothing to match

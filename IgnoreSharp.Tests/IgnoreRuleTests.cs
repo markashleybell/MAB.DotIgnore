@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.IO;
 
 namespace IgnoreSharp.Tests
 {
@@ -57,6 +58,25 @@ namespace IgnoreSharp.Tests
         {
             var rule = new IgnoreRule("/c/textfiles/test.txt");
             Assert.IsTrue(rule.IsMatch(@"c:\textfiles\test.txt", true));
+        }
+
+        [Test]
+        public void FileInfo_Match()
+        {
+            var directory = new DirectoryInfo(_basePath);
+            var file = directory.GetFiles("*.txt")[0];
+
+            var rule = new IgnoreRule("test.txt");
+            Assert.IsTrue(rule.IsMatch(file));
+        }
+
+        [Test]
+        public void DirectoryInfo_Match()
+        {
+            var directory = new DirectoryInfo(_basePath + @"\test");
+
+            var rule = new IgnoreRule("test");
+            Assert.IsTrue(rule.IsMatch(directory));
         }
 
         [Test]
