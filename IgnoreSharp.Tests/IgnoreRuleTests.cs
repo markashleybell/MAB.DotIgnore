@@ -53,6 +53,13 @@ namespace IgnoreSharp.Tests
         }
 
         [Test]
+        public void Windows_Paths_Converted()
+        {
+            var rule = new IgnoreRule("/c/textfiles/test.txt");
+            Assert.IsTrue(rule.IsMatch(@"c:\textfiles\test.txt", true));
+        }
+
+        [Test]
         public void Match_Relative_No_Wildcards()
         {
             var rule = new IgnoreRule("test.txt");

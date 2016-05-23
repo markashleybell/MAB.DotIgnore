@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -150,7 +151,7 @@ namespace IgnoreSharp
                 throw new ArgumentNullException(nameof(path));
 
             // .gitignore files use Unix paths (with a forward slash separator), so make sure our input also uses forward slashes
-            // path = path.Replace(Path.DirectorySeparatorChar.ToString(), "/").Trim();
+            path = NormalisePath(path);
 
             path = path.TrimStart('/');
 
@@ -214,6 +215,11 @@ namespace IgnoreSharp
             regexPattern = Regex.Replace(regexPattern, @"\?", ".");
 
             return new Regex(regexPattern, MatchFlags.HasFlag(MatchFlags.IGNORE_CASE) ? RegexOptions.IgnoreCase : RegexOptions.None);
+        }
+
+        public string NormalisePath(string path)
+        {
+            return path.Replace(":", "").Replace(Path.DirectorySeparatorChar.ToString(), "/").Trim();
         }
         
         public override string ToString()
