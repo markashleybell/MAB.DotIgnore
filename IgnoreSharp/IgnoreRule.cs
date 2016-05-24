@@ -20,6 +20,11 @@ namespace IgnoreSharp
         public Regex Regex { get; private set; }
         public bool Exclude { get; private set; }
 
+        /// <summary>
+        /// Create an individual ignore rule for the specified pattern
+        /// </summary>
+        /// <param name="pattern">A glob pattern specifying file(s) this rule should ignore</param>
+        /// <param name="matchFlags">Optional MatchFlags which alter the behaviour of the match</param>
         public IgnoreRule(string pattern, MatchFlags matchFlags = MatchFlags.IGNORE_CASE | MatchFlags.PATHNAME)
         {
             if(Utils.IsNullOrWhiteSpace(pattern))
@@ -144,16 +149,29 @@ namespace IgnoreSharp
         //    
         //    - Other consecutive asterisks are considered invalid.
 
+        /// <summary>
+        /// Check if a file path matches the rule glob pattern
+        /// </summary>
+        /// <param name="file">FileInfo representing the file to check</param>
         public bool IsMatch(FileInfo file)
         {
             return IsMatch(file.FullName, false);
         }
 
+        /// <summary>
+        /// Check if a directory path matches the rule glob pattern
+        /// </summary>
+        /// <param name="directory">DirectoryInfo representing the directory to check</param>
         public bool IsMatch(DirectoryInfo directory)
         {
             return IsMatch(directory.FullName, true);
         }
 
+        /// <summary>
+        /// Check if a path matches the rule glob pattern
+        /// </summary>
+        /// <param name="path">String representing the path to check</param>
+        /// <param name="pathIsDirectory">Should be set True if the path represents a directory, False if it represents a file</param>
         public bool IsMatch(string path, bool pathIsDirectory)
         {
             // If the pattern or the path are null empty, there is nothing to match
@@ -194,6 +212,15 @@ namespace IgnoreSharp
             return _negation != Regex.IsMatch(path);
         }
 
+        /// <summary>
+        /// Return a string representation showing the original pattern, 
+        /// the pre-processed pattern and the regular expression pattern
+        /// </summary>
+        public override string ToString()
+        {
+            return string.Format("{0} > {1} > {2}", OriginalPattern, Pattern, Regex);
+        }
+
         private Regex GlobPatternToRegex(string globPattern, bool singleAsteriskMatchesSlashes)
         {
             var regexBuilder = new StringBuilder(globPattern);
@@ -227,14 +254,9 @@ namespace IgnoreSharp
             return new Regex(regexPattern, MatchFlags.HasFlag(MatchFlags.IGNORE_CASE) ? RegexOptions.IgnoreCase : RegexOptions.None);
         }
 
-        public string NormalisePath(string path)
+        private string NormalisePath(string path)
         {
             return path.Replace(":", "").Replace(Path.DirectorySeparatorChar.ToString(), "/").Trim();
-        }
-        
-        public override string ToString()
-        {
-            return string.Format("{0} > {1} > {2}", OriginalPattern, Pattern, Regex);
         }
     }
 }
