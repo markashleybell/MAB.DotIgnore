@@ -77,7 +77,7 @@ namespace IgnoreSharp
 
         public IgnoreList Clone()
         {
-            return new IgnoreList(_rules.Select(x => x.Pattern));
+            return new IgnoreList(_rules.Select(x => x.OriginalPattern));
         }
     }
 }
