@@ -56,9 +56,6 @@ namespace IgnoreSharp
 
         public bool IsMatch(string input, List<string> log)
         {
-            // .gitignore files use Unix paths (with a forward slash separator), so make sure our input also uses forward slashes
-            input = input.Replace(Path.DirectorySeparatorChar.ToString(), "/").Trim();
-
             // This pattern modified from https://github.com/henon/GitSharp/blob/master/GitSharp/IgnoreRules.cs
             var ignore = false;
 
