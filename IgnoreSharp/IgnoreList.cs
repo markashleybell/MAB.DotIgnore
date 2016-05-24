@@ -49,12 +49,12 @@ namespace IgnoreSharp
                         .Where(line => line.Length > 0 && !line.StartsWith("#", StringComparison.OrdinalIgnoreCase));
         }
 
-        public bool IsMatch(string input)
+        public bool IsMatch(string path)
         {
-            return IsMatch(input, null);
+            return IsMatch(path, null);
         }
 
-        public bool IsMatch(string input, List<string> log)
+        public bool IsMatch(string path, List<string> log)
         {
             // This pattern modified from https://github.com/henon/GitSharp/blob/master/GitSharp/IgnoreRules.cs
             var ignore = false;
@@ -63,7 +63,7 @@ namespace IgnoreSharp
             {
                 if (rule.Exclude != ignore)
                 {
-                    ignore = rule.IsMatch(input, true);
+                    ignore = rule.IsMatch(path, true);
 
                     if (log != null)
                     {
