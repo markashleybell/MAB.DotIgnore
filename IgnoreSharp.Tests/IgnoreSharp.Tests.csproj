@@ -38,6 +38,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IntegrationTests.cs" />
     <Compile Include="UtilsTests.cs" />
     <Compile Include="IgnoreListTests.cs" />
     <Compile Include="IgnoreRuleTests.cs" />
