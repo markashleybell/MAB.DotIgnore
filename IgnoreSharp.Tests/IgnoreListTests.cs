@@ -44,10 +44,10 @@ namespace IgnoreSharp.Tests
             var ignoreList = new IgnoreList(new List<string> { "README1.txt" });
             ignoreList.AddRule("README2.txt");
             ignoreList.AddRules(new List<string> { "README3.txt", "README4.txt" });
-            Assert.IsTrue(ignoreList.IsMatch("README1.txt", true));
-            Assert.IsTrue(ignoreList.IsMatch("README2.txt", true));
-            Assert.IsTrue(ignoreList.IsMatch("README3.txt", true));
-            Assert.IsTrue(ignoreList.IsMatch("README4.txt", true));
+            Assert.IsTrue(ignoreList.IsIgnored("README1.txt", true));
+            Assert.IsTrue(ignoreList.IsIgnored("README2.txt", true));
+            Assert.IsTrue(ignoreList.IsIgnored("README3.txt", true));
+            Assert.IsTrue(ignoreList.IsIgnored("README4.txt", true));
         }
 
         [Test]
@@ -55,10 +55,10 @@ namespace IgnoreSharp.Tests
         {
             var ignoreList = new IgnoreList(new List<string> { "README1.txt", "README2.txt", "README3.txt", "README4.txt" });
             ignoreList.RemoveRule("README2.txt");
-            Assert.IsTrue(ignoreList.IsMatch("README1.txt", true));
-            Assert.IsFalse(ignoreList.IsMatch("README2.txt", true));
-            Assert.IsTrue(ignoreList.IsMatch("README3.txt", true));
-            Assert.IsTrue(ignoreList.IsMatch("README4.txt", true));
+            Assert.IsTrue(ignoreList.IsIgnored("README1.txt", true));
+            Assert.IsFalse(ignoreList.IsIgnored("README2.txt", true));
+            Assert.IsTrue(ignoreList.IsIgnored("README3.txt", true));
+            Assert.IsTrue(ignoreList.IsIgnored("README4.txt", true));
         }
 
         [Test]
@@ -66,9 +66,9 @@ namespace IgnoreSharp.Tests
         {
             var ignoreList = new IgnoreList(new string[] { "README.txt" });
             ignoreList.AddRules(_basePath + @"\loadfromfile.gitignore");
-            Assert.IsTrue(ignoreList.IsMatch("README.txt", true));
-            Assert.IsFalse(ignoreList.IsMatch("test.jpg", true));
-            Assert.IsTrue(ignoreList.IsMatch("test.cs", true));
+            Assert.IsTrue(ignoreList.IsIgnored("README.txt", true));
+            Assert.IsFalse(ignoreList.IsIgnored("test.jpg", true));
+            Assert.IsTrue(ignoreList.IsIgnored("test.cs", true));
         }
 
         [Test]
@@ -76,9 +76,9 @@ namespace IgnoreSharp.Tests
         {
             var original = new IgnoreList(new string[] { "README1.txt", "README2.txt" });
             var clone = original.Clone();
-            Assert.IsTrue(clone.IsMatch("README1.txt", true));
-            Assert.IsTrue(clone.IsMatch("README2.txt", true));
-            Assert.IsFalse(clone.IsMatch("README3.txt", true));
+            Assert.IsTrue(clone.IsIgnored("README1.txt", true));
+            Assert.IsTrue(clone.IsIgnored("README2.txt", true));
+            Assert.IsFalse(clone.IsIgnored("README3.txt", true));
         }
 
         [Test]
@@ -86,9 +86,9 @@ namespace IgnoreSharp.Tests
         {
             var ignoreList = new IgnoreList(new string[] { "*.txt", "!sub1/*.txt", "sub1/README2.txt" });
             var matched = new List<IgnoreRule>();
-            Assert.IsTrue(ignoreList.IsMatch("README1.txt", true));
-            Assert.IsFalse(ignoreList.IsMatch("sub1/README1.txt", true));
-            Assert.IsTrue(ignoreList.IsMatch("sub1/README2.txt", true));
+            Assert.IsTrue(ignoreList.IsIgnored("README1.txt", true));
+            Assert.IsFalse(ignoreList.IsIgnored("sub1/README1.txt", true));
+            Assert.IsTrue(ignoreList.IsIgnored("sub1/README2.txt", true));
         }
 
         [Test]
@@ -96,7 +96,7 @@ namespace IgnoreSharp.Tests
         {
             var ignoreList = new IgnoreList(new string[] { "*.txt", "!sub1/*.txt", "sub1/README2.txt" });
             var log = new List<string>();
-            ignoreList.IsMatch("sub1/README2.txt", true, log);
+            ignoreList.IsIgnored("sub1/README2.txt", true, log);
             Assert.IsTrue(log.Count == 3);
             Assert.IsTrue(log[0] == "Ignored by *.txt");
             Assert.IsTrue(log[1] == "Included by !sub1/*.txt");
@@ -109,7 +109,7 @@ namespace IgnoreSharp.Tests
             var directory = new DirectoryInfo(_basePath);
             var file = directory.GetFiles("*.txt")[0];
             var list = new IgnoreList(new string[] { "test.txt" });
-            Assert.IsTrue(list.IsMatch(file));
+            Assert.IsTrue(list.IsIgnored(file));
         }
 
         [Test]
@@ -117,7 +117,7 @@ namespace IgnoreSharp.Tests
         {
             var directory = new DirectoryInfo(_basePath + @"\test");
             var list = new IgnoreList(new string[] { "test" });
-            Assert.IsTrue(list.IsMatch(directory));
+            Assert.IsTrue(list.IsIgnored(directory));
         }
 
         [Test]
@@ -127,7 +127,7 @@ namespace IgnoreSharp.Tests
             var file = directory.GetFiles("*.txt")[0];
             var list = new IgnoreList(new string[] { "test.txt" });
             var log = new List<string>();
-            Assert.IsTrue(list.IsMatch(file, log));
+            Assert.IsTrue(list.IsIgnored(file, log));
             Assert.IsTrue(log.Count == 1);
             Assert.IsTrue(log[0] == "Ignored by test.txt");
         }
@@ -138,7 +138,7 @@ namespace IgnoreSharp.Tests
             var directory = new DirectoryInfo(_basePath + @"\test");
             var list = new IgnoreList(new string[] { "test" });
             var log = new List<string>();
-            Assert.IsTrue(list.IsMatch(directory, log));
+            Assert.IsTrue(list.IsIgnored(directory, log));
             Assert.IsTrue(log.Count == 1);
             Assert.IsTrue(log[0] == "Ignored by test");
         }

@@ -70,9 +70,9 @@ namespace IgnoreSharp
         /// Check if a file path matches any of the rules in the ignore list
         /// </summary>
         /// <param name="file">FileInfo representing the file to chec</param>
-        public bool IsMatch(FileInfo file)
+        public bool IsIgnored(FileInfo file)
         {
-            return IsMatch(file.FullName, false);
+            return IsIgnored(file.FullName, false);
         }
 
         /// <summary>
@@ -80,18 +80,18 @@ namespace IgnoreSharp
         /// </summary>
         /// <param name="file">FileInfo representing the file to check</param>
         /// <param name="log">List of strings to append log messages to</param>
-        public bool IsMatch(FileInfo file, List<string> log)
+        public bool IsIgnored(FileInfo file, List<string> log)
         {
-            return IsMatch(file.FullName, false, log);
+            return IsIgnored(file.FullName, false, log);
         }
 
         /// <summary>
         /// Check if a directory path matches any of the rules in the ignore list
         /// </summary>
         /// <param name="directory">DirectoryInfo representing the file to check</param>
-        public bool IsMatch(DirectoryInfo directory)
+        public bool IsIgnored(DirectoryInfo directory)
         {
-            return IsMatch(directory.FullName, true);
+            return IsIgnored(directory.FullName, true);
         }
 
         /// <summary>
@@ -99,9 +99,9 @@ namespace IgnoreSharp
         /// </summary>
         /// <param name="directory">DirectoryInfo representing the file to check</param>
         /// <param name="log">List of strings to append log messages to</param>
-        public bool IsMatch(DirectoryInfo directory, List<string> log)
+        public bool IsIgnored(DirectoryInfo directory, List<string> log)
         {
-            return IsMatch(directory.FullName, true, log);
+            return IsIgnored(directory.FullName, true, log);
         }
 
         /// <summary>
@@ -109,9 +109,9 @@ namespace IgnoreSharp
         /// </summary>
         /// <param name="path">String representing the path to check</param>
         /// <param name="pathIsDirectory">Should be set True if the path represents a directory, False if it represents a file</param>
-        public bool IsMatch(string path, bool pathIsDirectory)
+        public bool IsIgnored(string path, bool pathIsDirectory)
         {
-            return IsMatch(path, pathIsDirectory, null);
+            return IsIgnored(path, pathIsDirectory, null);
         }
 
         // <summary>
@@ -120,7 +120,7 @@ namespace IgnoreSharp
         /// <param name="path">String representing the path to check</param>
         /// <param name="pathIsDirectory">Should be set True if the path represents a directory, False if it represents a file</param>
         /// <param name="log">List of strings to append log messages to</param>
-        public bool IsMatch(string path, bool pathIsDirectory, List<string> log)
+        public bool IsIgnored(string path, bool pathIsDirectory, List<string> log)
         {
             // This pattern modified from https://github.com/henon/GitSharp/blob/master/GitSharp/IgnoreRules.cs
             var ignore = false;
