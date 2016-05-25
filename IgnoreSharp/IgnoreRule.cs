@@ -78,7 +78,23 @@ namespace IgnoreSharp
                     PatternFlags |= PatternFlags.WILD2;
             
                     if (Pattern.StartsWith("**", sc))
-                        PatternFlags |= PatternFlags.WILD2_PREFIX;
+                    { 
+                        if(Pattern[2] == '/')
+                        { 
+                            // Patterns beginning with **/ are treated in the same way as global patterns,
+                            // so for example '**/test' is equivalent to 'test'. So if the pattern starts
+                            // with this double-star wildcard, remove it so it is treated the same as if
+                            // there was no prefix
+                            PatternFlags |= PatternFlags.WILD2_PREFIX;
+                            Pattern = Pattern.Substring(3);
+                        }
+                        else
+                        {
+                            // The double-star prefix is invalid without a slash after it, so in this case
+                            // we treat it as a single-star wildcard (strip off the first asterisk)
+                            Pattern = Pattern.Substring(1);
+                        }
+                    }
                 }
             }
 
