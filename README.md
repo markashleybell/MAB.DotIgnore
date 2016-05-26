@@ -21,7 +21,7 @@ ignores.IsIgnored(@"path\to\include.cs"); // Returns false
 
 A quick example illustrating how you might integrate an `IgnoreList` into a copy routine:
 
-```
+```cs
 public static void CopyWithIgnores(DirectoryInfo source, DirectoryInfo target, IgnoreList ignores)
 {
     foreach (DirectoryInfo dir in source.GetDirectories().Where(d => !ignores.IsIgnored(d)))
