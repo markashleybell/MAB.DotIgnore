@@ -10,31 +10,31 @@ Load and parse `.gitignore` files (or any text files using the same syntax) to p
 
 #### C# code
 
-   ```cs
-    var ignores = new IgnoreList(@"path\to\my\.gitignore");
-    
-    ignores.IsIgnored(@"path\to\ignore.txt"); // Returns true
-    ignores.IsIgnored(@"path\to\include.cs"); // Returns false
-    ```
+```cs
+var ignores = new IgnoreList(@"path\to\my\.gitignore");
+
+ignores.IsIgnored(@"path\to\ignore.txt"); // Returns true
+ignores.IsIgnored(@"path\to\include.cs"); // Returns false
+```
 
 #### Example usage
 
 A quick example illustrating how you might integrate an `IgnoreList` into a copy routine:
 
-    ```
-    public static void CopyWithIgnores(DirectoryInfo source, DirectoryInfo target, IgnoreList ignores)
-    {
-        foreach (DirectoryInfo dir in source.GetDirectories().Where(d => !ignores.IsIgnored(d)))
-            CopyWithIgnores(dir, target.CreateSubdirectory(dir.Name), ignores);
+```
+public static void CopyWithIgnores(DirectoryInfo source, DirectoryInfo target, IgnoreList ignores)
+{
+    foreach (DirectoryInfo dir in source.GetDirectories().Where(d => !ignores.IsIgnored(d)))
+        CopyWithIgnores(dir, target.CreateSubdirectory(dir.Name), ignores);
 
-        foreach (FileInfo file in source.GetFiles().Where(f => !ignores.IsIgnored(f)))
-            file.CopyTo(Path.Combine(target.FullName, file.Name));
-    }
+    foreach (FileInfo file in source.GetFiles().Where(f => !ignores.IsIgnored(f)))
+        file.CopyTo(Path.Combine(target.FullName, file.Name));
+}
 
-    var source = new DirectoryInfo(@"c:\source");
-    var destination = new DirectoryInfo(@"c:\destination");
+var source = new DirectoryInfo(@"c:\source");
+var destination = new DirectoryInfo(@"c:\destination");
 
-    var ignores = new IgnoreList(@"c:\source\.gitignore");
+var ignores = new IgnoreList(@"c:\source\.gitignore");
 
-    CopyWithIgnores(source, destination, ignores);
-    ```
+CopyWithIgnores(source, destination, ignores);
+```
