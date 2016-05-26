@@ -12,6 +12,6 @@
         <language>en-GB</language>
     </metadata>
     <files>
-        <file src="IgnoreSharp\bin\Release\MAB.DotIgnore.dll" target="lib\MAB.DotIgnore.dll" />
+        <file src="MAB.DotIgnore\bin\Release\MAB.DotIgnore.dll" target="lib\MAB.DotIgnore.dll" />
     </files>
 </package>
