@@ -7,6 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAB.DotIgnore", "MAB.DotIgn
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAB.DotIgnore.Test", "MAB.DotIgnore.Test\MAB.DotIgnore.Test.csproj", "{03096302-2AF3-468B-B412-69F27DEE43D8}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7FB7EF8F-3017-4AE4-9909-7FA9A63EA97A}"
+	ProjectSection(SolutionItems) = preProject
+		MAB.DotIgnore.nuspec = MAB.DotIgnore.nuspec
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
