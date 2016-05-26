@@ -15,7 +15,7 @@ namespace MAB.DotIgnore.Tests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _basePath = AppDomain.CurrentDomain.BaseDirectory + @"test_content";
+            _basePath = TestContext.CurrentContext.TestDirec‌​tory + @"\test_content";
         }
 
         [SetUp]
@@ -204,7 +204,7 @@ namespace MAB.DotIgnore.Tests
         public void Match_Leading_Star_Star_Wildcard()
         {
             var rule = new IgnoreRule("**/test");
-            Assert.IsFalse(rule.IsMatch("/test", true));
+            Assert.IsTrue(rule.IsMatch("/test", true));
             Assert.IsTrue(rule.IsMatch("/sub1/test", true));
             Assert.IsTrue(rule.IsMatch("/sub1/sub2/test", true));
             // Should match directory as well
@@ -307,7 +307,7 @@ namespace MAB.DotIgnore.Tests
         public void Negated_Match_Leading_Star_Star_Wildcard()
         {
             var rule = new IgnoreRule("!**/test");
-            Assert.IsTrue(rule.IsMatch("/test", true));
+            Assert.IsFalse(rule.IsMatch("/test", true));
             Assert.IsFalse(rule.IsMatch("/sub1/test", true));
             Assert.IsFalse(rule.IsMatch("/sub1/sub2/test", true));
             // Should match directory as well
