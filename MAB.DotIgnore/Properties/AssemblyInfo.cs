@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("IgnoreSharp.Tests")]
+[assembly: AssemblyTitle("MAB.DotIgnore")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("IgnoreSharp.Tests")]
-[assembly: AssemblyCopyright("Copyright ©  2015")]
+[assembly: AssemblyProduct("MAB.DotIgnore")]
+[assembly: AssemblyCopyright("Copyright © Mark Ashley Bell 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("03096302-2af3-468b-b412-69f27dee43d8")]
+[assembly: Guid("fed27394-3783-46a4-9449-8edf1ff197e4")]
 
 // Version information for an assembly consists of the following four values:
 //

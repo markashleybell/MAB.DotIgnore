@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace IgnoreSharp.Tests
+namespace MAB.DotIgnore.Tests
 {
     [TestFixture]
     public class IgnoreListTests

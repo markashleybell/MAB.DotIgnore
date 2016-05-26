@@ -27,9 +27,9 @@ var reportGeneratorExecutable = glob.sync("ReportGenerator*/tools/ReportGenerato
 
 var openCoverArgs = [
     '-target:"' + nunitExecutable + '"',
-    '-targetargs:"/out:\\"' + path.join('reports/testresults.xml') + '\\" ' + path.join('IgnoreSharp.Tests/bin/Debug/IgnoreSharp.Tests.dll') + '"',
+    '-targetargs:"/out:\\"' + path.join('reports/testresults.xml') + '\\" ' + path.join('MAB.DotIgnore.Test/bin/Debug/MAB.DotIgnore.Test.dll') + '"',
     '-excludebyattribute:*.ExcludeFromTestCoverageAttribute',
-    '-filter:"+[*]* -[IgnoreSharp.Tests*]* -[IgnoreSharp]IgnoreSharp.ExcludeFromTestCoverageAttribute"',
+    '-filter:"+[*]* -[MAB.DotIgnore.Test*]* -[MAB.DotIgnore]MAB.DotIgnore.ExcludeFromTestCoverageAttribute"',
     '-register:user',
     '-output:"' + path.join('reports/results.xml') + '"'
 ];

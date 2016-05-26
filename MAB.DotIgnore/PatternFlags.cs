@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace IgnoreSharp
+namespace MAB.DotIgnore
 {
     [Flags]
     public enum PatternFlags 

@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace IgnoreSharp
+namespace MAB.DotIgnore
 {
     public class IgnoreRule
     {

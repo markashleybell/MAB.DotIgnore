@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>MAB.DotIgnore</id>
+        <version>1.0.0.0</version>
+        <authors>Mark Ashley Bell</authors>
+        <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
+        <requireLicenseAcceptance>true</requireLicenseAcceptance>
+        <description>Check whether file paths should be ignored, based on a .gitignore file</description>
+        <summary />
+        <copyright>2016 Mark Ashley Bell</copyright>
+        <language>en-GB</language>
+    </metadata>
+    <files>
+        <file src="IgnoreSharp\bin\Release\MAB.DotIgnore.dll" target="lib\MAB.DotIgnore.dll" />
+    </files>
+</package>
