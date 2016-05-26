@@ -9,12 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAB.DotIgnore.Test", "MAB.D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7FB7EF8F-3017-4AE4-9909-7FA9A63EA97A}"
 	ProjectSection(SolutionItems) = preProject
-		MAB.DotIgnore.nuspec = MAB.DotIgnore.nuspec
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2270B83C-F027-4221-8DEF-9C43FE005E6E}"
-	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		MAB.DotIgnore.nuspec = MAB.DotIgnore.nuspec
 	EndProjectSection
 EndProject
 Global

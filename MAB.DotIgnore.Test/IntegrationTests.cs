@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace IgnoreSharp.Tests
+namespace MAB.DotIgnore.Tests
 {
     [TestFixture]
     public class IntegrationTests
@@ -45,7 +45,10 @@ namespace IgnoreSharp.Tests
 
             CopyWithIgnores(source, destination, ignores);
 
-            throw new NotImplementedException();
+            // Do some very minimal checks and then just do some manual checking of the copy folder
+            Assert.IsTrue(File.Exists(destinationFolder + @"\MAB.DotIgnore\MAB.DotIgnore.csproj"));
+            Assert.IsTrue(File.Exists(destinationFolder + @"\MAB.DotIgnore.Test\MAB.DotIgnore.Test.csproj"));
+            Assert.IsFalse(Directory.Exists(destinationFolder + @"\MAB.DotIgnore\bin"));
         }
 
         public static void CopyWithIgnores(DirectoryInfo source, DirectoryInfo target, IgnoreList ignores)
