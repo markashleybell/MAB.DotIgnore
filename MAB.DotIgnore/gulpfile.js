@@ -7,6 +7,7 @@ var gulp = require('gulp'),
     fs = require('fs');
 
 var solutionFolder = path.resolve(__dirname, '..');
+var projectFolder = path.join(solutionFolder, 'MAB.DotIgnore');
 var distFolder = path.join(solutionFolder, 'dist');
 
 if (!fs.existsSync(distFolder)) {
@@ -14,7 +15,7 @@ if (!fs.existsSync(distFolder)) {
 }
 
 gulp.task('nuget-pack', function (callback) {
-    exec("nuget pack MAB.DotIgnore.nuspec -OutputDirectory " + distFolder, { cwd: solutionFolder }, function (err, stdout, stderr) {
+    exec('nuget pack MAB.DotIgnore.csproj -Symbols -OutputDirectory ' + distFolder + ' -Prop Configuration=Release', { cwd: projectFolder }, function (err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
         callback(err);

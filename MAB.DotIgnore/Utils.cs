@@ -2,6 +2,8 @@
 
 namespace MAB.DotIgnore
 {
+    // Re-implement a couple of convenience functions introduced in .NET 4, so we can support 3.5
+
     public static class Utils
     {
         public static bool IsNullOrWhiteSpace(string value)

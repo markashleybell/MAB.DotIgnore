@@ -43,9 +43,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="gulpfile.js" />
+    <None Include="gulpfile.js" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="MAB.DotIgnore.nuspec" />
     <None Include="package.json" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

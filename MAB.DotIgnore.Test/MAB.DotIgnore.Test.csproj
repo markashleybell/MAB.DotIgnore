@@ -45,7 +45,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="gulpfile.js" />
+    <None Include="gulpfile.js" />
     <Content Include="test_content\loadfromfile.gitignore">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
