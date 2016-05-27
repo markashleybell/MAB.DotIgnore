@@ -2,7 +2,7 @@
 
 Load and parse `.gitignore` files (or any text files using the same syntax) to produce an `IgnoreList` which can be used to ignore specific files and folders during (for example) a recursve file copy operation.
 
-The goal of this library is to implement the same file matching behaviour which [Git](https://github.com/git/git) uses to determine which files to ignore when adding to a commit. Please feel free to submit [issues](https://github.com/markashleybell/MAB.DotIgnore/issues) with examples (or pull requests) if you find instances where this isn't the case!
+The goal of this library is to implement the same file matching behaviour which [Git](https://github.com/git/git) uses (to determine which files to ignore when adding to a commit). Please feel free to submit [issues](https://github.com/markashleybell/MAB.DotIgnore/issues) with examples—or pull requests—if you find instances where this isn't the case!
 
 ## Basic usage: 
 
