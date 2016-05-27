@@ -2,16 +2,17 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MAB.DotIgnore</id>
-        <version>1.0.0.0</version>
+        <version>0.0.0.0</version>
+        <title>MAB.DotIgnore</title>
         <authors>Mark Ashley Bell</authors>
-        <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
+        <licenseUrl>https://github.com/markashleybell/MAB.DotIgnore/blob/master/README.md</licenseUrl>
+        <projectUrl>https://github.com/markashleybell/MAB.DotIgnore</projectUrl>
         <requireLicenseAcceptance>true</requireLicenseAcceptance>
-        <description>Check whether file paths should be ignored, based on a .gitignore file</description>
-        <summary />
-        <copyright>2016 Mark Ashley Bell</copyright>
+        <summary>Load and parse .gitignore files (or any text files using the same syntax) to produce an IgnoreList which can be used to ignore specific files and folders during (for example) a recursve file copy operation.</summary>
+        <description>Load and parse .gitignore files (or any text files using the same syntax) to produce an IgnoreList which can be used to ignore specific files and folders during (for example) a recursve file copy operation.</description>
+        <copyright>Copyright © 2016 Mark Ashley Bell</copyright>
         <language>en-GB</language>
+        <tags>ignore gitignore</tags>
     </metadata>
-    <files>
-        <file src="MAB.DotIgnore\bin\Release\MAB.DotIgnore.dll" target="lib\MAB.DotIgnore.dll" />
-    </files>
+    <files />
 </package>
