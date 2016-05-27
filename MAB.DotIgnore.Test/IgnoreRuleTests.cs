@@ -1,8 +1,5 @@
 ﻿using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq;
 using System.IO;
 
 namespace MAB.DotIgnore.Tests
