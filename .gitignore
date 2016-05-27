@@ -204,3 +204,4 @@ push_package.cmd
 
 # NuGet package output
 dist
+publish.cmd
