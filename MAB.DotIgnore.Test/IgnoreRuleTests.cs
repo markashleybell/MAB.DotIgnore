@@ -80,6 +80,7 @@ namespace MAB.DotIgnore.Tests
         public void Match_Relative_No_Wildcards()
         {
             var rule = new IgnoreRule("test.txt");
+            Assert.IsFalse(rule.Negation);
             Assert.IsTrue(rule.IsMatch("/test.txt", false));
             Assert.IsTrue(rule.IsMatch("/sub1/test.txt", false));
             Assert.IsTrue(rule.IsMatch("/sub1/sub2/test.txt", false));
@@ -91,6 +92,7 @@ namespace MAB.DotIgnore.Tests
         public void Match_Absolute_No_Wildcards()
         {
             var rule = new IgnoreRule("/test.txt");
+            Assert.IsFalse(rule.Negation);
             Assert.IsTrue(rule.IsMatch("/test.txt", false));
             Assert.IsFalse(rule.IsMatch("/sub1/test.txt", false));
             Assert.IsFalse(rule.IsMatch("/sub1/sub2/test.txt", false));
@@ -102,6 +104,7 @@ namespace MAB.DotIgnore.Tests
         public void Match_Directory_Relative_No_Wildcards()
         {
             var rule = new IgnoreRule("test/");
+            Assert.IsFalse(rule.Negation);
             Assert.IsTrue(rule.IsMatch("/test", true));
             Assert.IsTrue(rule.IsMatch("/sub1/test", true));
             Assert.IsTrue(rule.IsMatch("/sub1/sub2/test", true));
@@ -113,6 +116,7 @@ namespace MAB.DotIgnore.Tests
         public void Match_Directory_Absolute_No_Wildcards()
         {
             var rule = new IgnoreRule("/test/");
+            Assert.IsFalse(rule.Negation);
             Assert.IsTrue(rule.IsMatch("/test", true));
             Assert.IsFalse(rule.IsMatch("/sub1/test", true));
             Assert.IsFalse(rule.IsMatch("/sub1/sub2/test", true));
@@ -124,50 +128,55 @@ namespace MAB.DotIgnore.Tests
         public void Negated_Match_Relative_No_Wildcards()
         {
             var rule = new IgnoreRule("!test.txt");
-            Assert.IsFalse(rule.IsMatch("/test.txt", false));
-            Assert.IsFalse(rule.IsMatch("/sub1/test.txt", false));
-            Assert.IsFalse(rule.IsMatch("/sub1/sub2/test.txt", false));
+            Assert.IsTrue(rule.Negation);
+            Assert.IsTrue(rule.IsMatch("/test.txt", false));
+            Assert.IsTrue(rule.IsMatch("/sub1/test.txt", false));
+            Assert.IsTrue(rule.IsMatch("/sub1/sub2/test.txt", false));
             // Should match directory as well
-            Assert.IsFalse(rule.IsMatch("/test.txt", true));
+            Assert.IsTrue(rule.IsMatch("/test.txt", true));
         }
 
         [Test]
         public void Negated_Match_Absolute_No_Wildcards()
         {
             var rule = new IgnoreRule("!/test.txt");
-            Assert.IsFalse(rule.IsMatch("/test.txt", false));
-            Assert.IsTrue(rule.IsMatch("/sub1/test.txt", false));
-            Assert.IsTrue(rule.IsMatch("/sub1/sub2/test.txt", false));
+            Assert.IsTrue(rule.Negation);
+            Assert.IsTrue(rule.IsMatch("/test.txt", false));
+            Assert.IsFalse(rule.IsMatch("/sub1/test.txt", false));
+            Assert.IsFalse(rule.IsMatch("/sub1/sub2/test.txt", false));
             // Should match directory as well
-            Assert.IsFalse(rule.IsMatch("/test.txt", true));
+            Assert.IsTrue(rule.IsMatch("/test.txt", true));
         }
 
         [Test]
         public void Negated_Match_Directory_Relative_No_Wildcards()
         {
             var rule = new IgnoreRule("!test/");
-            Assert.IsFalse(rule.IsMatch("/test", true));
-            Assert.IsFalse(rule.IsMatch("/sub1/test", true));
-            Assert.IsFalse(rule.IsMatch("/sub1/sub2/test", true));
+            Assert.IsTrue(rule.Negation);
+            Assert.IsTrue(rule.IsMatch("/test", true));
+            Assert.IsTrue(rule.IsMatch("/sub1/test", true));
+            Assert.IsTrue(rule.IsMatch("/sub1/sub2/test", true));
             // Should not match file called 'test' with no extension
-            Assert.IsTrue(rule.IsMatch("/test", false));
+            Assert.IsFalse(rule.IsMatch("/test", false));
         }
 
         [Test]
         public void Negated_Match_Directory_Absolute_No_Wildcards()
         {
             var rule = new IgnoreRule("!/test/");
-            Assert.IsFalse(rule.IsMatch("/test", true));
-            Assert.IsTrue(rule.IsMatch("/sub1/test", true));
-            Assert.IsTrue(rule.IsMatch("/sub1/sub2/test", true));
+            Assert.IsTrue(rule.Negation);
+            Assert.IsTrue(rule.IsMatch("/test", true));
+            Assert.IsFalse(rule.IsMatch("/sub1/test", true));
+            Assert.IsFalse(rule.IsMatch("/sub1/sub2/test", true));
             // Should not match file called 'test' with no extension
-            Assert.IsTrue(rule.IsMatch("/test", false));
+            Assert.IsFalse(rule.IsMatch("/test", false));
         }
 
         [Test]
         public void Match_Global_Wildcards()
         {
             var rule = new IgnoreRule("*.txt");
+            Assert.IsFalse(rule.Negation);
             Assert.IsTrue(rule.IsMatch("/test.txt", false));
             Assert.IsTrue(rule.IsMatch("/sub1/test.txt", false));
             Assert.IsTrue(rule.IsMatch("/sub1/sub2/test.txt", false));
@@ -179,17 +188,19 @@ namespace MAB.DotIgnore.Tests
         public void Negated_Match_Global_Wildcards()
         {
             var rule = new IgnoreRule("!*.txt");
-            Assert.IsFalse(rule.IsMatch("/test.txt", false));
-            Assert.IsFalse(rule.IsMatch("/sub1/test.txt", false));
-            Assert.IsFalse(rule.IsMatch("/sub1/sub2/test.txt", false));
+            Assert.IsTrue(rule.Negation);
+            Assert.IsTrue(rule.IsMatch("/test.txt", false));
+            Assert.IsTrue(rule.IsMatch("/sub1/test.txt", false));
+            Assert.IsTrue(rule.IsMatch("/sub1/sub2/test.txt", false));
             // Should match directory as well
-            Assert.IsFalse(rule.IsMatch("/test.txt", true));
+            Assert.IsTrue(rule.IsMatch("/test.txt", true));
         }
 
         [Test]
         public void Match_Global_Star_Star_Wildcard()
         {
             var rule = new IgnoreRule("**.txt");
+            Assert.IsFalse(rule.Negation);
             Assert.IsTrue(rule.IsMatch("/test.txt", false));
             Assert.IsTrue(rule.IsMatch("/sub1/test.txt", false));
             Assert.IsTrue(rule.IsMatch("/sub1/sub2/test.txt", false));
@@ -201,6 +212,7 @@ namespace MAB.DotIgnore.Tests
         public void Match_Leading_Star_Star_Wildcard()
         {
             var rule = new IgnoreRule("**/test");
+            Assert.IsFalse(rule.Negation);
             Assert.IsTrue(rule.IsMatch("/test", true));
             Assert.IsTrue(rule.IsMatch("/sub1/test", true));
             Assert.IsTrue(rule.IsMatch("/sub1/sub2/test", true));
@@ -212,6 +224,7 @@ namespace MAB.DotIgnore.Tests
         public void Match_Relative_Star_Star_Wildcard()
         {
             var rule = new IgnoreRule("sub2/**.txt");
+            Assert.IsFalse(rule.Negation);
             Assert.IsFalse(rule.IsMatch("/test.txt", false));
             Assert.IsFalse(rule.IsMatch("/sub1/test.txt", false));
             Assert.IsTrue(rule.IsMatch("/sub1/sub2/test.txt", false));
@@ -223,6 +236,7 @@ namespace MAB.DotIgnore.Tests
         public void Match_Absolute_Star_Star_Wildcard()
         {
             var rule = new IgnoreRule("/sub1/**.txt");
+            Assert.IsFalse(rule.Negation);
             Assert.IsFalse(rule.IsMatch("/test.txt", false));
             Assert.IsTrue(rule.IsMatch("/sub1/test.txt", false));
             Assert.IsTrue(rule.IsMatch("/sub1/sub2/test.txt", false));
@@ -235,6 +249,7 @@ namespace MAB.DotIgnore.Tests
         public void Match_Trailing_Star_Star_Wildcard()
         {
             var rule = new IgnoreRule("sub1/**");
+            Assert.IsFalse(rule.Negation);
             Assert.IsFalse(rule.IsMatch("/test.txt", false));
             Assert.IsTrue(rule.IsMatch("/sub1/test.txt", false));
             Assert.IsTrue(rule.IsMatch("/sub1/sub2/test.txt", false));
@@ -247,6 +262,7 @@ namespace MAB.DotIgnore.Tests
         public void Match_Directory_Global_Star_Star_Wildcard()
         {
             var rule = new IgnoreRule("**test/");
+            Assert.IsFalse(rule.Negation);
             Assert.IsTrue(rule.IsMatch("/test", true));
             Assert.IsTrue(rule.IsMatch("/sub1/test", true));
             Assert.IsTrue(rule.IsMatch("/sub1/sub2/test", true));
@@ -258,6 +274,7 @@ namespace MAB.DotIgnore.Tests
         public void Match_Directory_Relative_Star_Star_Wildcard()
         {
             var rule = new IgnoreRule("sub1/**/test/");
+            Assert.IsFalse(rule.Negation);
             Assert.IsFalse(rule.IsMatch("/test", true));
             Assert.IsFalse(rule.IsMatch("/sub1/test", true));
             Assert.IsTrue(rule.IsMatch("/sub1/sub2/test", true));
@@ -269,6 +286,7 @@ namespace MAB.DotIgnore.Tests
         public void Match_Directory_Absolute_Star_Star_Wildcard()
         {
             var rule = new IgnoreRule("/sub1/**.txt/");
+            Assert.IsFalse(rule.Negation);
             Assert.IsFalse(rule.IsMatch("/test.txt", true));
             Assert.IsTrue(rule.IsMatch("/sub1/test.txt", true));
             Assert.IsTrue(rule.IsMatch("/sub1/sub2/test.txt", true));
@@ -281,6 +299,7 @@ namespace MAB.DotIgnore.Tests
         public void Match_Directory_Trailing_Star_Star_Wildcard()
         {
             var rule = new IgnoreRule("sub1/**/");
+            Assert.IsFalse(rule.Negation);
             Assert.IsFalse(rule.IsMatch("/test.txt", true));
             Assert.IsTrue(rule.IsMatch("/sub1/test.txt", true));
             Assert.IsTrue(rule.IsMatch("/sub1/sub2/test.txt", true));
@@ -293,92 +312,100 @@ namespace MAB.DotIgnore.Tests
         public void Negated_Match_Global_Star_Star_Wildcard()
         {
             var rule = new IgnoreRule("!**.txt");
-            Assert.IsFalse(rule.IsMatch("/test.txt", false));
-            Assert.IsFalse(rule.IsMatch("/sub1/test.txt", false));
-            Assert.IsFalse(rule.IsMatch("/sub1/sub2/test.txt", false));
+            Assert.IsTrue(rule.Negation);
+            Assert.IsTrue(rule.IsMatch("/test.txt", false));
+            Assert.IsTrue(rule.IsMatch("/sub1/test.txt", false));
+            Assert.IsTrue(rule.IsMatch("/sub1/sub2/test.txt", false));
             // Should match directory as well
-            Assert.IsFalse(rule.IsMatch("/test.txt", true));
+            Assert.IsTrue(rule.IsMatch("/test.txt", true));
         }
 
         [Test]
         public void Negated_Match_Leading_Star_Star_Wildcard()
         {
             var rule = new IgnoreRule("!**/test");
-            Assert.IsFalse(rule.IsMatch("/test", true));
-            Assert.IsFalse(rule.IsMatch("/sub1/test", true));
-            Assert.IsFalse(rule.IsMatch("/sub1/sub2/test", true));
+            Assert.IsTrue(rule.Negation);
+            Assert.IsTrue(rule.IsMatch("/test", true));
+            Assert.IsTrue(rule.IsMatch("/sub1/test", true));
+            Assert.IsTrue(rule.IsMatch("/sub1/sub2/test", true));
             // Should match directory as well
-            Assert.IsFalse(rule.IsMatch("/sub1/sub2/test", false));
+            Assert.IsTrue(rule.IsMatch("/sub1/sub2/test", false));
         }
 
         [Test]
         public void Negated_Match_Relative_Star_Star_Wildcard()
         {
             var rule = new IgnoreRule("!sub2/**.txt");
-            Assert.IsTrue(rule.IsMatch("/test.txt", false));
-            Assert.IsTrue(rule.IsMatch("/sub1/test.txt", false));
-            Assert.IsFalse(rule.IsMatch("/sub1/sub2/test.txt", false));
+            Assert.IsTrue(rule.Negation);
+            Assert.IsFalse(rule.IsMatch("/test.txt", false));
+            Assert.IsFalse(rule.IsMatch("/sub1/test.txt", false));
+            Assert.IsTrue(rule.IsMatch("/sub1/sub2/test.txt", false));
             // Should match directory as well
-            Assert.IsFalse(rule.IsMatch("/sub1/sub2/test.txt", true));
+            Assert.IsTrue(rule.IsMatch("/sub1/sub2/test.txt", true));
         }
 
         [Test]
         public void Negated_Match_Absolute_Star_Star_Wildcard()
         {
             var rule = new IgnoreRule("!/sub1/**.txt");
-            Assert.IsTrue(rule.IsMatch("/test.txt", false));
-            Assert.IsFalse(rule.IsMatch("/sub1/test.txt", false));
-            Assert.IsFalse(rule.IsMatch("/sub1/sub2/test.txt", false));
-            Assert.IsTrue(rule.IsMatch("/sub0/sub1/test.txt", false));
+            Assert.IsTrue(rule.Negation);
+            Assert.IsFalse(rule.IsMatch("/test.txt", false));
+            Assert.IsTrue(rule.IsMatch("/sub1/test.txt", false));
+            Assert.IsTrue(rule.IsMatch("/sub1/sub2/test.txt", false));
+            Assert.IsFalse(rule.IsMatch("/sub0/sub1/test.txt", false));
             // Should match directory as well
-            Assert.IsFalse(rule.IsMatch("/sub1/test.txt", true));
+            Assert.IsTrue(rule.IsMatch("/sub1/test.txt", true));
         }
 
         [Test]
         public void Negated_Match_Trailing_Star_Star_Wildcard()
         {
             var rule = new IgnoreRule("!sub1/**");
-            Assert.IsTrue(rule.IsMatch("/test.txt", false));
-            Assert.IsFalse(rule.IsMatch("/sub1/test.txt", false));
-            Assert.IsFalse(rule.IsMatch("/sub1/sub2/test.txt", false));
-            Assert.IsFalse(rule.IsMatch("/sub1/test.jpg", false));
+            Assert.IsTrue(rule.Negation);
+            Assert.IsFalse(rule.IsMatch("/test.txt", false));
+            Assert.IsTrue(rule.IsMatch("/sub1/test.txt", false));
+            Assert.IsTrue(rule.IsMatch("/sub1/sub2/test.txt", false));
+            Assert.IsTrue(rule.IsMatch("/sub1/test.jpg", false));
             // Should match directory as well
-            Assert.IsFalse(rule.IsMatch("/sub1/test.txt", true));
+            Assert.IsTrue(rule.IsMatch("/sub1/test.txt", true));
         }
 
         [Test]
         public void Negated_Match_Directory_Relative_Star_Star_Wildcard()
         {
             var rule = new IgnoreRule("!sub1/**/test/");
-            Assert.IsTrue(rule.IsMatch("/test", true));
-            Assert.IsTrue(rule.IsMatch("/sub1/test", true));
-            Assert.IsFalse(rule.IsMatch("/sub1/sub2/test", true));
+            Assert.IsTrue(rule.Negation);
+            Assert.IsFalse(rule.IsMatch("/test", true));
+            Assert.IsFalse(rule.IsMatch("/sub1/test", true));
+            Assert.IsTrue(rule.IsMatch("/sub1/sub2/test", true));
             // Should not match file
-            Assert.IsTrue(rule.IsMatch("/sub1/sub2/test", false));
+            Assert.IsFalse(rule.IsMatch("/sub1/sub2/test", false));
         }
 
         [Test]
         public void Negated_Match_Directory_Absolute_Star_Star_Wildcard()
         {
             var rule = new IgnoreRule("!/sub1/**.txt/");
-            Assert.IsTrue(rule.IsMatch("/test.txt", true));
-            Assert.IsFalse(rule.IsMatch("/sub1/test.txt", true));
-            Assert.IsFalse(rule.IsMatch("/sub1/sub2/test.txt", true));
-            Assert.IsTrue(rule.IsMatch("/sub0/sub1/test.txt", true));
+            Assert.IsTrue(rule.Negation);
+            Assert.IsFalse(rule.IsMatch("/test.txt", true));
+            Assert.IsTrue(rule.IsMatch("/sub1/test.txt", true));
+            Assert.IsTrue(rule.IsMatch("/sub1/sub2/test.txt", true));
+            Assert.IsFalse(rule.IsMatch("/sub0/sub1/test.txt", true));
             // Should not match file
-            Assert.IsTrue(rule.IsMatch("/sub1/test.txt", false));
+            Assert.IsFalse(rule.IsMatch("/sub1/test.txt", false));
         }
 
         [Test]
         public void Negated_Match_Directory_Trailing_Star_Star_Wildcard()
         {
             var rule = new IgnoreRule("!sub1/**/");
-            Assert.IsTrue(rule.IsMatch("/test.txt", true));
-            Assert.IsFalse(rule.IsMatch("/sub1/test.txt", true));
-            Assert.IsFalse(rule.IsMatch("/sub1/sub2/test.txt", true));
-            Assert.IsFalse(rule.IsMatch("/sub1/test.jpg", true));
+            Assert.IsTrue(rule.Negation);
+            Assert.IsFalse(rule.IsMatch("/test.txt", true));
+            Assert.IsTrue(rule.IsMatch("/sub1/test.txt", true));
+            Assert.IsTrue(rule.IsMatch("/sub1/sub2/test.txt", true));
+            Assert.IsTrue(rule.IsMatch("/sub1/test.jpg", true));
             // Should not match file
-            Assert.IsTrue(rule.IsMatch("/sub1/test.txt", false));
+            Assert.IsFalse(rule.IsMatch("/sub1/test.txt", false));
         }
 
         [TearDown]

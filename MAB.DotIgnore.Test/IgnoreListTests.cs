@@ -91,7 +91,7 @@ namespace MAB.DotIgnore.Tests
         [Test]
         public void Log_Matched_Rules()
         {
-            var ignoreList = new IgnoreList(new string[] { "*.txt", "!sub1/*.txt", "sub1/README2.txt" });
+            var ignoreList = new IgnoreList(new string[] { "*.txt", "*.cs", "!sub1/*.txt", "sub1/README2.txt" });
             var log = new List<string>();
             ignoreList.IsIgnored("sub1/README2.txt", true, log);
             Assert.IsTrue(log.Count == 3);

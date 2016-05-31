@@ -7,7 +7,6 @@ namespace MAB.DotIgnore
 {
     public class IgnoreRule
     {
-        private bool _negation;
         private bool _singleAsteriskMatchesSlashes;
         private int _wildcardIndex;
 
@@ -18,7 +17,7 @@ namespace MAB.DotIgnore
         public MatchFlags MatchFlags { get; private set; }
         public PatternFlags PatternFlags { get; private set; }
         public Regex Regex { get; private set; }
-        public bool Exclude { get; private set; }
+        public bool Negation { get; private set; }
 
         /// <summary>
         /// Create an individual ignore rule for the specified pattern
@@ -35,7 +34,7 @@ namespace MAB.DotIgnore
 
             Pattern = pattern;
             MatchFlags = matchFlags;
-            Exclude = true;
+            Negation = false;
             
             // First, let's figure out some things about the pattern and set flags to pass to our match function
             PatternFlags = PatternFlags.NONE;
@@ -43,13 +42,10 @@ namespace MAB.DotIgnore
             // If the pattern starts with an exclamation mark, it's a negation pattern
             // Once we know that, we can remove the exclamation mark (so the pattern behaves just like any other),
             // then just negate the match result when we return it
-            _negation = Pattern.StartsWith("!", sc);
+            Negation = Pattern.StartsWith("!", sc);
 
-            if (_negation)
-            { 
-                Exclude = false;
+            if (Negation)
                 Pattern = Pattern.Substring(1);
-            }
 
             // If the pattern starts with a forward slash, it should only match an absolute path
             if (Pattern.StartsWith("/", sc))
@@ -203,7 +199,7 @@ namespace MAB.DotIgnore
             // This has to be determined by the OS (at least that's the only reliable way), 
             // so we pass that information in as a boolean so the consuming code can provide it
             if (PatternFlags.HasFlag(PatternFlags.DIRECTORY) && pathIsDirectory == false)
-                return _negation != false;
+                return false;
 
             // If we're passing IGNORE_CASE, uppercase the pattern
             if (MatchFlags.HasFlag(MatchFlags.IGNORE_CASE))
@@ -214,18 +210,18 @@ namespace MAB.DotIgnore
             var patternBeforeFirstWildcard = _wildcardIndex != -1 ? Pattern.Substring(0, _wildcardIndex) : Pattern;
     
             if (PatternFlags.HasFlag(PatternFlags.ABSOLUTE_PATH) && !path.StartsWith(patternBeforeFirstWildcard, sc))
-                return _negation != false;
+                return false;
 
             // If the pattern is *not* an absolute path pattern and there are no wildcards in the pattern, 
             // then we know that the path must actually end with the pattern in order to be a match
             if (!PatternFlags.HasFlag(PatternFlags.ABSOLUTE_PATH) && _wildcardIndex == -1)
-                return _negation != path.EndsWith(Pattern, sc);
+                return path.EndsWith(Pattern, sc);
 
             // If we got this far, we can't figure out the match with simple string matching, 
             // so we'll use the regular expression we built from the original glob pattern
     
             // Return the regex match result, taking negation into account
-            return _negation != Regex.IsMatch(path);
+            return Regex.IsMatch(path);
         }
 
         /// <summary>

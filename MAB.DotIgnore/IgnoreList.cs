@@ -127,13 +127,13 @@ namespace MAB.DotIgnore
 
             foreach (var rule in _rules)
             {
-                if (rule.Exclude != ignore)
+                if (rule.IsMatch(path, pathIsDirectory))
                 {
-                    ignore = rule.IsMatch(path, pathIsDirectory);
+                    ignore = !rule.Negation;
 
                     if (log != null)
                     {
-                        log.Add(string.Format("{0} by {1}", (rule.Exclude ? "Ignored" : "Included"), rule.OriginalPattern));
+                        log.Add(string.Format("{0} by {1}", (rule.Negation ? "Included" : "Ignored"), rule.OriginalPattern));
                     }
                 }
             }
