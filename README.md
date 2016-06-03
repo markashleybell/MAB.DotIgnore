@@ -40,3 +40,5 @@ var ignores = new IgnoreList(@"c:\source\.gitignore");
 
 CopyWithIgnores(source, destination, ignores);
 ```
+
+**Note:** this code is *not* an example of good or efficient recursive copying: it's just here to illustrate the use of this library!
