@@ -261,7 +261,10 @@ namespace MAB.DotIgnore
                 regexPattern = Regex.Replace(regexPattern, @"\.\{\@\}", ".*");
             }
 
-            regexPattern = Regex.Replace(regexPattern, @"\?", ".");
+            // Add on the end of line pattern char ($) so that wildcard matches aren't too greedy
+            // Omitting this means that ignore pattern '*.cs' would match files with a '.cshtml' 
+            // extension as well as '.cs' files, which is definitely not what we want!
+            regexPattern = Regex.Replace(regexPattern, @"\?", ".") + "$";
 
             return new Regex(regexPattern, MatchFlags.HasFlag(MatchFlags.IGNORE_CASE) ? RegexOptions.IgnoreCase : RegexOptions.None);
         }
