@@ -19,30 +19,6 @@ namespace MAB.DotIgnore.Tests
         {
 
         }
-
-        [Test]
-        public void StringIsNullOrWhiteSpace_Null()
-        {
-            Assert.IsTrue(Utils.IsNullOrWhiteSpace(null));
-        }
-
-        [Test]
-        public void StringIsNullOrWhiteSpace_Empty()
-        {
-            Assert.IsTrue(Utils.IsNullOrWhiteSpace(""));
-        }
-
-        [Test]
-        public void StringIsNullOrWhiteSpace_White_Space()
-        {
-            Assert.IsTrue(Utils.IsNullOrWhiteSpace("   "));
-        }
-
-        [Test]
-        public void StringIsNullOrWhiteSpace_String()
-        {
-            Assert.IsFalse(Utils.IsNullOrWhiteSpace("ABC"));
-        }
         
         [TearDown]
         public void TearDown()

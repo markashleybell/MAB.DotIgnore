@@ -4,9 +4,9 @@ namespace MAB.DotIgnore
 {
     // Re-implement a couple of convenience functions introduced in .NET 4, so we can support 3.5
 
-    public static class Utils
+    internal static class Utils
     {
-        public static bool IsNullOrWhiteSpace(string value)
+        internal static bool IsNullOrWhiteSpace(string value)
         {
             if (value == null) return true;
  
@@ -18,7 +18,7 @@ namespace MAB.DotIgnore
             return true;
         }
 
-        public static bool HasFlag(this Enum variable, Enum value)
+        internal static bool HasFlag(this Enum variable, Enum value)
         {
             ulong num = Convert.ToUInt64(value);
             return ((Convert.ToUInt64(variable) & num) == num);
