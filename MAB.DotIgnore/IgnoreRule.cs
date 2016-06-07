@@ -5,6 +5,9 @@ using System.Text.RegularExpressions;
 
 namespace MAB.DotIgnore
 {
+    /// <summary>
+    /// A rule which can be used to determine whether a file path should be ignored
+    /// </summary>
     public class IgnoreRule
     {
         private bool _singleAsteriskMatchesSlashes;
@@ -12,11 +15,29 @@ namespace MAB.DotIgnore
 
         private StringComparison sc = StringComparison.Ordinal;
 
+        /// <summary>
+        /// The original pattern string passed into the constructor
+        /// </summary>
         public string OriginalPattern { get; private set; }
+        /// <summary>
+        /// The pre-processed pattern string after basic parsing
+        /// </summary>
         public string Pattern { get; private set; }
+        /// <summary>
+        /// The <see cref="MatchFlags"/> set for this rule
+        /// </summary>
         public MatchFlags MatchFlags { get; private set; }
+        /// <summary>
+        /// The <see cref="PatternFlags"/> set for the parsed rule pattern
+        /// </summary>
         public PatternFlags PatternFlags { get; private set; }
+        /// <summary>
+        /// The <see cref="Regex"/> pattern created from the string pattern
+        /// </summary>
         public Regex Regex { get; private set; }
+        /// <summary>
+        /// True if this rule was negated by an exclamation mark at the start of the pattern (!*.txt)
+        /// </summary>
         public bool Negation { get; private set; }
 
         /// <summary>

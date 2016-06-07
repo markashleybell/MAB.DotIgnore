@@ -6,10 +6,16 @@ using System.Linq;
 
 namespace MAB.DotIgnore
 {
+    /// <summary>
+    /// A list of ignore rules
+    /// </summary>
     public class IgnoreList
     {
         private List<IgnoreRule> _rules = new List<IgnoreRule>();
 
+        /// <summary>
+        /// The individual ignore rules currently loaded into this list
+        /// </summary>
         public ReadOnlyCollection<IgnoreRule> Rules { get { return _rules.AsReadOnly(); } }
 
         /// <summary>
@@ -114,7 +120,7 @@ namespace MAB.DotIgnore
             return IsIgnored(path, pathIsDirectory, null);
         }
 
-        // <summary>
+        /// <summary>
         /// Check if a string path matches any of the rules in the ignore list
         /// </summary>
         /// <param name="path">String representing the path to check</param>

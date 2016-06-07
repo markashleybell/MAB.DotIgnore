@@ -2,14 +2,35 @@
 
 namespace MAB.DotIgnore
 {
+    /// <summary>
+    /// Informational flags telling us about a parsed pattern
+    /// </summary>
     [Flags]
     public enum PatternFlags 
     {
+        /// <summary>
+        /// Pattern is a basic match pattern with no wildcards and no leading/trailing slashes
+        /// </summary>
         NONE = 0,
-        WILD = 1,           // Pattern contains '*', '[', and/or '?'
-        WILD2 = 2,          // Pattern contains '**'
-        WILD2_PREFIX = 4,   // Pattern starts with '**'
-        ABSOLUTE_PATH = 8,  // Pattern starts with '/'
-        DIRECTORY = 16      // Pattern should match only directories
+        /// <summary>
+        /// Pattern contains '*', '[', and/or '?'
+        /// </summary>
+        WILD = 1,
+        /// <summary>
+        /// Pattern contains '**'
+        /// </summary>
+        WILD2 = 2,
+        /// <summary>
+        /// Pattern starts with '**'
+        /// </summary>
+        WILD2_PREFIX = 4,
+        /// <summary>
+        /// Pattern starts with '/'
+        /// </summary>
+        ABSOLUTE_PATH = 8,
+        /// <summary>
+        /// Pattern should match only directories
+        /// </summary>
+        DIRECTORY = 16
     }
 }
