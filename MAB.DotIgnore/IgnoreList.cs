@@ -139,7 +139,7 @@ namespace MAB.DotIgnore
 
                     if (log != null)
                     {
-                        log.Add(string.Format("{0} by {1}", (rule.Negation ? "Included" : "Ignored"), rule.OriginalPattern));
+                        log.Add(string.Format("{0} by {1}", (rule.Negation ? "Included" : "Ignored"), rule.ToString()));
                     }
                 }
             }
