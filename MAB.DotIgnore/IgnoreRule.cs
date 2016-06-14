@@ -35,7 +35,7 @@ namespace MAB.DotIgnore
         /// Create an individual ignore rule for the specified pattern
         /// </summary>
         /// <param name="pattern">A glob pattern specifying file(s) this rule should ignore</param>
-        public IgnoreRule(string pattern)
+        public IgnoreRule(string pattern, MatchFlags flags = MatchFlags.PATHNAME)
         {
             if(Utils.IsNullOrWhiteSpace(pattern))
                 throw new ArgumentNullException(nameof(pattern));
@@ -43,7 +43,7 @@ namespace MAB.DotIgnore
             // Keep track of the original pattern before modifications (for display purposes)
             OriginalPattern = pattern;
             Pattern = pattern;
-            MatchFlags = MatchFlags.NONE;
+            MatchFlags = flags;
             
             // First, let's figure out some things about the pattern and set flags to pass to our match function
             PatternFlags = PatternFlags.NONE;
@@ -78,11 +78,12 @@ namespace MAB.DotIgnore
             if (MatchFlags.HasFlag(MatchFlags.CASEFOLD))
                 sc = StringComparison.OrdinalIgnoreCase;
 
+            // If PATHNAME is set, single asterisks should not match slashes
+            if(!MatchFlags.HasFlag(MatchFlags.PATHNAME))
+                MatchFlags |= MatchFlags.PATHNAME;
+
             // TODO: Currently, we are just setting PATHNAME for every rule, because it seems to match the original behaviour
             // See here for a clue: https://github.com/git/git/blob/c2c5f6b1e479f2c38e0e01345350620944e3527f/dir.c#L99
-
-            // If PATHNAME is set, single asterisks should not match slashes
-            MatchFlags |= MatchFlags.PATHNAME;
         }
 
         // PATTERN FORMAT
