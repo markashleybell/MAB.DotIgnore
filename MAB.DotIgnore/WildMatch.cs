@@ -76,9 +76,7 @@ namespace MAB.DotIgnore
                             while ((++p) < p_len && pattern[p] == '*') { }
                             // If PATHNAME isn't set, a single star also matches slashes
                             if (!flags.HasFlag(MatchFlags.PATHNAME))
-                            {
                                 match_slash = true;
-                            }
                             // If the character before the first star is either the beginning of the pattern or a slash,
                             // and the character after the last star is either the end of the pattern or a slash
                             else if ((pre_star_ch == '\0' || pre_star_ch == '/') && (p == p_len || pattern[p] == '/'))
@@ -151,6 +149,7 @@ namespace MAB.DotIgnore
                                 
                                     t++;
                                 }
+
                                 if (t_ch != p_ch)
                                     return NOMATCH;
                             }
@@ -206,6 +205,7 @@ namespace MAB.DotIgnore
                                 
                                     p_ch = pattern[p];
                                 }
+
                                 if (t_ch <= p_ch && t_ch >= prev_ch)
                                 {
                                     match = 1;
@@ -216,6 +216,7 @@ namespace MAB.DotIgnore
                                     if (t_ch_upper <= p_ch && t_ch_upper >= prev_ch)
                                         match = 1;
                                 }
+
                                 p_ch = '\0'; // This makes "prev_ch" get set to 0
                             } 
                             else if (p_ch == '[' && p < p_EOP && pattern[p + 1] == ':') 
@@ -230,6 +231,7 @@ namespace MAB.DotIgnore
                                     return ABORT_ALL;
                             
                                 i = p - s - 1;
+
                                 if (i < 0 || pattern[p - 1] != ':') 
                                 {
                                     // Didn't find ":]", so treat like a normal set
@@ -239,6 +241,7 @@ namespace MAB.DotIgnore
                                         match = 1;
                                     continue;
                                 }
+
                                 if (CC_EQ(pattern, s, i, "alnum")) 
                                 {
                                     if (Char.IsLetterOrDigit(t_ch))
@@ -258,7 +261,8 @@ namespace MAB.DotIgnore
                                 {
                                     if (Char.IsControl(t_ch))
                                         match = 1;
-                                } else if (CC_EQ(pattern, s, i, "digit")) 
+                                }
+                                else if (CC_EQ(pattern, s, i, "digit")) 
                                 {
                                     if (Char.IsDigit(t_ch))
                                         match = 1;
@@ -304,12 +308,14 @@ namespace MAB.DotIgnore
                                 {
                                     return ABORT_ALL;
                                 }
+
                                 p_ch = '\0'; // This makes "prev_ch" get set to 0
                             } 
                             else if (t_ch == p_ch)
                             {
                                 match = 1;
                             }
+
                             prev_ch = p_ch;
                         } while (p < p_len && (p_ch = pattern[++p]) != ']');
                 
