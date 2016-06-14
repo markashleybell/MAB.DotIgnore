@@ -7,16 +7,16 @@ namespace MAB.DotIgnore
 {
     internal static class WildMatch
     {
-        public const int ABORT_MALFORMED = 2;
-        public const int NOMATCH = 1;
-        public const int MATCH = 0;
-        public const int ABORT_ALL = -1;
-        public const int ABORT_TO_STARSTAR = -2;
+        internal const int ABORT_MALFORMED = 2;
+        internal const int NOMATCH = 1;
+        internal const int MATCH = 0;
+        internal const int ABORT_ALL = -1;
+        internal const int ABORT_TO_STARSTAR = -2;
 
         static char NEGATE_CLASS = '!';
         static char NEGATE_CLASS2 = '^';
 
-        public static int IsMatch(string pattern, string text, MatchFlags flags)
+        internal static int IsMatch(string pattern, string text, MatchFlags flags)
         {
             return Match(pattern.ToCharArray(), text.ToCharArray(), 0, 0, flags);
         }
