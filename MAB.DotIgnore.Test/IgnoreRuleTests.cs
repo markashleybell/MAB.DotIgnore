@@ -35,6 +35,19 @@ namespace MAB.DotIgnore.Tests
         }
 
         [Test]
+        public void Empty_Pattern_Throws_Exception()
+        {
+            Assert.Throws<ArgumentNullException>(() => new IgnoreRule("  "));
+        }
+
+        [Test]
+        public void Empty_Path_Throws_Exception()
+        {
+            var rule = new IgnoreRule("test.txt");
+            Assert.Throws<ArgumentNullException>(() => rule.IsMatch("  ", false));
+        }
+
+        [Test]
         public void ToString_Returns_Correct_Pattern_Info()
         {
             var rule = new IgnoreRule("sub2/**.txt");
@@ -45,9 +58,20 @@ namespace MAB.DotIgnore.Tests
         [Test]
         public void Case_Sensitive_Match()
         {
-            var rule = new IgnoreRule("test.txt");
-            Assert.IsTrue(rule.IsMatch("test.txt", true));
-            Assert.IsFalse(rule.IsMatch("TEST.TXT", true));
+            var rule = new IgnoreRule("a/**/teSt.tXt");
+            Assert.IsTrue(rule.IsMatch("a/b/teSt.tXt", true));
+            Assert.IsFalse(rule.IsMatch("a/b/test.txt", true));
+            Assert.IsFalse(rule.IsMatch("a/b/TEST.TXT", true));
+        }
+
+        [Test]
+        public void Case_Insensitive_Match()
+        {
+            // Use a glob pattern to get past the shortcuts and exercise WildMatch
+            var rule = new IgnoreRule("a/**/teSt.tXt", MatchFlags.CASEFOLD);
+            Assert.IsTrue(rule.IsMatch("a/b/teSt.tXt", true));
+            Assert.IsTrue(rule.IsMatch("a/b/test.txt", true));
+            Assert.IsTrue(rule.IsMatch("a/b/TEST.TXT", true));
         }
 
         [Test]
@@ -315,6 +339,25 @@ namespace MAB.DotIgnore.Tests
             Assert.IsTrue(rule.IsMatch("/sub1/test.jpg", true));
             // Should not match file
             Assert.IsFalse(rule.IsMatch("/sub1/test.txt", false));
+        }
+
+        [Test]
+        public void Match_Question_Mark_Wildcard()
+        {
+            var rule = new IgnoreRule("?at.txt");
+            Assert.IsTrue(rule.IsMatch("/cat.txt", true));
+            Assert.IsTrue(rule.IsMatch("/hat.txt", true));
+            Assert.IsTrue(rule.IsMatch("/mat.txt", true));
+            Assert.IsFalse(rule.IsMatch("/hot.txt", true));
+            Assert.IsFalse(rule.IsMatch("/a/at.txt", true));
+        }
+
+        [Test]
+        public void Match_Escape_Char()
+        {
+            var rule = new IgnoreRule(@"h\?t.txt");
+            Assert.IsTrue(rule.IsMatch("/h?t.txt", true));
+            Assert.IsFalse(rule.IsMatch("/hat.txt", true));
         }
 
         [TearDown]
