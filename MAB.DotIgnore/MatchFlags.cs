@@ -15,7 +15,7 @@ namespace MAB.DotIgnore
         /// <summary>
         /// If set, pattern matches are case-insensitive
         /// </summary>
-        IGNORE_CASE = 1,
+        CASEFOLD = 1,
         /// <summary>
         /// If set, single asterisks in patterns should not match path slashes
         /// </summary>

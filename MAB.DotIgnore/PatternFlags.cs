@@ -9,28 +9,20 @@ namespace MAB.DotIgnore
     public enum PatternFlags 
     {
         /// <summary>
-        /// Pattern is a basic match pattern with no wildcards and no leading/trailing slashes
+        /// Pattern is a basic pattern
         /// </summary>
         NONE = 0,
         /// <summary>
-        /// Pattern contains '*', '[', and/or '?'
+        /// Pattern starts with '!'
         /// </summary>
-        WILD = 1,
-        /// <summary>
-        /// Pattern contains '**'
-        /// </summary>
-        WILD2 = 2,
-        /// <summary>
-        /// Pattern starts with '**'
-        /// </summary>
-        WILD2_PREFIX = 4,
+        NEGATION = 1,
         /// <summary>
         /// Pattern starts with '/'
         /// </summary>
-        ABSOLUTE_PATH = 8,
+        ABSOLUTE_PATH = 2,
         /// <summary>
         /// Pattern should match only directories
         /// </summary>
-        DIRECTORY = 16
+        DIRECTORY = 4
     }
 }

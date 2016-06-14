@@ -135,11 +135,11 @@ namespace MAB.DotIgnore
             {
                 if (rule.IsMatch(path, pathIsDirectory))
                 {
-                    ignore = !rule.Negation;
+                    ignore = !rule.PatternFlags.HasFlag(PatternFlags.NEGATION);
 
                     if (log != null)
                     {
-                        log.Add(string.Format("{0} by {1}", (rule.Negation ? "Included" : "Ignored"), rule.ToString()));
+                        log.Add(string.Format("{0} by {1}", (rule.PatternFlags.HasFlag(PatternFlags.NEGATION) ? "Included" : "Ignored"), rule.ToString()));
                     }
                 }
             }

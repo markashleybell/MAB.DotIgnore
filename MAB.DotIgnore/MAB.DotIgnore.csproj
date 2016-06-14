@@ -42,6 +42,7 @@
     <Compile Include="MatchFlags.cs" />
     <Compile Include="PatternFlags.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WildMatch.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="gulpfile.js" />
