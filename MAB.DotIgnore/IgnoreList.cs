@@ -22,45 +22,50 @@ namespace MAB.DotIgnore
         /// Create a list of ignore rules to check paths against
         /// </summary>
         /// <param name="rules">A list of glob ignore patterns as strings</param>
-        public IgnoreList(IEnumerable<string> rules)
+        /// <param name="flags">Optional flags determining pattern matching behaviour</param>
+        public IgnoreList(IEnumerable<string> rules, MatchFlags flags = MatchFlags.PATHNAME)
         {
-            AddRules(rules);
+            AddRules(rules, flags);
         }
 
         /// <summary>
         /// Create a list of ignore rules to check paths against
         /// </summary>
         /// <param name="ignoreFilePath">Path to a text file containing a list of glob ignore patterns as strings</param>
-        public IgnoreList(string ignoreFilePath)
+        /// <param name="flags">Optional flags determining pattern matching behaviour</param>
+        public IgnoreList(string ignoreFilePath, MatchFlags flags = MatchFlags.PATHNAME)
         {
-            AddRules(File.ReadAllLines(ignoreFilePath));
+            AddRules(File.ReadAllLines(ignoreFilePath), flags);
         }
 
         /// <summary>
         /// Add a rule to the ignore list
         /// </summary>
         /// <param name="rule">Glob ignore pattern as string</param>
-        public void AddRule(string rule)
+        /// <param name="flags">Optional flags determining pattern matching behaviour</param>
+        public void AddRule(string rule, MatchFlags flags = MatchFlags.PATHNAME)
         {
-            AddRules(new string[] { rule });
+            AddRules(new string[] { rule }, flags);
         }
 
         /// <summary>
         /// Add multiple rules to the ignore list
         /// </summary>
         /// <param name="ignoreFilePath">Path to a text file containing a list of glob ignore patterns as strings</param>
-        public void AddRules(string ignoreFilePath)
+        /// <param name="flags">Optional flags determining pattern matching behaviour</param>
+        public void AddRules(string ignoreFilePath, MatchFlags flags = MatchFlags.PATHNAME)
         {
-            _rules.AddRange(CleanRules(File.ReadAllLines(ignoreFilePath)).Select(line => new IgnoreRule(line)));
+            _rules.AddRange(CleanRules(File.ReadAllLines(ignoreFilePath)).Select(line => new IgnoreRule(line, flags)));
         }
 
         /// <summary>
         /// Add multiple rules to the ignore list
         /// </summary>
         /// <param name="rules">A list of glob ignore patterns as strings</param>
-        public void AddRules(IEnumerable<string> rules)
+        /// <param name="flags">Optional flags determining pattern matching behaviour</param>
+        public void AddRules(IEnumerable<string> rules, MatchFlags flags = MatchFlags.PATHNAME)
         {
-            _rules.AddRange(CleanRules(rules).Select(line => new IgnoreRule(line)));
+            _rules.AddRange(CleanRules(rules).Select(line => new IgnoreRule(line, flags)));
         }
 
         /// <summary>
@@ -75,7 +80,7 @@ namespace MAB.DotIgnore
         /// <summary>
         /// Check if a file path matches any of the rules in the ignore list
         /// </summary>
-        /// <param name="file">FileInfo representing the file to chec</param>
+        /// <param name="file">FileInfo representing the file to check</param>
         public bool IsIgnored(FileInfo file)
         {
             return IsIgnored(file.FullName, false);

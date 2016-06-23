@@ -35,6 +35,7 @@ namespace MAB.DotIgnore
         /// Create an individual ignore rule for the specified pattern
         /// </summary>
         /// <param name="pattern">A glob pattern specifying file(s) this rule should ignore</param>
+        /// <param name="flags">Optional flags determining pattern matching behaviour</param>
         public IgnoreRule(string pattern, MatchFlags flags = MatchFlags.PATHNAME)
         {
             if(Utils.IsNullOrWhiteSpace(pattern))

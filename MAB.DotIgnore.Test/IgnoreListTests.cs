@@ -140,6 +140,30 @@ namespace MAB.DotIgnore.Tests
             Assert.IsTrue(log[0] == "Ignored by test > test");
         }
 
+        [Test]
+        public void Constructor_Flags_Respected()
+        {
+            var directory = new DirectoryInfo(_basePath + @"\TEST");
+            // Case sensitive list, should not match
+            var list1 = new IgnoreList(new string[] { "test" });
+            // Case insensitive, should match
+            var list2 = new IgnoreList(new string[] { "test" }, MatchFlags.CASEFOLD);
+            Assert.IsFalse(list1.IsIgnored(directory));
+            Assert.IsTrue(list2.IsIgnored(directory));
+        }
+
+        [Test]
+        public void Add_Rule_Flags_Respected()
+        {
+            var directory = new DirectoryInfo(_basePath + @"\TEST");
+            var list1 = new IgnoreList(new string[] { "x" });
+            var list2 = new IgnoreList(new string[] { "x" });
+            list1.AddRule("test");
+            list2.AddRule("test", MatchFlags.CASEFOLD);
+            Assert.IsFalse(list1.IsIgnored(directory));
+            Assert.IsTrue(list2.IsIgnored(directory));
+        }
+
         [TearDown]
         public void TearDown()
         {
