@@ -1,5 +1,5 @@
 <Query Kind="Program">
-  <Reference Relative="MAB.DotIgnore\bin\Debug\MAB.DotIgnore.dll">E:\Inetpub\myapps\IgnoreSharp\MAB.DotIgnore\bin\Debug\MAB.DotIgnore.dll</Reference>
+  <Reference Relative="MAB.DotIgnore\bin\Debug\MAB.DotIgnore.dll">E:\Src\MAB.DotIgnore\MAB.DotIgnore\bin\Debug\MAB.DotIgnore.dll</Reference>
   <Namespace>MAB.DotIgnore</Namespace>
 </Query>
 
@@ -22,7 +22,7 @@ void Main()
     };
     
     var ignoreList = new IgnoreList(ignorePatterns);
-    paths.ForEach(path => ignoreList.IsMatch(path, false).Dump("Ignore '" + path + "'"));
+    paths.ForEach(path => ignoreList.IsIgnored(path, false).Dump("Ignore '" + path + "'"));
     
 	var ignoreRule = new IgnoreRule("test/*.jpg");
     paths.ForEach(path => ignoreRule.IsMatch(path, false).Dump("Ignore '" + path + "'"));
