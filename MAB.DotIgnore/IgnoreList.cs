@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -150,6 +151,40 @@ namespace MAB.DotIgnore
             }
 
             return ignore;
+        }
+
+        /// <summary>
+        /// Check if a string path matches any of the rules in the ignore list
+        /// </summary>
+        /// <param name="path">String representing the path to check</param>
+        public bool IsAncestorIgnored(string path)
+        {
+            return IsAncestorIgnored(path, null);
+        }
+
+        /// <summary>
+        /// Check if a string path matches any of the rules in the ignore list
+        /// </summary>
+        /// <param name="path">String representing the path to check</param>
+        /// <param name="log">List of strings to append log messages to</param>
+        public bool IsAncestorIgnored(string path, List<string> log)
+        {
+            var segments = Utils.NormalisePath(path).Split('/').ToList();
+            segments.RemoveAt(segments.Count - 1);
+
+            var directory = new List<string>();
+
+            // Loop over all the path segments (moving down the directory tree) 
+            // and test each as a directory, returning immediately if true
+            foreach (var segment in segments)
+            {
+                directory.Add(segment);
+
+                if(IsIgnored(string.Join("/", directory.ToArray()), true, log))
+                    return true;
+            }
+
+            return false;
         }
 
         /// <summary>

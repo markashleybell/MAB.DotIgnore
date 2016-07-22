@@ -164,6 +164,19 @@ namespace MAB.DotIgnore.Tests
             Assert.IsTrue(list2.IsIgnored(directory));
         }
 
+        [Test]
+        public void Ancestor_Ignored()
+        {
+            var list = new IgnoreList(new string[] { "ignored/" });
+            var log = new List<string>();
+            Assert.IsTrue(list.IsAncestorIgnored("ignored/test.txt", log));
+            Assert.IsTrue(list.IsAncestorIgnored("ignored/one/test.txt", log));
+            Assert.IsTrue(list.IsAncestorIgnored("ignored/one/two/test.txt", log));
+            Assert.IsFalse(list.IsAncestorIgnored("notignored/test.txt", log));
+            Assert.IsFalse(list.IsAncestorIgnored("notignored/one/test.txt", log));
+            Assert.IsFalse(list.IsAncestorIgnored("notignored/one/two/test.txt", log));
+        }
+
         [TearDown]
         public void TearDown()
         {
