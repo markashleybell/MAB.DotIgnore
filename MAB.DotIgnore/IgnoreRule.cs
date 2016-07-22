@@ -181,11 +181,6 @@ namespace MAB.DotIgnore
             if (PatternFlags.HasFlag(PatternFlags.ABSOLUTE_PATH) && !path.StartsWith(patternBeforeFirstWildcard, sc))
                 return false;
 
-            // If the pattern is *not* an absolute path pattern and there are no wildcards in the pattern, 
-            // then we know that the path must actually end with the pattern in order to be a match
-            if (!PatternFlags.HasFlag(PatternFlags.ABSOLUTE_PATH) && _wildcardIndex == -1)
-                return path.EndsWith(Pattern, sc);
-
             // If we got this far, we can't figure out the match with simple string matching, so use our wildmatch implementation
             
             // If the pattern does not contain any slashes it should match *any* occurence, *anywhere* within the path 

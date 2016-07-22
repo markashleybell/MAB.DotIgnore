@@ -519,6 +519,14 @@ namespace MAB.DotIgnore.Tests
             Assert.IsFalse(rule.IsMatch("a/test.txt", false));
         }
 
+        [Test]
+        public void Dont_Match_Same_Endings()
+        {
+            var rule = new IgnoreRule(@"ignored/");
+            Assert.IsTrue(rule.IsMatch("ignored", true));
+            Assert.IsFalse(rule.IsMatch("notignored", true));
+        }
+
         [TearDown]
         public void TearDown()
         {
