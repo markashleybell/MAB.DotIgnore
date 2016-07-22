@@ -5,25 +5,26 @@
 
 void Main()
 {
-    var paths = new List<string> {
-        "test1.jpg",
-        "test/test1.jpg",
-        "test/test2.jpg",
-        "test/sub/test3.jpg",
-        "test/sub/test3.jpg",
-        "test/sub/f123.jpg"
+    var paths = new List<TestPath> {
+        new TestPath { Path = "ignored", IsDirectory = true },
+        new TestPath { Path = "notignored", IsDirectory = true }
     };
 
     var ignorePatterns = new string[] {
-        "sub/",
-        "*.jpg",
-        "!sub/*.jpg",
-        "sub/f*.jpg"
+        "ignored/"
     };
     
-    var ignoreList = new IgnoreList(ignorePatterns);
-    paths.ForEach(path => ignoreList.IsIgnored(path, false).Dump("Ignore '" + path + "'"));
+    var ignoreList = new IgnoreList(ignorePatterns, MatchFlags.PATHNAME | MatchFlags.CASEFOLD);
+    paths.ForEach(path => ignoreList.IsIgnored(path.Path, path.IsDirectory).Dump("Ignore '" + path.Path + "'"));
     
-	var ignoreRule = new IgnoreRule("test/*.jpg");
-    paths.ForEach(path => ignoreRule.IsMatch(path, false).Dump("Ignore '" + path + "'"));
+    paths.Where(p => !p.IsDirectory).ToList().ForEach(path => ignoreList.IsAncestorIgnored(path.Path).Dump("Ignore '" + path.Path + "' Ancestor"));
+    
+	var ignoreRule = new IgnoreRule(ignorePatterns[0], MatchFlags.PATHNAME | MatchFlags.CASEFOLD);
+    paths.ForEach(path => ignoreRule.IsMatch(path.Path, path.IsDirectory).Dump("Ignore '" + path.Path + "'"));
+}
+
+public class TestPath
+{
+    public string Path { get; set; }
+    public bool IsDirectory { get; set; }
 }
