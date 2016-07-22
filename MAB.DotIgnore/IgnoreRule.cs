@@ -164,7 +164,7 @@ namespace MAB.DotIgnore
                 throw new ArgumentNullException(nameof(path));
 
             // .gitignore files use Unix paths (with a forward slash separator), so make sure our input also uses forward slashes
-            path = NormalisePath(path);
+            path = Utils.NormalisePath(path);
 
             path = path.TrimStart('/');
 
@@ -209,11 +209,6 @@ namespace MAB.DotIgnore
         public override string ToString()
         {
             return string.Format("{0} > {1}", OriginalPattern, Pattern);
-        }
-
-        private string NormalisePath(string path)
-        {
-            return path.Replace(":", "").Replace(Path.DirectorySeparatorChar.ToString(), "/").Trim();
         }
     }
 }

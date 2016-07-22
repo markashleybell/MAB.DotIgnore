@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace MAB.DotIgnore
 {
@@ -22,6 +23,11 @@ namespace MAB.DotIgnore
         {
             ulong num = Convert.ToUInt64(value);
             return ((Convert.ToUInt64(variable) & num) == num);
+        }
+
+        internal static string NormalisePath(string path)
+        {
+            return path.Replace(":", "").Replace(Path.DirectorySeparatorChar.ToString(), "/").Trim();
         }
     }
 }
