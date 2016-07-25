@@ -165,16 +165,18 @@ namespace MAB.DotIgnore.Tests
         }
 
         [Test]
-        public void Ancestor_Ignored()
+        public void Ignored_Directory_Ignores_All_Children()
         {
-            var list = new IgnoreList(new string[] { "ignored/" });
+            var list = new IgnoreList(new string[] { "ignored/", "!ignored/one/two/" });
             var log = new List<string>();
-            Assert.IsTrue(list.IsAncestorIgnored("ignored/test.txt", log));
-            Assert.IsTrue(list.IsAncestorIgnored("ignored/one/test.txt", log));
-            Assert.IsTrue(list.IsAncestorIgnored("ignored/one/two/test.txt", log));
-            Assert.IsFalse(list.IsAncestorIgnored("notignored/test.txt", log));
-            Assert.IsFalse(list.IsAncestorIgnored("notignored/one/test.txt", log));
-            Assert.IsFalse(list.IsAncestorIgnored("notignored/one/two/test.txt", log));
+            Assert.IsTrue(list.IsIgnored("ignored/test.txt", false, log));
+            Assert.IsTrue(list.IsIgnored("ignored/one/test.txt", false, log));
+            Assert.IsTrue(list.IsIgnored("ignored/two/three.txt", false, log));
+            Assert.IsTrue(list.IsIgnored("ignored/one/two/test.txt", false, log));
+            Assert.IsTrue(list.IsIgnored("ignored/one/two/three/test.txt", false, log));
+            Assert.IsFalse(list.IsIgnored("notignored/test.txt", false, log));
+            Assert.IsFalse(list.IsIgnored("notignored/one/test.txt", false, log));
+            Assert.IsFalse(list.IsIgnored("notignored/one/two/test.txt", false, log));
         }
 
         [TearDown]

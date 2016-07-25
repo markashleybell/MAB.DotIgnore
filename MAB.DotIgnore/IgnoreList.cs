@@ -134,6 +134,36 @@ namespace MAB.DotIgnore
         /// <param name="log">List of strings to append log messages to</param>
         public bool IsIgnored(string path, bool pathIsDirectory, List<string> log)
         {
+            var pathIgnored = IsPathIgnored(path, pathIsDirectory, log);
+
+            if(pathIsDirectory)
+                return pathIgnored;
+
+            var ancestorIgnored = IsAnyParentDirectoryIgnored(path, log);
+
+            if(ancestorIgnored)
+                return true;
+
+            return pathIgnored;
+        }
+
+        /// <summary>
+        /// Create an exact copy of the ignore list
+        /// </summary>
+        public IgnoreList Clone()
+        {
+            return new IgnoreList(_rules.Select(x => x.OriginalPattern));
+        }
+
+        private IEnumerable<string> CleanRules(IEnumerable<string> rules)
+        {
+            // Exclude all comment or whitespace lines
+            return rules.Select(line => line.Trim())
+                        .Where(line => line.Length > 0 && !line.StartsWith("#", StringComparison.OrdinalIgnoreCase));
+        }
+
+        private bool IsPathIgnored(string path, bool pathIsDirectory, List<string> log)
+        {
             // This pattern modified from https://github.com/henon/GitSharp/blob/master/GitSharp/IgnoreRules.cs
             var ignore = false;
 
@@ -153,21 +183,7 @@ namespace MAB.DotIgnore
             return ignore;
         }
 
-        /// <summary>
-        /// Check if a string path matches any of the rules in the ignore list
-        /// </summary>
-        /// <param name="path">String representing the path to check</param>
-        public bool IsAncestorIgnored(string path)
-        {
-            return IsAncestorIgnored(path, null);
-        }
-
-        /// <summary>
-        /// Check if a string path matches any of the rules in the ignore list
-        /// </summary>
-        /// <param name="path">String representing the path to check</param>
-        /// <param name="log">List of strings to append log messages to</param>
-        public bool IsAncestorIgnored(string path, List<string> log)
+        private bool IsAnyParentDirectoryIgnored(string path, List<string> log)
         {
             var segments = Utils.NormalisePath(path).Split('/').ToList();
             segments.RemoveAt(segments.Count - 1);
@@ -179,27 +195,11 @@ namespace MAB.DotIgnore
             foreach (var segment in segments)
             {
                 directory.Add(segment);
-
-                if(IsIgnored(string.Join("/", directory.ToArray()), true, log))
+                if(IsPathIgnored(string.Join("/", directory.ToArray()), true, log))
                     return true;
             }
 
             return false;
-        }
-
-        /// <summary>
-        /// Create an exact copy of the ignore list
-        /// </summary>
-        public IgnoreList Clone()
-        {
-            return new IgnoreList(_rules.Select(x => x.OriginalPattern));
-        }
-
-        private IEnumerable<string> CleanRules(IEnumerable<string> rules)
-        {
-            // Exclude all comment or whitespace lines
-            return rules.Select(line => line.Trim())
-                        .Where(line => line.Length > 0 && !line.StartsWith("#", StringComparison.OrdinalIgnoreCase));
         }
     }
 }
