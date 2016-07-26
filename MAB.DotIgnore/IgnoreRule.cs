@@ -1,7 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Text;
-using System.Text.RegularExpressions;
 
 namespace MAB.DotIgnore
 {
