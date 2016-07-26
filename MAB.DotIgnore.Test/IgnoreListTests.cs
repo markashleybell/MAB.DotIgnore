@@ -92,12 +92,13 @@ namespace MAB.DotIgnore.Tests
         public void Log_Matched_Rules()
         {
             var ignoreList = new IgnoreList(new string[] { "*.txt", "*.cs", "!sub1/*.txt", "sub1/README2.txt" });
-            var log = new List<string>();
+            var log = new IgnoreLog();
             ignoreList.IsIgnored("sub1/README2.txt", true, log);
-            Assert.IsTrue(log.Count == 3);
-            Assert.IsTrue(log[0] == "Ignored by *.txt > *.txt");
-            Assert.IsTrue(log[1] == "Included by !sub1/*.txt > sub1/*.txt");
-            Assert.IsTrue(log[2] == "Ignored by sub1/README2.txt > sub1/README2.txt");
+            Assert.IsTrue(log.Count == 1);
+            Assert.IsTrue(log["sub1/README2.txt"].Count == 3);
+            Assert.IsTrue(log["sub1/README2.txt"][0] == "IGNORED by *.txt > *.txt");
+            Assert.IsTrue(log["sub1/README2.txt"][1] == "INCLUDED by !sub1/*.txt > sub1/*.txt");
+            Assert.IsTrue(log["sub1/README2.txt"][2] == "IGNORED by sub1/README2.txt > sub1/README2.txt");
         }
 
         [Test]
@@ -123,10 +124,11 @@ namespace MAB.DotIgnore.Tests
             var directory = new DirectoryInfo(_basePath);
             var file = directory.GetFiles("*.txt")[0];
             var list = new IgnoreList(new string[] { "test.txt" });
-            var log = new List<string>();
+            var log = new IgnoreLog();
             Assert.IsTrue(list.IsIgnored(file, log));
             Assert.IsTrue(log.Count == 1);
-            Assert.IsTrue(log[0] == "Ignored by test.txt > test.txt");
+            Assert.IsTrue(log[file.FullName].Count == 1);
+            Assert.IsTrue(log[file.FullName][0] == "IGNORED by test.txt > test.txt");
         }
 
         [Test]
@@ -134,10 +136,11 @@ namespace MAB.DotIgnore.Tests
         {
             var directory = new DirectoryInfo(_basePath + @"\test");
             var list = new IgnoreList(new string[] { "test" });
-            var log = new List<string>();
+            var log = new IgnoreLog();
             Assert.IsTrue(list.IsIgnored(directory, log));
             Assert.IsTrue(log.Count == 1);
-            Assert.IsTrue(log[0] == "Ignored by test > test");
+            Assert.IsTrue(log[directory.FullName].Count == 1);
+            Assert.IsTrue(log[directory.FullName][0] == "IGNORED by test > test");
         }
 
         [Test]
@@ -168,15 +171,14 @@ namespace MAB.DotIgnore.Tests
         public void Ignored_Directory_Ignores_All_Children()
         {
             var list = new IgnoreList(new string[] { "ignored/", "!ignored/one/two/" });
-            var log = new List<string>();
-            Assert.IsTrue(list.IsIgnored("ignored/test.txt", false, log));
-            Assert.IsTrue(list.IsIgnored("ignored/one/test.txt", false, log));
-            Assert.IsTrue(list.IsIgnored("ignored/two/three.txt", false, log));
-            Assert.IsTrue(list.IsIgnored("ignored/one/two/test.txt", false, log));
-            Assert.IsTrue(list.IsIgnored("ignored/one/two/three/test.txt", false, log));
-            Assert.IsFalse(list.IsIgnored("notignored/test.txt", false, log));
-            Assert.IsFalse(list.IsIgnored("notignored/one/test.txt", false, log));
-            Assert.IsFalse(list.IsIgnored("notignored/one/two/test.txt", false, log));
+            Assert.IsTrue(list.IsIgnored("ignored/test.txt", false));
+            Assert.IsTrue(list.IsIgnored("ignored/one/test.txt", false));
+            Assert.IsTrue(list.IsIgnored("ignored/two/three.txt", false));
+            Assert.IsTrue(list.IsIgnored("ignored/one/two/test.txt", false));
+            Assert.IsTrue(list.IsIgnored("ignored/one/two/three/test.txt", false));
+            Assert.IsFalse(list.IsIgnored("notignored/test.txt", false));
+            Assert.IsFalse(list.IsIgnored("notignored/one/test.txt", false));
+            Assert.IsFalse(list.IsIgnored("notignored/one/two/test.txt", false));
         }
 
         [TearDown]

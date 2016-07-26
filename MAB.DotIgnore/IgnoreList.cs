@@ -92,7 +92,7 @@ namespace MAB.DotIgnore
         /// </summary>
         /// <param name="file">FileInfo representing the file to check</param>
         /// <param name="log">List of strings to append log messages to</param>
-        public bool IsIgnored(FileInfo file, List<string> log)
+        public bool IsIgnored(FileInfo file, IgnoreLog log)
         {
             return IsIgnored(file.FullName, false, log);
         }
@@ -111,7 +111,7 @@ namespace MAB.DotIgnore
         /// </summary>
         /// <param name="directory">DirectoryInfo representing the file to check</param>
         /// <param name="log">List of strings to append log messages to</param>
-        public bool IsIgnored(DirectoryInfo directory, List<string> log)
+        public bool IsIgnored(DirectoryInfo directory, IgnoreLog log)
         {
             return IsIgnored(directory.FullName, true, log);
         }
@@ -132,7 +132,7 @@ namespace MAB.DotIgnore
         /// <param name="path">String representing the path to check</param>
         /// <param name="pathIsDirectory">Should be set True if the path represents a directory, False if it represents a file</param>
         /// <param name="log">List of strings to append log messages to</param>
-        public bool IsIgnored(string path, bool pathIsDirectory, List<string> log)
+        public bool IsIgnored(string path, bool pathIsDirectory, IgnoreLog log)
         {
             var pathIgnored = IsPathIgnored(path, pathIsDirectory, log);
 
@@ -162,7 +162,7 @@ namespace MAB.DotIgnore
                         .Where(line => line.Length > 0 && !line.StartsWith("#", StringComparison.OrdinalIgnoreCase));
         }
 
-        private bool IsPathIgnored(string path, bool pathIsDirectory, List<string> log)
+        private bool IsPathIgnored(string path, bool pathIsDirectory, IgnoreLog log)
         {
             // This pattern modified from https://github.com/henon/GitSharp/blob/master/GitSharp/IgnoreRules.cs
             var ignore = false;
@@ -175,7 +175,16 @@ namespace MAB.DotIgnore
 
                     if (log != null)
                     {
-                        log.Add(string.Format("{0} by {1}", (rule.PatternFlags.HasFlag(PatternFlags.NEGATION) ? "Included" : "Ignored"), rule.ToString()));
+                        if(!log.ContainsKey(path))
+                            log.Add(path, new List<string>());
+
+                        var entry = string.Format(
+                            "{0} by {1}", 
+                            (rule.PatternFlags.HasFlag(PatternFlags.NEGATION) ? "INCLUDED" : "IGNORED"), 
+                            rule.ToString()
+                        );
+
+                        log[path].Add(entry);
                     }
                 }
             }
@@ -183,7 +192,7 @@ namespace MAB.DotIgnore
             return ignore;
         }
 
-        private bool IsAnyParentDirectoryIgnored(string path, List<string> log)
+        private bool IsAnyParentDirectoryIgnored(string path, IgnoreLog log)
         {
             var segments = Utils.NormalisePath(path).Split('/').ToList();
             segments.RemoveAt(segments.Count - 1);

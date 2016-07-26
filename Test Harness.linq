@@ -6,21 +6,27 @@
 void Main()
 {
     var paths = new List<TestPath> {
-        new TestPath { Path = "ignored", IsDirectory = true },
-        new TestPath { Path = "notignored", IsDirectory = true }
+        new TestPath { Path = "one", IsDirectory = true },
+        new TestPath { Path = "one/two", IsDirectory = true },
+        new TestPath { Path = "two", IsDirectory = true }
     };
 
     var ignorePatterns = new string[] {
-        "ignored/"
+        "one/",
+        "two/",
+        "!one/two/"
     };
     
+    var log = new IgnoreLog();
+    
     var ignoreList = new IgnoreList(ignorePatterns, MatchFlags.PATHNAME | MatchFlags.CASEFOLD);
-    paths.ForEach(path => ignoreList.IsIgnored(path.Path, path.IsDirectory).Dump("Ignore '" + path.Path + "'"));
+    paths.ForEach(path => ignoreList.IsIgnored(path.Path, path.IsDirectory, log).Dump("Ignore '" + path.Path + "'"));
     
-    paths.Where(p => !p.IsDirectory).ToList().ForEach(path => ignoreList.IsAncestorIgnored(path.Path).Dump("Ignore '" + path.Path + "' Ancestor"));
+//	var ignoreRule = new IgnoreRule(ignorePatterns[0], MatchFlags.PATHNAME | MatchFlags.CASEFOLD);
+//  paths.ForEach(path => ignoreRule.IsMatch(path.Path, path.IsDirectory).Dump("Ignore '" + path.Path + "'"));
     
-	var ignoreRule = new IgnoreRule(ignorePatterns[0], MatchFlags.PATHNAME | MatchFlags.CASEFOLD);
-    paths.ForEach(path => ignoreRule.IsMatch(path.Path, path.IsDirectory).Dump("Ignore '" + path.Path + "'"));
+    log.Dump();
+    log.ToString().Dump();
 }
 
 public class TestPath
