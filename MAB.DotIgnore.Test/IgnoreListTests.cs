@@ -88,8 +88,6 @@ namespace MAB.DotIgnore.Tests
             Assert.IsTrue(ignoreList.IsIgnored("sub1/README2.txt", true));
         }
 
-        
-
         [Test]
         public void FileInfo_Match()
         {

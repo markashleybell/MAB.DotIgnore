@@ -298,7 +298,7 @@ namespace MAB.DotIgnore
                                 }
                                 else if (CC_EQ(pattern, s, i, "xdigit")) 
                                 {
-                                    if (Char.IsSurrogate(t_ch))
+                                    if (Char.IsDigit(t_ch) || (Char.ToLower(t_ch) >= 'a' && Char.ToLower(t_ch) <= 'f'))
                                         match = 1;
                                 } 
                                 else // Malformed [:class:] string

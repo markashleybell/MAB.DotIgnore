@@ -349,7 +349,6 @@ namespace MAB.DotIgnore.Tests
             Assert.IsTrue(rule.IsMatch("/hat.txt", true));
             Assert.IsTrue(rule.IsMatch("/mat.txt", true));
             Assert.IsFalse(rule.IsMatch("/hot.txt", true));
-            Assert.IsFalse(rule.IsMatch("/a/at.txt", true));
         }
 
         [Test]
@@ -441,12 +440,13 @@ namespace MAB.DotIgnore.Tests
             Assert.IsFalse(rule.IsMatch("/cat.txt", true));
         }
 
-        //[Test]
-        //public void Match_Character_Class_Cntrl()
-        //{
-        //    var rule = new IgnoreRule(@"[[:cntrl:]]at.txt");
-        //    Assert.IsTrue(rule.IsMatch("/" + Environment.NewLine + "at.txt", true));
-        //}
+        [Test]
+        public void Match_Character_Class_Cntrl()
+        {
+            var rule = new IgnoreRule(@"[[:cntrl:]]at.txt");
+            var controlChar = Convert.ToChar(0x00);
+            Assert.IsTrue(rule.IsMatch(controlChar + "at.txt", true));
+        }
 
         [Test]
         public void Match_Character_Class_Digit()
@@ -488,13 +488,29 @@ namespace MAB.DotIgnore.Tests
             Assert.IsFalse(rule.IsMatch("/cat.txt", true));
         }
 
-        //[Test]
-        //public void Match_Character_Class_XDigit()
-        //{
-        //    var rule = new IgnoreRule(@"[[:xdigit:]]at.txt");
-        //    Assert.IsTrue(rule.IsMatch("/1F.txt", true));
-        //    Assert.IsTrue(rule.IsMatch("/1G.txt", true));
-        //}
+        [Test]
+        public void Match_Character_Class_Upper_Casefold()
+        {
+            var rule = new IgnoreRule(@"[[:upper:]]at.txt", MatchFlags.CASEFOLD);
+            Assert.IsTrue(rule.IsMatch("/Cat.txt", true));
+            Assert.IsTrue(rule.IsMatch("/cat.txt", true));
+        }
+
+        [Test]
+        public void Match_Character_Class_XDigit()
+        {
+            var rule = new IgnoreRule(@"1[[:xdigit:]].txt");
+            Assert.IsTrue(rule.IsMatch("/1F.txt", true));
+            Assert.IsFalse(rule.IsMatch("/1G.txt", true));
+        }
+
+        [Test]
+        public void Match_Malformed_Character_Class()
+        {
+            var rule = new IgnoreRule(@"1[[:malformed:]].txt");
+            Assert.IsFalse(rule.IsMatch("/1F.txt", true));
+            Assert.IsFalse(rule.IsMatch("/1G.txt", true));
+        }
 
         [Test]
         public void Match_Literal_After_Star_Case_Sensitive()
