@@ -163,6 +163,8 @@ namespace MAB.DotIgnore
 
         private bool IsPathIgnored(string path, bool pathIsDirectory, IgnoreLog log)
         {
+            var logAction = (log != null) ? LogAction : NoAction;
+            
             // This pattern modified from https://github.com/henon/GitSharp/blob/master/GitSharp/IgnoreRules.cs
             var ignore = false;
 
@@ -171,20 +173,7 @@ namespace MAB.DotIgnore
                 if (rule.IsMatch(path, pathIsDirectory))
                 {
                     ignore = !rule.PatternFlags.HasFlag(PatternFlags.NEGATION);
-
-                    if (log != null)
-                    {
-                        if(!log.ContainsKey(path))
-                            log.Add(path, new List<string>());
-
-                        var entry = string.Format(
-                            "{0} by {1}", 
-                            (rule.PatternFlags.HasFlag(PatternFlags.NEGATION) ? "INCLUDED" : "IGNORED"), 
-                            rule.ToString()
-                        );
-
-                        log[path].Add(entry);
-                    }
+                    logAction(path, rule, log);
                 }
             }
 
@@ -209,5 +198,20 @@ namespace MAB.DotIgnore
 
             return false;
         }
+
+        private Action<string, IgnoreRule, IgnoreLog> NoAction = (path, rule, log) => { };
+
+        private Action<string, IgnoreRule, IgnoreLog> LogAction = (path, rule, log) => {
+            if(!log.ContainsKey(path))
+                log.Add(path, new List<string>());
+
+            var entry = string.Format(
+                "{0} by {1}", 
+                (rule.PatternFlags.HasFlag(PatternFlags.NEGATION) ? "INCLUDED" : "IGNORED"), 
+                rule.ToString()
+            );
+
+            log[path].Add(entry);
+        };
     }
 }
