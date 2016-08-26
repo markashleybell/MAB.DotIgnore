@@ -35,7 +35,7 @@ namespace MAB.DotIgnore
         /// <param name="flags">Optional flags determining pattern matching behaviour</param>
         public IgnoreList(string ignoreFilePath, MatchFlags flags = MatchFlags.PATHNAME)
         {
-            AddRules(File.ReadAllLines(ignoreFilePath), flags);
+            AddRules(ignoreFilePath, flags);
         }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace MAB.DotIgnore
         /// <param name="flags">Optional flags determining pattern matching behaviour</param>
         public void AddRules(string ignoreFilePath, MatchFlags flags = MatchFlags.PATHNAME)
         {
-            _rules.AddRange(CleanRules(File.ReadAllLines(ignoreFilePath)).Select(line => new IgnoreRule(line, flags)));
+            AddRules(File.ReadAllLines(ignoreFilePath), flags);
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace MAB.DotIgnore
         /// <param name="file">FileInfo representing the file to check</param>
         public bool IsIgnored(FileInfo file)
         {
-            return IsIgnored(file.FullName, false);
+            return IsIgnored(file, null);
         }
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace MAB.DotIgnore
         /// <param name="directory">DirectoryInfo representing the file to check</param>
         public bool IsIgnored(DirectoryInfo directory)
         {
-            return IsIgnored(directory.FullName, true);
+            return IsIgnored(directory, null);
         }
 
         /// <summary>
