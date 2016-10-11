@@ -156,11 +156,7 @@ namespace MAB.DotIgnore
                                 if(!match_slash || match != ABORT_TO_STARSTAR)
                                     return match;
                             }
-                            else if (!match_slash && t_ch == '/')
-                            {
-                                return ABORT_TO_STARSTAR;
-                            }
-                    
+
                             t_ch = text[++t];
                         }
                 
