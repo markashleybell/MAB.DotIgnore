@@ -416,6 +416,18 @@ namespace MAB.DotIgnore.Tests
         }
 
         [Test]
+        public void Negated_Match_Character_Range()
+        {
+            var rule = new IgnoreRule(@"[^C-Dc-d]at.txt", MatchFlags.CASEFOLD);
+            Assert.IsFalse(rule.IsMatch("/Cat.txt", true));
+            Assert.IsTrue(rule.IsMatch("/hat.txt", true));
+            Assert.IsTrue(rule.IsMatch("/mat.txt", true));
+            Assert.IsFalse(rule.IsMatch("/cat.txt", true));
+            Assert.IsTrue(rule.IsMatch("/Hat.txt", true));
+            Assert.IsTrue(rule.IsMatch("/Mat.txt", true));
+        }
+
+        [Test]
         public void Match_Character_Class_Alnum()
         {
             var rule = new IgnoreRule(@"[[:alnum:]]at.txt");
