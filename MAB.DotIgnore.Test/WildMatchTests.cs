@@ -81,6 +81,22 @@ namespace MAB.DotIgnore.Tests
             Assert.IsTrue(match == WildMatch.MATCH);
         }
 
+        [Test]
+        public void Handle_Unclosed_Character_Class()
+        {
+            var match = WildMatch.IsMatch("abc.t[:x]t", "abc.txt", MatchFlags.NONE);
+            Assert.IsTrue(match == WildMatch.MATCH);
+        }
+
+        [Test]
+        public void Tmp()
+        {
+            var match = WildMatch.IsMatch("**[!te]", "ten", MatchFlags.NONE);
+            Assert.IsTrue(match == WildMatch.ABORT_MALFORMED);
+        }
+
+        
+
         [TearDown]
         public void TearDown()
         {
