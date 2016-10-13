@@ -38,24 +38,140 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="WildMatchTests.cs" />
     <Compile Include="IgnoreLogTests.cs" />
     <Compile Include="IntegrationTests.cs" />
     <Compile Include="IgnoreListTests.cs" />
     <Compile Include="IgnoreRuleTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WildMatchTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="gulpfile.js" />
+    <Content Include="test_content\git-wildmatch\tcc\doc\tcc-doc.html" />
+    <Content Include="test_content\git-wildmatch\tcc\doc\tcc-win32.txt" />
+    <Content Include="test_content\git-wildmatch\tcc\libtcc.dll" />
+    <Content Include="test_content\git-wildmatch\tcc\tcc.exe" />
+    <Content Include="test_content\git-wildmatch\tcc\tiny_impdef.exe" />
+    <Content Include="test_content\git-wildmatch\tcc\tiny_libmaker.exe" />
+    <Content Include="test_content\git-wildmatch\wm.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="test_content\loadfromfile.gitignore">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="test_content\test.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="test_content\tests.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="test_content\test\test.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="test_content\git-wildmatch\compile.bat" />
+    <None Include="test_content\git-wildmatch\gitutils.h" />
+    <None Include="test_content\git-wildmatch\tcc\examples\dll.c" />
+    <None Include="test_content\git-wildmatch\tcc\examples\fib.c" />
+    <None Include="test_content\git-wildmatch\tcc\examples\hello_dll.c" />
+    <None Include="test_content\git-wildmatch\tcc\examples\hello_win.c" />
+    <None Include="test_content\git-wildmatch\tcc\examples\libtcc_test.c" />
+    <None Include="test_content\git-wildmatch\tcc\include\assert.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\conio.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\ctype.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\dir.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\direct.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\dirent.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\dos.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\errno.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\excpt.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\fcntl.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\fenv.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\float.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\inttypes.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\io.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\limits.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\locale.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\malloc.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\math.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\mem.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\memory.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\process.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\sec_api\conio_s.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\sec_api\crtdbg_s.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\sec_api\io_s.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\sec_api\mbstring_s.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\sec_api\search_s.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\sec_api\stdio_s.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\sec_api\stdlib_s.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\sec_api\stralign_s.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\sec_api\string_s.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\sec_api\sys\timeb_s.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\sec_api\tchar_s.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\sec_api\time_s.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\sec_api\wchar_s.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\setjmp.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\share.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\signal.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\stdarg.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\stdbool.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\stddef.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\stdint.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\stdio.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\stdlib.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\string.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\sys\fcntl.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\sys\file.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\sys\locking.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\sys\stat.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\sys\time.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\sys\timeb.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\sys\types.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\sys\unistd.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\sys\utime.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\tcclib.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\tchar.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\time.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\vadefs.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\values.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\varargs.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\wchar.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\wctype.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\winapi\basetsd.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\winapi\basetyps.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\winapi\guiddef.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\winapi\intrin.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\winapi\poppack.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\winapi\pshpack1.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\winapi\pshpack2.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\winapi\pshpack4.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\winapi\pshpack8.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\winapi\reason.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\winapi\specstrings.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\winapi\stralign.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\winapi\tvout.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\winapi\winbase.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\winapi\wincon.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\winapi\windef.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\winapi\windows.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\winapi\winerror.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\winapi\wingdi.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\winapi\winnetwk.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\winapi\winnls.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\winapi\winnt.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\winapi\winreg.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\winapi\winuser.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\winapi\winver.h" />
+    <None Include="test_content\git-wildmatch\tcc\include\_mingw.h" />
+    <None Include="test_content\git-wildmatch\tcc\libtcc\libtcc.def" />
+    <None Include="test_content\git-wildmatch\tcc\libtcc\libtcc.h" />
+    <None Include="test_content\git-wildmatch\tcc\lib\gdi32.def" />
+    <None Include="test_content\git-wildmatch\tcc\lib\kernel32.def" />
+    <None Include="test_content\git-wildmatch\tcc\lib\libtcc1.a" />
+    <None Include="test_content\git-wildmatch\tcc\lib\msvcrt.def" />
+    <None Include="test_content\git-wildmatch\tcc\lib\user32.def" />
+    <None Include="test_content\git-wildmatch\wildmatch.c" />
+    <None Include="test_content\git-wildmatch\wildmatch.h" />
+    <None Include="test_content\git-wildmatch\wm.c" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
