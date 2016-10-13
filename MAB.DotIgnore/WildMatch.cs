@@ -152,10 +152,7 @@ namespace MAB.DotIgnore
                             }
 
                             if ((match = Match(pattern, text, p, t, flags)) != NOMATCH)
-                            {
-                                if(!match_slash || match != ABORT_TO_STARSTAR)
-                                    return match;
-                            }
+                                return match;
 
                             t_ch = text[++t];
                         }
