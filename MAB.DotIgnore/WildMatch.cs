@@ -123,9 +123,6 @@ namespace MAB.DotIgnore
                         // Each time the match fails, remove the first character from the text and retry
                         while (true)
                         {
-                            if(t == t_EOP)
-                                break;
-
                             // Try to advance faster when an asterisk is followed by a literal. 
                             // We know in this case that the string before the literal must belong to "*".
                             // If match_slash is false, do not look past the first slash as it cannot belong to '*'.
@@ -153,6 +150,9 @@ namespace MAB.DotIgnore
 
                             if ((match = Match(pattern, text, p, t, flags)) != NOMATCH)
                                 return match;
+
+                            if(t == t_EOP)
+                                break;
 
                             t_ch = text[++t];
                         }
