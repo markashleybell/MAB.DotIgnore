@@ -76,7 +76,7 @@ namespace MAB.DotIgnore
                                 match_slash = true;
                             // If the character before the first star is either the beginning of the pattern or a slash,
                             // and the character after the last star is either the end of the pattern or a slash
-                            else if ((pre_star_ch == '\0' || pre_star_ch == '/') && (p == p_len || pattern[p] == '/'))
+                            if ((pre_star_ch == '\0' || pre_star_ch == '/') && (p == p_len || pattern[p] == '/'))
                             {
                                 if ((p == p_len || pattern[p] == '/') && Match(pattern, text, p + 1, t, flags) == MATCH)
                                     return MATCH;
