@@ -160,20 +160,23 @@ namespace MAB.DotIgnore
                         return ABORT_ALL;
                     // Match character ranges
                     case '[':
-                        p_ch = pattern[++p];
+                        if (++p == p_len)
+                            return ABORT_ALL;
+
+                        p_ch = pattern[p];
                 
                         negated = (p_ch == NEGATE_CLASS || p_ch == NEGATE_CLASS2) ? 1 : 0;
 
                         if (negated == 1)
-                            p_ch = pattern[++p];
+                            if (++p == p_len)
+                                return ABORT_ALL;
+
+                        p_ch = pattern[p];
                 
                         prev_ch = '\0';
                         match = 0;
                 
                         do {
-                            if (p == p_len)
-                                return ABORT_ALL;
-                        
                             if (p_ch == '\\') 
                             {
                                 if (++p == p_len)

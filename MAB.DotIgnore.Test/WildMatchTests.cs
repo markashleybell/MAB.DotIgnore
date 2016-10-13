@@ -53,6 +53,20 @@ namespace MAB.DotIgnore.Tests
             Assert.IsTrue(match == WildMatch.MATCH);
         }
 
+        [Test]
+        public void Abort_Unclosed_Character_Range()
+        {
+            var match = WildMatch.IsMatch("abc.t[", "abc.txt", MatchFlags.NONE);
+            Assert.IsTrue(match == WildMatch.ABORT_ALL);
+        }
+
+        [Test]
+        public void Abort_Unclosed_Character_Range_Negated()
+        {
+            var match = WildMatch.IsMatch("abc.t[^", "abc.txt", MatchFlags.NONE);
+            Assert.IsTrue(match == WildMatch.ABORT_ALL);
+        }
+
         [TearDown]
         public void TearDown()
         {
