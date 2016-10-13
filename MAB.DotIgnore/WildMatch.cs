@@ -35,8 +35,8 @@ namespace MAB.DotIgnore
         
                 char t_ch, prev_ch;
         
-                if (t == t_len && p_ch != '*')
-                    return ABORT_ALL;
+                if (t == t_len)
+                    return p_ch != '*' ? ABORT_ALL : MATCH;
             
                 t_ch = text[t];
 
