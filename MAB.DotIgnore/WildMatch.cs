@@ -166,14 +166,16 @@ namespace MAB.DotIgnore
                             return ABORT_ALL;
 
                         p_ch = pattern[p];
-                
+                        
                         negated = (p_ch == NEGATE_CLASS || p_ch == NEGATE_CLASS2) ? 1 : 0;
 
                         if (negated == 1)
+                        {
                             if (++p == p_len)
                                 return ABORT_ALL;
 
-                        p_ch = pattern[p];
+                            p_ch = pattern[p];
+                        }
                 
                         prev_ch = '\0';
                         match = 0;
