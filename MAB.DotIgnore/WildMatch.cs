@@ -314,7 +314,7 @@ namespace MAB.DotIgnore
                             }
 
                             prev_ch = p_ch;
-                        } while (p < p_len && (p_ch = pattern[++p]) != ']');
+                        } while (p < p_EOP && (p_ch = pattern[++p]) != ']');
                 
                         if (match == negated || (flags.HasFlag(MatchFlags.PATHNAME) && t_ch == '/'))
                             return NOMATCH;
