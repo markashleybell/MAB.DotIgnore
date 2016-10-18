@@ -40,9 +40,9 @@ namespace MAB.DotIgnore.Tests
                     .ToList();
 
             tests.ForEach(t => {
-                Console.WriteLine(t.Pattern);
+                Console.WriteLine(string.Format("{0} {1}", t.Text, t.Pattern));
                 var referenceResult = ReferenceMatchPattern(t.Pattern, t.Text, true);
-                var testResult = WildMatch.IsMatch(t.Pattern, t.Text, MatchFlags.CASEFOLD);
+                var testResult = WildMatch.IsMatch(t.Pattern, t.Text, MatchFlags.PATHNAME);
                 Assert.AreEqual(referenceResult, testResult);
             });
         }
