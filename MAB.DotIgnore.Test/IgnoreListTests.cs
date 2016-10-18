@@ -79,6 +79,18 @@ namespace MAB.DotIgnore.Tests
         }
 
         [Test]
+        public void Clone_Keeps_Match_Flags()
+        {
+            var original = new IgnoreList(new string[] { "README1.txt", "README2.txt" }, MatchFlags.PATHNAME | MatchFlags.CASEFOLD);
+            original.AddRule("README3.txt", MatchFlags.NONE);
+            var clone = original.Clone();
+            Assert.IsTrue(clone.Rules[0].MatchFlags == (MatchFlags.PATHNAME | MatchFlags.CASEFOLD));
+            Assert.IsTrue(clone.Rules[1].MatchFlags == (MatchFlags.PATHNAME | MatchFlags.CASEFOLD));
+            // Should use PATHNAME because we assign this internally if it's not set
+            Assert.IsTrue(clone.Rules[2].MatchFlags == MatchFlags.PATHNAME);
+        }
+
+        [Test]
         public void Respect_Rule_Overrides()
         {
             var ignoreList = new IgnoreList(new string[] { "*.txt", "!sub1/*.txt", "sub1/README2.txt" });

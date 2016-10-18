@@ -151,7 +151,10 @@ namespace MAB.DotIgnore
         /// </summary>
         public IgnoreList Clone()
         {
-            return new IgnoreList(_rules.Select(x => x.OriginalPattern));
+            var clone = new IgnoreList(new string[0]);
+            _rules.ForEach(r => clone.AddRule(r.OriginalPattern, r.MatchFlags));
+
+            return clone;
         }
 
         private IEnumerable<string> CleanRules(IEnumerable<string> rules)
