@@ -49,6 +49,8 @@ namespace MAB.DotIgnore
                 {
                     // Escape character: require literal match of next char
                     case '\\': 
+                        if(p == p_EOP)
+                            return NOMATCH;
                         p_ch = pattern[++p];
                         goto default;
                     // Normal character: literal match
