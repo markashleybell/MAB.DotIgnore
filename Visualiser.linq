@@ -7,22 +7,22 @@
 
 void Main()
 {
-    var sourceDirectory = @"E:\Inetpub\wwwroot\specialtyfasteners.co.uk\specialtyfasteners.co.uk.CMS";
-    var ignoreFile = @"E:\Inetpub\wwwroot\specialtyfasteners.co.uk\.wsdignore";
+    var sourceDirectory = @"E:\Src\TESTSOLUTION";
+    var projectDirectory = sourceDirectory + @"\TESTPROJECT";
+    var ignoreFile = sourceDirectory + @"\.gitignore";
     
     var log = new IgnoreLog();
     
     var ignoreList = new IgnoreList(new string[] { "*.cs" }, MatchFlags.CASEFOLD);
     ignoreList.AddRules(ignoreFile, MatchFlags.CASEFOLD);
     
-    var root = InteropDirectoryUtils.ScanDirectory(sourceDirectory, sourceDirectory);
+    var root = InteropDirectoryUtils.ScanDirectory(projectDirectory, projectDirectory);
 
     var paths = root.Children.DirectoriesFirst()
                              .Expand<PathInfo>(pi => pi.Children.DirectoriesFirst())
                              .ToList();
     
     // paths.Select(pi => pi.Path).Dump();
-    
     paths.ForEach(path => ignoreList.IsIgnored(path.Path, path.IsDirectory, log));
    
     log.ToString().Dump();
