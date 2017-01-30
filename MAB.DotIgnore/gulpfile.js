@@ -14,7 +14,17 @@ if (!fs.existsSync(distFolder)) {
     fs.mkdirSync(distFolder);
 }
 
-gulp.task('nuget-pack', function (callback) {
+
+gulp.task('nuget-clean', function (callback) {
+    exec('del *.nupkg', { cwd: distFolder }, function (err, stdout, stderr) {
+        console.log(stdout);
+        console.log(stderr);
+        callback(err);
+    });
+});
+
+
+gulp.task('nuget-pack', ['nuget-clean'], function (callback) {
     exec('nuget pack MAB.DotIgnore.csproj -Symbols -OutputDirectory ' + distFolder + ' -Prop Configuration=Release', { cwd: projectFolder }, function (err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
