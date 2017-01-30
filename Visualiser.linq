@@ -28,12 +28,6 @@ void Main()
     log.ToString().Dump();
 }
 
-public class TestPath
-{
-    public string Path { get; set; }
-    public bool IsDirectory { get; set; }
-}
-
 public static class Extensions 
 {
     public static IEnumerable<PathInfo> DirectoriesFirst(this IEnumerable<PathInfo> source)
