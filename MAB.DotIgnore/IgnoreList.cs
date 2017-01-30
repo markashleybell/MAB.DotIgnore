@@ -45,7 +45,7 @@ namespace MAB.DotIgnore
         /// <param name="flags">Optional flags determining pattern matching behaviour</param>
         public void AddRule(string rule, MatchFlags flags = MatchFlags.PATHNAME)
         {
-            AddRules(new string[] { rule }, flags);
+            AddRules(new string[] { rule }, flags, false);
         }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace MAB.DotIgnore
         /// <param name="flags">Optional flags determining pattern matching behaviour</param>
         public void AddRules(string ignoreFilePath, MatchFlags flags = MatchFlags.PATHNAME)
         {
-            AddRules(File.ReadAllLines(ignoreFilePath), flags);
+            AddRules(File.ReadAllLines(ignoreFilePath), flags, true);
         }
 
         /// <summary>
@@ -65,9 +65,9 @@ namespace MAB.DotIgnore
         /// <param name="flags">Optional flags determining pattern matching behaviour</param>
         public void AddRules(IEnumerable<string> rules, MatchFlags flags = MatchFlags.PATHNAME)
         {
-            _rules.AddRange(CleanRules(rules).Select(line => new IgnoreRule(line, flags)));
+            AddRules(rules, flags, false);
         }
-
+        
         /// <summary>
         /// Remove a rule from the ignore list
         /// </summary>
@@ -157,11 +157,18 @@ namespace MAB.DotIgnore
             return clone;
         }
 
-        private IEnumerable<string> CleanRules(IEnumerable<string> rules)
+        private void AddRules(IEnumerable<string> rules, MatchFlags flags, bool loadedFromFile)
+        {
+            _rules.AddRange(GetRuleLines(rules, loadedFromFile).Select(line => new IgnoreRule(line.Pattern, flags, line.LineNumber)));
+        }
+
+        private IEnumerable<RuleLine> GetRuleLines(IEnumerable<string> rules, bool lineNumbers)
         {
             // Exclude all comment or whitespace lines
-            return rules.Select(line => line.Trim())
-                        .Where(line => line.Length > 0 && !line.StartsWith("#", StringComparison.OrdinalIgnoreCase));
+            // Note that we store the line numbers (if flag set) *before* filtering out
+            // comments and whitespace, otherwise they don't match up with the source file
+            return rules.Select((line, index) => new RuleLine { LineNumber = lineNumbers ? (index + 1) : default(int?), Pattern = line.Trim() })
+                        .Where(line => line.Pattern.Length > 0 && !line.Pattern.StartsWith("#", StringComparison.OrdinalIgnoreCase));
         }
 
         private bool IsPathIgnored(string path, bool pathIsDirectory, IgnoreLog log)

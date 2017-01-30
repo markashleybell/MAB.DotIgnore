@@ -12,6 +12,8 @@ namespace MAB.DotIgnore
 
         private StringComparison sc = StringComparison.Ordinal;
 
+        internal int? LineNumber { get; set; }
+
         /// <summary>
         /// The original pattern string passed into the constructor
         /// </summary>
@@ -34,10 +36,13 @@ namespace MAB.DotIgnore
         /// </summary>
         /// <param name="pattern">A glob pattern specifying file(s) this rule should ignore</param>
         /// <param name="flags">Optional flags determining pattern matching behaviour</param>
-        public IgnoreRule(string pattern, MatchFlags flags = MatchFlags.PATHNAME)
+        /// <param name="lineNumber">Optional line number for logging purposes</param>
+        public IgnoreRule(string pattern, MatchFlags flags = MatchFlags.PATHNAME, int? lineNumber = null)
         {
             if(Utils.IsNullOrWhiteSpace(pattern))
                 throw new ArgumentNullException(nameof(pattern));
+
+            LineNumber = lineNumber;
             
             // Keep track of the original pattern before modifications (for display purposes)
             OriginalPattern = pattern;
@@ -201,12 +206,12 @@ namespace MAB.DotIgnore
         }
 
         /// <summary>
-        /// Return a string representation showing the original pattern, 
-        /// the pre-processed pattern and the regular expression pattern
+        /// Return a string representation showing the original pattern (plus the line number if present)
         /// </summary>
         public override string ToString()
         {
-            return string.Format("{0} > {1}", OriginalPattern, Pattern);
+            var lineNumber = LineNumber.HasValue ? string.Format(" (line {0})", LineNumber.Value) : "";
+            return string.Format("{0}{1}", OriginalPattern, lineNumber);
         }
     }
 }

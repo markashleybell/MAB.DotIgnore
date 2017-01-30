@@ -37,6 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IgnoreLog.cs" />
+    <Compile Include="RuleLine.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="IgnoreList.cs" />
     <Compile Include="IgnoreRule.cs" />

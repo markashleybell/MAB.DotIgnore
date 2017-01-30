@@ -1,0 +1,7 @@
+﻿# This ignore file matches the same file with several rules
+
+!test/*.cs
+test/test*.cs
+
+!test/test2.cs
+

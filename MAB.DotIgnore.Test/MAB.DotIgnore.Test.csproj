@@ -56,6 +56,9 @@
     <Content Include="test_content\git-wildmatch\wm.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="test_content\multiplematch.gitignore">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="test_content\loadfromfile.gitignore">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

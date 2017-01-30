@@ -52,7 +52,7 @@ namespace MAB.DotIgnore.Tests
         {
             var rule = new IgnoreRule("sub2/**.txt");
             // Should return original glob pattern > modified glob pattern
-            Assert.IsTrue(rule.ToString() == "sub2/**.txt > sub2/**.txt");
+            Assert.IsTrue(rule.ToString() == "sub2/**.txt");
         }
 
         [Test]
