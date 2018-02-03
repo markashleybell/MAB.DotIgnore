@@ -39,8 +39,11 @@ namespace MAB.DotIgnore
         /// <param name="lineNumber">Optional line number for logging purposes</param>
         public IgnoreRule(string pattern, MatchFlags flags = MatchFlags.PATHNAME, int? lineNumber = null)
         {
-            if(Utils.IsNullOrWhiteSpace(pattern))
+            if (pattern == null)
                 throw new ArgumentNullException(nameof(pattern));
+
+            if (Utils.IsWhiteSpace(pattern))
+                throw new ArgumentException("Pattern is empty", nameof(pattern));
 
             LineNumber = lineNumber;
             
@@ -162,9 +165,11 @@ namespace MAB.DotIgnore
         /// <param name="pathIsDirectory">Should be set True if the path represents a directory, False if it represents a file</param>
         public bool IsMatch(string path, bool pathIsDirectory)
         {
-            // If the pattern or the path are null empty, there is nothing to match
-            if(Utils.IsNullOrWhiteSpace(path))
+            if(path == null)
                 throw new ArgumentNullException(nameof(path));
+
+            if (Utils.IsWhiteSpace(path))
+                throw new ArgumentException("Path is empty", nameof(path));
 
             // .gitignore files use Unix paths (with a forward slash separator), so make sure our input also uses forward slashes
             path = Utils.NormalisePath(path);

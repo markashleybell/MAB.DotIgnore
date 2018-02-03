@@ -37,14 +37,14 @@ namespace MAB.DotIgnore.Tests
         [Test]
         public void Empty_Pattern_Throws_Exception()
         {
-            Assert.Throws<ArgumentNullException>(() => new IgnoreRule("  "));
+            Assert.Throws<ArgumentException>(() => new IgnoreRule("  "));
         }
 
         [Test]
         public void Empty_Path_Throws_Exception()
         {
             var rule = new IgnoreRule("test.txt");
-            Assert.Throws<ArgumentNullException>(() => rule.IsMatch("  ", false));
+            Assert.Throws<ArgumentException>(() => rule.IsMatch("  ", false));
         }
 
         [Test]

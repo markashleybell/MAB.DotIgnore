@@ -7,16 +7,23 @@ namespace MAB.DotIgnore
 
     internal static class Utils
     {
+        internal static bool IsWhiteSpace(string value)
+        {
+            if (value == null) return false;
+
+            for (int i = 0; i < value.Length; i++)
+            {
+                if (!char.IsWhiteSpace(value[i])) return false;
+            }
+
+            return true;
+        }
+
         internal static bool IsNullOrWhiteSpace(string value)
         {
             if (value == null) return true;
  
-            for(int i = 0; i < value.Length; i++)
-            {
-                if(!char.IsWhiteSpace(value[i])) return false;
-            }
- 
-            return true;
+            return IsWhiteSpace(value);
         }
 
         internal static bool HasFlag(this Enum variable, Enum value)
