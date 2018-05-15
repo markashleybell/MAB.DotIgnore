@@ -9,7 +9,7 @@ void Main()
     var sourceDirectory = @"E:\SOURCE";
     var solutionDirectory = sourceDirectory + @"\TESTSOLUTION";
     var projectDirectory = solutionDirectory + @"\TESTPROJECT";
-    var ignoreFile = projectDirectory + @"\.gitignore";
+    var ignoreFile = solutionDirectory + @"\.gitignore";
     
     var log = new IgnoreLog();
     
