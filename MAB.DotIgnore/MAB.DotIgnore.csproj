@@ -1,64 +1,26 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{FED27394-3783-46A4-9449-8EDF1FF197E4}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MAB.DotIgnore</RootNamespace>
-    <AssemblyName>MAB.DotIgnore</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-    <Deterministic>True</Deterministic>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\MAB.DotIgnore.XML</DocumentationFile>
+    <TargetFramework>netstandard1.3</TargetFramework>
+    <PackageId>MAB.DotIgnore</PackageId>
+    <Version>1.3.0</Version>
+    <AssemblyVersion>1.3.0.0</AssemblyVersion>
+    <Authors>Mark Ashley Bell</Authors>
+    <Company />
+    <PackageLicenseUrl>https://github.com/markashleybell/MAB.DotIgnore/blob/master/LICENSE.md</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/markashleybell/MAB.DotIgnore</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/markashleybell/MAB.DotIgnore.git</RepositoryUrl>
+    <Description>Load and parse .gitignore files (or any list of pattern strings using the same pattern syntax) to produce an IgnoreList, which can be used to ignore specific files and folders during (for example) a file copy operation.
+
+The goal of this library is to implement the same file matching behaviour Git uses to determine which files to ignore when adding to commits. Please feel free to submit any issues with examples or pull requests, if you find instances where this isn't the case.</Description>
+    <Copyright>Copyright © Mark Ashley Bell 2018</Copyright>
+    <PackageTags>ignore gitignore glob</PackageTags>
+    <NeutralLanguage>en-GB</NeutralLanguage>
+    <RepositoryType>git</RepositoryType>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="IgnoreLog.cs" />
-    <Compile Include="RuleLine.cs" />
-    <Compile Include="Utils.cs" />
-    <Compile Include="IgnoreList.cs" />
-    <Compile Include="IgnoreRule.cs" />
-    <Compile Include="MatchFlags.cs" />
-    <Compile Include="PatternFlags.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WildMatch.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="gulpfile.js" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="MAB.DotIgnore.nuspec" />
-    <None Include="package.json" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>$(MSBuildProjectName).Test</_Parameter1>
+    </AssemblyAttribute>
+</ItemGroup>
 </Project>

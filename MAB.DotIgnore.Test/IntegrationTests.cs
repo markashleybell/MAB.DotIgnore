@@ -90,7 +90,7 @@ namespace MAB.DotIgnore.Tests
         [Test]
         public void Copy_Non_Ignored_Solution_Files()
         {
-            var sourceFolder = Directory.GetParent(TestContext.CurrentContext.TestDirec‌​tory).Parent.Parent.FullName;
+            var sourceFolder = Directory.GetParent(TestContext.CurrentContext.TestDirec‌​tory).Parent.Parent.Parent.FullName;
             var destinationFolder = _basePath + @"\copy";
 
             if(Directory.Exists(destinationFolder))
