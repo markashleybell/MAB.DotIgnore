@@ -18,7 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 - Improve match logging.
 
 ### Fixed
-- Fixed a number of obscure bugs which were picked up by testing against a reference C version of the wildmatch function.
+- Fixed a number of obscure bugs which were picked up by testing against a reference C version of the `wildmatch` function.
 
 ## [1.2.1] - 2016-06-25
 ### Fixed
@@ -39,7 +39,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ## [1.0.2] - 2015-06-06
 ### Fixed
-- Fixed over-eager wildcard matching (e.g. *.cs also matched *.cshtml).
+- Fixed over-eager wildcard matching (e.g. `*.cs` also matched `*.cshtml`).
 
 ## [1.0.1] - 2016-05-31
 ### Changed
