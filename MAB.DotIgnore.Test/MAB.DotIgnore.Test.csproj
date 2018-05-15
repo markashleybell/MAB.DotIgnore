@@ -1,47 +1,47 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
-    <Company />
-    <Copyright>Copyright © Mark Ashley Bell 2018</Copyright>
-    <Authors>Mark Ashley Bell</Authors>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="node_modules\**" />
-    <EmbeddedResource Remove="node_modules\**" />
-    <None Remove="node_modules\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="package-lock.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.7.0" />
-    <PackageReference Include="NUnit" Version="3.10.1" />
-    <PackageReference Include="NUnit.ConsoleRunner" Version="3.8.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />
-    <PackageReference Include="OpenCover" Version="4.6.519" />
-    <PackageReference Include="ReportGenerator" Version="3.1.2" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\MAB.DotIgnore\MAB.DotIgnore.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="test_content\git-wildmatch\wm.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="test_content\loadfromfile.gitignore">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="test_content\multiplematch.gitignore">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="test_content\test.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="test_content\tests.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="test_content\test\test.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+    <PropertyGroup>
+        <TargetFramework>netcoreapp2.0</TargetFramework>
+        <Company />
+        <Copyright>Copyright © Mark Ashley Bell 2018</Copyright>
+        <Authors>Mark Ashley Bell</Authors>
+    </PropertyGroup>
+    <ItemGroup>
+        <Compile Remove="node_modules\**" />
+        <EmbeddedResource Remove="node_modules\**" />
+        <None Remove="node_modules\**" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Remove="package-lock.json" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.7.0" />
+        <PackageReference Include="NUnit" Version="3.10.1" />
+        <PackageReference Include="NUnit.ConsoleRunner" Version="3.8.0" />
+        <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />
+        <PackageReference Include="OpenCover" Version="4.6.519" />
+        <PackageReference Include="ReportGenerator" Version="3.1.2" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\MAB.DotIgnore\MAB.DotIgnore.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Update="test_content\git-wildmatch\wm.exe">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="test_content\loadfromfile.gitignore">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="test_content\multiplematch.gitignore">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="test_content\test.txt">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="test_content\tests.txt">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="test_content\test\test.txt">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
 </Project>
