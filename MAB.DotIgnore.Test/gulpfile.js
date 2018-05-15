@@ -1,31 +1,31 @@
 ﻿"use strict";
 
-var gulp = require('gulp'),
-    path = require('path'),
-    glob = require("glob"),
-    exec = require('child_process').exec,
-    fs = require('fs');
+const gulp = require('gulp');
+const path = require('path');
+const glob = require("glob");
+const exec = require('child_process').exec;
+const fs = require('fs');
 
-var solutionFolder = path.resolve(__dirname, '..');
-var nugetPackageFolder = path.join(solutionFolder, 'packages');
-var reportsFolder = '../reports';
+const  solutionFolder = path.resolve(__dirname, '..');
+const  nugetPackageFolder = path.join(solutionFolder, 'packages');
+const  reportsFolder = '../reports';
 
 if (!fs.existsSync(reportsFolder)) {
     fs.mkdirSync(reportsFolder);
 }
 
-var globOptions = {
+const globOptions = {
     cwd: nugetPackageFolder,
     nocase: true,
     nodir: true,
     realpath: true
 };
 
-var nunitExecutable = glob.sync("NUnit.ConsoleRunner*/tools/nunit3-console.exe", globOptions)[0];
-var openCoverExecutable = glob.sync("OpenCover*/tools/OpenCover.Console.exe", globOptions)[0];
-var reportGeneratorExecutable = glob.sync("ReportGenerator*/tools/ReportGenerator.exe", globOptions)[0];
+const nunitExecutable = glob.sync("NUnit.ConsoleRunner*/tools/nunit3-console.exe", globOptions)[0];
+const openCoverExecutable = glob.sync("OpenCover*/tools/OpenCover.Console.exe", globOptions)[0];
+const reportGeneratorExecutable = glob.sync("ReportGenerator*/tools/ReportGenerator.exe", globOptions)[0];
 
-var openCoverArgs = [
+const openCoverArgs = [
     '-target:"' + nunitExecutable + '"',
     '-targetargs:"/out:\\"' + path.join('reports/testresults.xml') + '\\" ' + path.join('MAB.DotIgnore.Test/bin/Debug/MAB.DotIgnore.Test.dll') + '"',
     '-excludebyattribute:*.ExcludeFromTestCoverageAttribute',
@@ -34,22 +34,22 @@ var openCoverArgs = [
     '-output:"' + path.join('reports/results.xml') + '"'
 ];
 
-var openCoverCommand = openCoverExecutable + ' ' + openCoverArgs.join(' ');
+const openCoverCommand = openCoverExecutable + ' ' + openCoverArgs.join(' ');
 
-var reportGeneratorArgs = [
+const reportGeneratorArgs = [
     '-reports:"' + path.join('reports/results.xml') + '"',
     '-targetdir:"reports"'
 ];
 
-var reportGeneratorCommand = reportGeneratorExecutable + ' ' + reportGeneratorArgs.join(' ');
+const reportGeneratorCommand = reportGeneratorExecutable + ' ' + reportGeneratorArgs.join(' ');
 
-gulp.task('opencover-reports', function (callback) {
-    exec(openCoverCommand, { cwd: solutionFolder }, function (ocerr, ocstdout, ocstderr) {
+gulp.task('opencover-reports', callback => {
+    exec(openCoverCommand, { cwd: solutionFolder }, (ocerr, ocstdout, ocstderr) => {
         console.log(ocstdout);
         console.log(ocstderr);
-        // If nothing went wrong, generate the report files
+        // If nothing went wrong with the OpenCover run, generate the report files
         if(!ocerr) {
-            exec(reportGeneratorCommand, { cwd: solutionFolder }, function (rgerr, rgstdout, rgstderr) {
+            exec(reportGeneratorCommand, { cwd: solutionFolder }, (rgerr, rgstdout, rgstderr) => {
                 console.log(rgstdout);
                 console.log(rgstderr);
                 callback(rgerr);
