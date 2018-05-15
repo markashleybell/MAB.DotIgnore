@@ -2,7 +2,7 @@
     <PropertyGroup>
         <TargetFrameworks>netstandard1.3;net35</TargetFrameworks>
         <PackageId>MAB.DotIgnore</PackageId>
-        <Version>1.4.0-rc</Version>
+        <Version>1.4.0</Version>
         <AssemblyVersion>1.4.0.0</AssemblyVersion>
         <Authors>Mark Ashley Bell</Authors>
         <Company />
