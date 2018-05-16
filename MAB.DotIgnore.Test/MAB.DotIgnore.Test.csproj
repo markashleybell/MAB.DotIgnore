@@ -5,6 +5,14 @@
         <Copyright>Copyright © Mark Ashley Bell 2018</Copyright>
         <Authors>Mark Ashley Bell</Authors>
     </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+      <DebugType>full</DebugType>
+      <DebugSymbols>true</DebugSymbols>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+      <DebugType>full</DebugType>
+      <DebugSymbols>true</DebugSymbols>
+    </PropertyGroup>
     <ItemGroup>
         <Compile Remove="node_modules\**" />
         <EmbeddedResource Remove="node_modules\**" />

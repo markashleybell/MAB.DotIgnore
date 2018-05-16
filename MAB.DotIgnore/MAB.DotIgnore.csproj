@@ -18,9 +18,14 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard1.3|AnyCPU'">
         <DocumentationFile>bin\Debug\netstandard1.3\MAB.DotIgnore.xml</DocumentationFile>
+        <DebugType>full</DebugType>
+        <DebugSymbols>true</DebugSymbols>
+        <WarningLevel>3</WarningLevel>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard1.3|AnyCPU'">
         <DocumentationFile>bin\Release\netstandard1.3\MAB.DotIgnore.xml</DocumentationFile>
+        <DebugType>full</DebugType>
+        <DebugSymbols>true</DebugSymbols>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net35|AnyCPU'">
         <DocumentationFile>bin\Debug\net35\MAB.DotIgnore.xml</DocumentationFile>
