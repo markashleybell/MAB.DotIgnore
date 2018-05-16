@@ -4,7 +4,7 @@ using System.IO;
 
 namespace MAB.DotIgnore.Tests
 {
-    [TestFixture]
+    [TestFixture(Category = "IgnoreList Tests")]
     public class IgnoreListTests
     {
         private string _basePath;

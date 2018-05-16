@@ -4,7 +4,7 @@ using System.IO;
 
 namespace MAB.DotIgnore.Tests
 {
-    [TestFixture]
+    [TestFixture(Category = "WildMatch Tests")]
     public class WildMatchTests
     {
         [OneTimeSetUp]

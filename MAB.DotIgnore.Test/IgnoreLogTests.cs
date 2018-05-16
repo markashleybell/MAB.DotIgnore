@@ -4,7 +4,7 @@ using System.IO;
 
 namespace MAB.DotIgnore.Tests
 {
-    [TestFixture]
+    [TestFixture(Category = "IgnoreLog Tests")]
     public class IgnoreLogTests
     {
         private string _basePath;

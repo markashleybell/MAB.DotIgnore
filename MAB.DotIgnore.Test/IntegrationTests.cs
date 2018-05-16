@@ -13,7 +13,7 @@ namespace MAB.DotIgnore.Tests
         public string Pattern { get; set; }
     }
 
-    [TestFixture]
+    [TestFixture(Category = "Integration Tests")]
     public class IntegrationTests
     {
         private string _basePath;
