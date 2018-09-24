@@ -1,5 +1,7 @@
 # MAB.DotIgnore
 
+[![NuGet](https://img.shields.io/nuget/v/MAB.DotIgnore.svg)](https://www.nuget.org/packages/MAB.DotIgnore/)
+
 Load and parse `.gitignore` files (or any text files using the same syntax) to produce an `IgnoreList` which can be used to ignore specific files and folders during (for example) a recursve file copy operation.
 
 The goal of this library is to implement the same file matching behaviour [Git](https://github.com/git/git) uses to determine which files to ignore when adding to a commit. Please feel free to submit any [issues](https://github.com/markashleybell/MAB.DotIgnore/issues) with examples or pull requests, if you find instances where this isn't the case.
