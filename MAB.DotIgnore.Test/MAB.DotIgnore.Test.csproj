@@ -4,6 +4,8 @@
         <Company />
         <Copyright>Copyright © Mark Ashley Bell 2018</Copyright>
         <Authors>Mark Ashley Bell</Authors>
+        <SignAssembly>true</SignAssembly>
+        <AssemblyOriginatorKeyFile>MAB.DotIgnore.Test.snk</AssemblyOriginatorKeyFile>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
       <DebugType>full</DebugType>
