@@ -264,21 +264,21 @@ namespace MAB.DotIgnore
                                     if (Char.IsDigit(t_ch))
                                         match = 1;
                                 } 
-        //				        else if (CC_EQ(pattern, s, i, "graph")) 
-        //				        {
-        //				            if (ISGRAPH(t_ch))
-        //				                match = 1;
-        //				        } 
+                                else if (CC_EQ(pattern, s, i, "graph")) 
+                                {
+                                    if (ISGRAPH(t_ch))
+                                        match = 1;
+                                } 
                                 else if (CC_EQ(pattern, s, i, "lower")) 
                                 {
                                     if (Char.IsLower(t_ch))
                                         match = 1;
                                 } 
-        //				        else if (CC_EQ(pattern, s, i, "print")) 
-        //				        {
-        //				            if (ISPRINT(t_ch))
-        //				                match = 1;
-        //				        } 
+                                else if (CC_EQ(pattern, s, i, "print")) 
+                                {
+                                    if (ISPRINT(t_ch))
+                                        match = 1;
+                                } 
                                 else if (CC_EQ(pattern, s, i, "punct")) 
                                 {
                                     if (Char.IsPunctuation(t_ch))
@@ -335,5 +335,8 @@ namespace MAB.DotIgnore
         {
             return string.Compare(new String(pattern, s, len), @class, StringComparison.Ordinal) == 0;
         }
+
+        static bool ISPRINT(char ch) => ch >= 0x20 && ch <= 0x7e;
+        static bool ISGRAPH(char ch) => ISPRINT(ch) && ch != 0x20;
     }
 }
