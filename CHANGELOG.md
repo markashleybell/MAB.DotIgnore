@@ -5,9 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ## [Unreleased]
 
-## [2.0.0] - 2018-10-17
+## [2.0.0] - 2018-10-26
 ### Changed
 - Library is now strong-named.
+### Added
+- We now support `[:graph:]` & `[:print:]` classifications (thanks: [@atifaziz](https://github.com/atifaziz)).
 
 ## [1.4.0] - 2018-05-15
 ### Changed
