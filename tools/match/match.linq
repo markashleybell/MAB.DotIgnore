@@ -1,37 +1,42 @@
-<Query Kind="Program">
-  <Reference Relative="..\..\MAB.DotIgnore\bin\Debug\netstandard1.3\MAB.DotIgnore.dll">E:\Src\MAB.DotIgnore\MAB.DotIgnore\bin\Debug\netstandard1.3\MAB.DotIgnore.dll</Reference>
+<Query Kind="FSharpProgram">
+  <Reference Relative="..\..\MAB.DotIgnore\bin\Debug\netstandard1.3\MAB.DotIgnore.dll">C:\Src\MAB.DotIgnore\MAB.DotIgnore\bin\Debug\netstandard1.3\MAB.DotIgnore.dll</Reference>
   <Namespace>MAB.DotIgnore</Namespace>
   <Namespace>System.Runtime.InteropServices</Namespace>
 </Query>
 
-void Main()
-{
-    // https://github.com/git/git/blob/master/t/t3070-wildmatch.sh
+
+// https://github.com/git/git/blob/master/t/t3070-wildmatch.sh
+
+type PatternTest = {
+    Path: string
+    Pattern: string
+    ExpectGlobMatch: bool
+    ExpectGlobMatchCI: bool
+    ExpectPathMatch: bool
+    ExpectPathMatchCI: bool
+}
+
+let workingDirectory = Path.GetDirectoryName Util.CurrentQueryPath
+
+let isCommentLine (l: string) = l.StartsWith("#")
+let isEmptyLine l = String.IsNullOrWhiteSpace(l)
+let isNotEmptyOrComment l = not (l |> isEmptyLine || l |> isCommentLine)
+let splitLineAtSpaces (l: string) = l.Split([|' '|], StringSplitOptions.RemoveEmptyEntries)
+
+let asPatternTest (l: string[]) = 
+    { 
+        Path = l.[5].Trim('\'')
+        Pattern = l.[6].Trim('\'')
+        ExpectGlobMatch = l.[1] = "1"
+        ExpectGlobMatchCI = l.[2] = "1"
+        ExpectPathMatch = l.[3] = "1"
+        ExpectPathMatchCI = l.[4] = "1"
+    }
+
+let tests = 
+    File.ReadAllLines(workingDirectory + @"\tests.txt")
+    |> Array.filter isNotEmptyOrComment
+    |> Array.map splitLineAtSpaces
+    |> Array.map asPatternTest
     
-    var workingDirectory = Path.GetDirectoryName(Util.CurrentQueryPath);
-
-    var tests = File.ReadAllLines(workingDirectory + @"\tests.txt")
-        .Where(l => !l.StartsWith("#") && !string.IsNullOrWhiteSpace(l))
-        .Select(l => l.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
-        .Select(l => new Test { 
-            Path = l[5].Trim('\''),
-            Pattern = l[6].Trim('\''),
-            ExpectGlobMatch = l[1] == "1",
-            ExpectGlobMatchCI = l[2] == "1",
-            ExpectPathMatch = l[3] == "1",
-            ExpectPathMatchCI = l[4] == "1"
-        })
-        .ToList();
-        
-    tests.Dump();
-}
-
-public class Test
-{
-    public string Path { get; set; }
-    public string Pattern { get; set; }
-    public bool ExpectGlobMatch { get; set; }
-    public bool ExpectGlobMatchCI { get; set; }
-    public bool ExpectPathMatch { get; set; }
-    public bool ExpectPathMatchCI { get; set; }
-}
+tests |> Dump |> ignore
