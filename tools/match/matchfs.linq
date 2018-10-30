@@ -1,9 +1,8 @@
 <Query Kind="FSharpProgram">
-  <Reference Relative="..\..\MAB.DotIgnore\bin\Debug\netstandard1.3\MAB.DotIgnore.dll">C:\Src\MAB.DotIgnore\MAB.DotIgnore\bin\Debug\netstandard1.3\MAB.DotIgnore.dll</Reference>
-  <Namespace>MAB.DotIgnore</Namespace>
+  <NuGetReference>FParsec</NuGetReference>
+  <Namespace>FParsec</Namespace>
   <Namespace>System.Runtime.InteropServices</Namespace>
 </Query>
-
 
 // https://github.com/git/git/blob/master/t/t3070-wildmatch.sh
 

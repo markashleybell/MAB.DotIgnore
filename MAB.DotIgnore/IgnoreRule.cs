@@ -199,6 +199,7 @@ namespace MAB.DotIgnore
 
                 foreach(var segment in segments)
                 {
+                    // TODO: This doesn't even need to do wildmatch...
                     if(WildMatch.IsMatch(Pattern, segment, MatchFlags) == WildMatch.MATCH)
                         return true;
                 }
