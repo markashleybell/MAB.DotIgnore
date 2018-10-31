@@ -12,7 +12,9 @@ void Main()
         .Where(l => !l.StartsWith("#") && !string.IsNullOrWhiteSpace(l))
         .Select(l => l.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
         .Select(l => new Test { 
-            Pattern = l[6].Trim('\''),
+            // This weirdness is because a few of the patterns contain a space, so the
+            // we tack the extra element created by the split onto the end
+            Pattern = l[6].Trim('\'') + (l.Length == 8 ? " " + l[7].Trim('\'') : ""),
             Path = l[5].Trim('\''),
             ExpectGlobMatch = l[1] == "1",
             ExpectGlobMatchCI = l[2] == "1",
@@ -39,11 +41,13 @@ void Main()
     // Util.Dif(expected, actual).Dump();
     
     var failed = actual.Where(a => a.Result != expected.Single(e => e.ID == a.ID).Result)
-        .Select(a => new { a.Pattern, a.Path, Expected = !a.Result, Actual = a.Result });
+        .Select(a => new { a.ID, a.Pattern, a.Path, Expected = !a.Result, Actual = a.Result });
+    
+    // expected.Dump();
     
     failed.Dump();
     
-    Match(pattern: @"[[:digit:][:punct:][:space:]]", path: @"_", dumpRegex: true).Dump();
+    //Match(pattern: @"[[:digit:][:punct:][:space:]]", path: @"_", dumpRegex: true).Dump();
 }
 
 public bool Match(string pattern, string path, bool caseSensitive = false, bool dumpRegex = false)
@@ -60,7 +64,7 @@ public bool Match(string pattern, string path, bool caseSensitive = false, bool 
         { "[:lower:]", "a-z" },
         { "[:print:]", @"\x20-\x7E" },
         // Note that this has twice the amount of backslashes before the escaped backslash
-        // This is because we later replace \\ with \
+        // This is because we later replace \\ with \ when building the regex pattern
         { "[:punct:]", @"!""\#$%&'()*+,\-./:;<=>?@\[\\\\\]^_`{|}~" },
         { "[:space:]", @" \t\r\n\v\f" },
         { "[:upper:]", "A-Z" },
