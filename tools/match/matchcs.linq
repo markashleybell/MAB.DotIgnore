@@ -48,18 +48,32 @@ void Main()
         ID = t.ID,
         Pattern = t.Pattern,
         Path = t.Path,
-        Result = t.ExpectPathMatchCI
+        Result = t.ExpectPathMatch,
+        ResultCI = t.ExpectPathMatchCI
     });
     
     var actual = tests.Select(t => new Check {
         ID = t.ID,
         Pattern = t.Pattern,
         Path = t.Path,
-        Result = Match(t.Pattern, t.Path)
+        Result = Match(t.Pattern, t.Path),
+        ResultCI = Match(t.Pattern, t.Path, caseSensitive: false)
     });
     
-    var failed = actual.Where(a => a.Result != expected.Single(e => e.ID == a.ID).Result)
-        .Select(a => new { a.ID, a.Pattern, a.Path, Expected = !a.Result, Actual = a.Result });
+    var failed = actual
+        .Where(a => {
+            var ex = expected.Single(e => e.ID == a.ID);
+            return a.Result != ex.Result || a.ResultCI != ex.ResultCI;
+        })
+        .Select(a => new { 
+            a.ID, 
+            a.Pattern, 
+            a.Path, 
+            Expected = !a.Result, 
+            Actual = a.Result, 
+            ExpectedCI = !a.ResultCI,
+            ActualCI = a.ResultCI
+        });
     
     // expected.Dump();
     
@@ -71,7 +85,7 @@ void Main()
     // Match(pattern: @"XXX/*/*/*/*/*/*/12/*/*/*/m/*/*/*", path: @"XXX/adobe/courier/bold/o/normal//12/120/75/75/m/70/iso8859/1", dumpRegex: true).Dump();
 }
 
-public bool Match(string pattern, string path, bool caseSensitive = false, bool dumpRegex = false)
+public bool Match(string pattern, string path, bool caseSensitive = true)
 {
     var literalsToEscapeInRegex = new[] { ".", "$", "{", "}", "(", "|", ")", "+" };
     
@@ -123,7 +137,9 @@ public bool Match(string pattern, string path, bool caseSensitive = false, bool 
 
     try
     {
-        return Regex.IsMatch(path, rxs, RegexOptions.IgnoreCase);
+        return !caseSensitive 
+            ? Regex.IsMatch(path, rxs, RegexOptions.IgnoreCase)
+            : Regex.IsMatch(path, rxs);
     }
     catch
     {
@@ -148,4 +164,5 @@ public class Check
     public string Pattern { get; set; }
     public string Path { get; set; }
     public bool Result { get; set; }
+    public bool ResultCI { get; set; }
 }
