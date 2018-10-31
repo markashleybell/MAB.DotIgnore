@@ -43,35 +43,40 @@ void Main()
     
     failed.Dump();
     
-    Match(pattern: @"foo\*", path: "foo*", dumpRegex: true).Dump();
+    Match(pattern: @"[[:digit:][:punct:][:space:]]", path: @"_", dumpRegex: true).Dump();
 }
 
 public bool Match(string pattern, string path, bool caseSensitive = false, bool dumpRegex = false)
 {
     var literals = new[] { @"\", ".", "$", "{", "}", "(", "|", ")", "+" };
     
-    var charClasses = new Dictionary<string, string> {
-        { "[:alnum:]", "a-z0-9" },
-        { "[:alpha:]", "a-z" },
-        { "[:blank:]", "" },
-        { "[:cntrl:]", "" },
+    var charClassSubstitutions = new Dictionary<string, string> {
+        { "[:alnum:]", "a-zA-Z0-9" },
+        { "[:alpha:]", "a-zA-Z" },
+        { "[:blank:]", @" \t" },
+        { "[:cntrl:]", @"\x00-\x1F\x7F" },
         { "[:digit:]", @"0-9" },
-        { "[:graph:]", "" },
+        { "[:graph:]", @"\x21-\x7E" },
         { "[:lower:]", "a-z" },
-        { "[:print:]", "" },
-        { "[:punct:]", "" },
-        { "[:space:]", @"\s" },
+        { "[:print:]", @"\x20-\x7E" },
+        // Note that this has twice the amount of backslashes before the escaped backslash
+        // This is because we later replace \\ with \
+        { "[:punct:]", @"!""\#$%&'()*+,\-./:;<=>?@\[\\\\\]^_`{|}~" },
+        { "[:space:]", @" \t\r\n\v\f" },
         { "[:upper:]", "A-Z" },
-        { "[:xdigit:]", "" }
+        { "[:xdigit:]", "A-Fa-f0-9" }
     };
+    
+    var charClasses = charClassSubstitutions.Keys.ToArray();
     
     var rx = new StringBuilder(pattern);
 
     Array.ForEach(literals, l => rx.Replace(l, @"\" + l));
-    Array.ForEach(charClasses.Keys.ToArray(), k => rx.Replace(k, charClasses[k]));
+    Array.ForEach(charClasses, k => rx.Replace(k, charClassSubstitutions[k]));
 
     rx.Replace("*", ".*");
     rx.Replace(@"\\.*", @"\*");
+    rx.Replace(@"\\", @"\");
     rx.Replace("?", ".");
     rx.Replace("!", "^");
 
@@ -80,8 +85,6 @@ public bool Match(string pattern, string path, bool caseSensitive = false, bool 
 
     var rxs = rx.ToString();
 
-    // rxs = Regex.Replace(rxs, @"[^\\]\*", ".*");
-    
     if (dumpRegex)
         rxs.Dump();
 
