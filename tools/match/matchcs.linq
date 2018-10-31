@@ -12,10 +12,10 @@ void Main()
         .Where(l => !l.StartsWith("#") && !string.IsNullOrWhiteSpace(l))
         .Select(l => l.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
         .Select((l, i) => {
-            var path = l[5].Trim('\'');
+            var path = l[5].Trim('\'', '"');
             // This weirdness is because a few of the test patterns actually contain a space
             // character, so we tack the extra element created by the split onto the end
-            var pattern = l[6].Trim('\'') + (l.Length == 8 ? " " + l[7].Trim('\'') : "");
+            var pattern = l[6].Trim('\'', '"') + (l.Length == 8 ? " " + l[7].Trim('\'', '"') : "");
         
             // Manually hack around the fact that test 80 passes in a space as the path, which makes 
             // both the pattern and path differ from the test file and causes the test to fail 
@@ -39,7 +39,10 @@ void Main()
     // tests.Dump();
     
     // $"'{tests.Single(t => t.ID == 80).Path}'".Dump();
-    // tests = tests.Where(t => t.ID == 80);
+    
+    var filter = new[] { 11, 12, 72, 73, 133, 134 };
+    
+    // tests = tests.Where(t => filter.Any(f => f == t.ID));
     
     var expected = tests.Select(t => new Check {
         ID = t.ID,
@@ -55,8 +58,6 @@ void Main()
         Result = Match(t.Pattern, t.Path)
     });
     
-    // Util.Dif(expected, actual).Dump();
-    
     var failed = actual.Where(a => a.Result != expected.Single(e => e.ID == a.ID).Result)
         .Select(a => new { a.ID, a.Pattern, a.Path, Expected = !a.Result, Actual = a.Result });
     
@@ -64,7 +65,10 @@ void Main()
     
     failed.Dump();
     
-    Match(pattern: @"\??\?b", path: @"?a?b", dumpRegex: true).Dump();
+    Util.Dif(expected, actual).Dump();
+    
+    // Match(pattern: @"\??\?b", path: @"?a?b", dumpRegex: true).Dump();
+    // Match(pattern: @"XXX/*/*/*/*/*/*/12/*/*/*/m/*/*/*", path: @"XXX/adobe/courier/bold/o/normal//12/120/75/75/m/70/iso8859/1", dumpRegex: true).Dump();
 }
 
 public bool Match(string pattern, string path, bool caseSensitive = false, bool dumpRegex = false)
@@ -94,18 +98,15 @@ public bool Match(string pattern, string path, bool caseSensitive = false, bool 
     
     if (patternCharClasses.Any(pcc => !charClasses.Any(cc => cc == pcc)))
     {
-        // throw new Exception("Malformed character class");
+        // Malformed character class
         return false;
     }
-    
+
     var rx = new StringBuilder(pattern);
 
     Array.ForEach(literalsToEscapeInRegex, l => rx.Replace(l, @"\" + l));
     Array.ForEach(charClasses, k => rx.Replace(k, charClassSubstitutions[k]));
 
-    rx.Replace("*", ".*");
-    rx.Replace(@"\.*", @"\*");
-    rx.Replace("?", ".");
     rx.Replace("!", "^");
 
     rx.Insert(0, "^");
@@ -113,12 +114,15 @@ public bool Match(string pattern, string path, bool caseSensitive = false, bool 
 
     var rxs = rx.ToString();
 
-    if (dumpRegex)
-        rxs.Dump();
+    // Remove single backslashes before alphanumeric chars (escaping these should have no effect)
+    rxs = Regex.Replace(rxs, @"(?<!\\)\\([a-zA-Z0-9])", "$1");
+
+    // Replace non-escaped star and question mark chars with equivalent regex patterns
+    rxs = Regex.Replace(rxs, @"(?<!\\)\*", ".*");
+    rxs = Regex.Replace(rxs, @"(?<!\\)\?", ".");
 
     try
     {
-
         return Regex.IsMatch(path, rxs, RegexOptions.IgnoreCase);
     }
     catch
