@@ -64,7 +64,7 @@ void Main()
     
     failed.Dump();
     
-    Match(pattern: @"[[:digit:][:upper:][:space:]]", path: @" ", dumpRegex: true).Dump();
+    // Match(pattern: @"[[:digit:][:upper:][:spaci:]]", path: @"1", dumpRegex: true).Dump();
 }
 
 public bool Match(string pattern, string path, bool caseSensitive = false, bool dumpRegex = false)
@@ -87,8 +87,16 @@ public bool Match(string pattern, string path, bool caseSensitive = false, bool 
         { "[:upper:]", "A-Z" },
         { "[:xdigit:]", "A-Fa-f0-9" }
     };
-    
+
     var charClasses = charClassSubstitutions.Keys.ToArray();
+    
+    var patternCharClasses = Regex.Matches(pattern, @"\[\:[a-z]+\:\]").Cast<Match>().Select(m => m.Groups[0].Value);
+    
+    if (patternCharClasses.Any(pcc => !charClasses.Any(cc => cc == pcc)))
+    {
+        // throw new Exception("Malformed character class");
+        return false;
+    }
     
     var rx = new StringBuilder(pattern);
 
