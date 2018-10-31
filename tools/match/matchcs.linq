@@ -64,28 +64,28 @@ void Main()
     
     failed.Dump();
     
-    // Match(pattern: @"[[:digit:][:upper:][:spaci:]]", path: @"1", dumpRegex: true).Dump();
+    Match(pattern: @"\??\?b", path: @"?a?b", dumpRegex: true).Dump();
 }
 
 public bool Match(string pattern, string path, bool caseSensitive = false, bool dumpRegex = false)
 {
-    var literals = new[] { @"\", ".", "$", "{", "}", "(", "|", ")", "+" };
+    var literalsToEscapeInRegex = new[] { ".", "$", "{", "}", "(", "|", ")", "+" };
     
     var charClassSubstitutions = new Dictionary<string, string> {
-        { "[:alnum:]", "a-zA-Z0-9" },
-        { "[:alpha:]", "a-zA-Z" },
+        { "[:alnum:]", @"a-zA-Z0-9" },
+        { "[:alpha:]", @"a-zA-Z" },
         { "[:blank:]", @" \t" },
         { "[:cntrl:]", @"\x00-\x1F\x7F" },
         { "[:digit:]", @"0-9" },
         { "[:graph:]", @"\x21-\x7E" },
-        { "[:lower:]", "a-z" },
+        { "[:lower:]", @"a-z" },
         { "[:print:]", @"\x20-\x7E" },
         // Note that this has twice the amount of backslashes before the escaped backslash
         // This is because we later replace \\ with \ when building the regex pattern
-        { "[:punct:]", @"!""\#$%&'()*+,\-./:;<=>?@\[\\\\\]^_`{|}~" },
+        { "[:punct:]", @"!""\#$%&'()*+,\-./:;<=>?@\[\\\]^_`{|}~" },
         { "[:space:]", @" \t\r\n\v\f" },
-        { "[:upper:]", "A-Z" },
-        { "[:xdigit:]", "A-Fa-f0-9" }
+        { "[:upper:]", @"A-Z" },
+        { "[:xdigit:]", @"A-Fa-f0-9" }
     };
 
     var charClasses = charClassSubstitutions.Keys.ToArray();
@@ -100,12 +100,11 @@ public bool Match(string pattern, string path, bool caseSensitive = false, bool 
     
     var rx = new StringBuilder(pattern);
 
-    Array.ForEach(literals, l => rx.Replace(l, @"\" + l));
+    Array.ForEach(literalsToEscapeInRegex, l => rx.Replace(l, @"\" + l));
     Array.ForEach(charClasses, k => rx.Replace(k, charClassSubstitutions[k]));
 
     rx.Replace("*", ".*");
-    rx.Replace(@"\\.*", @"\*");
-    rx.Replace(@"\\", @"\");
+    rx.Replace(@"\.*", @"\*");
     rx.Replace("?", ".");
     rx.Replace("!", "^");
 
