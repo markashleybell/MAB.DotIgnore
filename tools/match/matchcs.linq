@@ -11,28 +11,45 @@ void Main()
     var tests = File.ReadAllLines(workingDirectory + @"\tests.txt")
         .Where(l => !l.StartsWith("#") && !string.IsNullOrWhiteSpace(l))
         .Select(l => l.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
-        .Select(l => new Test { 
-            // This weirdness is because a few of the patterns contain a space, so the
-            // we tack the extra element created by the split onto the end
-            Pattern = l[6].Trim('\'') + (l.Length == 8 ? " " + l[7].Trim('\'') : ""),
-            Path = l[5].Trim('\''),
-            ExpectGlobMatch = l[1] == "1",
-            ExpectGlobMatchCI = l[2] == "1",
-            ExpectPathMatch = l[3] == "1",
-            ExpectPathMatchCI = l[4] == "1"
+        .Select((l, i) => {
+            var path = l[5].Trim('\'');
+            // This weirdness is because a few of the test patterns actually contain a space
+            // character, so we tack the extra element created by the split onto the end
+            var pattern = l[6].Trim('\'') + (l.Length == 8 ? " " + l[7].Trim('\'') : "");
+        
+            // Manually hack around the fact that test 80 passes in a space as the path, which makes 
+            // both the pattern and path differ from the test file and causes the test to fail 
+            if (i == 80)
+            {
+                path = " ";
+                pattern = pattern.TrimStart(' ');
+            }
+        
+            return new Test { 
+                ID = i,
+                Pattern = pattern,
+                Path = path,
+                ExpectGlobMatch = l[1] == "1",
+                ExpectGlobMatchCI = l[2] == "1",
+                ExpectPathMatch = l[3] == "1",
+                ExpectPathMatchCI = l[4] == "1"
+            };
         });
         
     // tests.Dump();
     
-    var expected = tests.Select((t, i) => new Check {
-        ID = i,
+    // $"'{tests.Single(t => t.ID == 80).Path}'".Dump();
+    // tests = tests.Where(t => t.ID == 80);
+    
+    var expected = tests.Select(t => new Check {
+        ID = t.ID,
         Pattern = t.Pattern,
         Path = t.Path,
         Result = t.ExpectPathMatchCI
     });
     
-    var actual = tests.Select((t, i) => new Check {
-        ID = i,
+    var actual = tests.Select(t => new Check {
+        ID = t.ID,
         Pattern = t.Pattern,
         Path = t.Path,
         Result = Match(t.Pattern, t.Path)
@@ -47,7 +64,7 @@ void Main()
     
     failed.Dump();
     
-    //Match(pattern: @"[[:digit:][:punct:][:space:]]", path: @"_", dumpRegex: true).Dump();
+    Match(pattern: @"[[:digit:][:upper:][:space:]]", path: @" ", dumpRegex: true).Dump();
 }
 
 public bool Match(string pattern, string path, bool caseSensitive = false, bool dumpRegex = false)
@@ -105,6 +122,7 @@ public bool Match(string pattern, string path, bool caseSensitive = false, bool 
 
 public class Test
 {
+    public int ID { get; set; }
     public string Pattern { get; set; }
     public string Path { get; set; }
     public bool ExpectGlobMatch { get; set; }
