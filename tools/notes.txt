@@ -1,0 +1,4 @@
+https://www.loggly.com/blog/five-invaluable-techniques-to-improve-regex-performance/
+https://ci.appveyor.com/signup/free
+https://github.com/git/git/blob/master/t/t3070-wildmatch.sh
+https://odetocode.com/blogs/scott/archive/2018/10/29/net-core-opinion-6-ndash-be-wary-of-gui.aspx

@@ -41,8 +41,9 @@ namespace MAB.DotIgnore.Tests
 
             tests.ForEach(t => {
                 Console.WriteLine(string.Format("{0} {1}", t.Text, t.Pattern));
-                var referenceResult = ReferenceMatchPattern(t.Pattern, t.Text, false);
-                var testResult = WildMatch.IsMatch(t.Pattern, t.Text, MatchFlags.PATHNAME);
+                var referenceReturnValue = ReferenceMatchPattern(t.Pattern, t.Text, false);
+                var referenceResult = referenceReturnValue == 0;
+                var testResult = Matcher.IsMatch(t.Pattern, t.Text);
                 Assert.AreEqual(referenceResult, testResult);
             });
         }

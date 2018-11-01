@@ -1,3 +1,5 @@
+# From: https://github.com/git/git/blob/3a078dec3327fb68faa7c800040f89db3e38e6e5/t/t3070-wildmatch.sh
+
 # Basic wildmat features
 1 1 foo         foo
 0 1 foo         bar

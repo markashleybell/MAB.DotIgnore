@@ -200,7 +200,7 @@ namespace MAB.DotIgnore
                 foreach(var segment in segments)
                 {
                     // TODO: This doesn't even need to do wildmatch...
-                    if(WildMatch.IsMatch(Pattern, segment, MatchFlags) == WildMatch.MATCH)
+                    if (Matcher.IsMatch(Pattern, segment, MatchFlags.HasFlag(MatchFlags.CASEFOLD)))
                         return true;
                 }
 
@@ -208,7 +208,7 @@ namespace MAB.DotIgnore
             }
 
             // If the *path* doesn't contain any slashes, we should skip over the conditional above
-            return WildMatch.IsMatch(Pattern, path, MatchFlags) == WildMatch.MATCH;
+            return Matcher.IsMatch(Pattern, path, MatchFlags.HasFlag(MatchFlags.CASEFOLD));
         }
 
         /// <summary>

@@ -36,7 +36,7 @@ void Main()
             };
         });
         
-    // tests.Dump();
+    tests.Dump();
     
     // $"'{tests.Single(t => t.ID == 80).Path}'".Dump();
     
@@ -76,13 +76,13 @@ void Main()
         });
     
     // expected.Dump();
+    // actual.Dump();
     
-    failed.Dump();
+    //failed.Dump();
     
-    Util.Dif(expected, actual).Dump();
+    // Util.Dif(expected, actual).Dump();
     
-    // Match(pattern: @"\??\?b", path: @"?a?b", dumpRegex: true).Dump();
-    // Match(pattern: @"XXX/*/*/*/*/*/*/12/*/*/*/m/*/*/*", path: @"XXX/adobe/courier/bold/o/normal//12/120/75/75/m/70/iso8859/1", dumpRegex: true).Dump();
+    Match(pattern: @"**[!te]", path: @"ten").Dump();
 }
 
 public bool Match(string pattern, string path, bool caseSensitive = true)
