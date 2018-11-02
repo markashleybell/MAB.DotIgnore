@@ -25,7 +25,7 @@ void Main()
                 pattern = pattern.TrimStart(' ');
             }
         
-            return new Test { 
+            return new GitTest { 
                 ID = i,
                 Pattern = pattern,
                 Path = path,
@@ -36,7 +36,7 @@ void Main()
             };
         });
         
-    tests.Dump();
+    // tests.Dump();
     
     // $"'{tests.Single(t => t.ID == 80).Path}'".Dump();
     
@@ -48,16 +48,16 @@ void Main()
         ID = t.ID,
         Pattern = t.Pattern,
         Path = t.Path,
-        Result = t.ExpectPathMatch,
-        ResultCI = t.ExpectPathMatchCI
+        Result = t.ExpectGlobMatch,
+        ResultCI = t.ExpectGlobMatchCI
     });
     
     var actual = tests.Select(t => new Check {
         ID = t.ID,
         Pattern = t.Pattern,
         Path = t.Path,
-        Result = Match(t.Pattern, t.Path),
-        ResultCI = Match(t.Pattern, t.Path, caseSensitive: false)
+        Result = IsMatch(t.Pattern, t.Path),
+        ResultCI = IsMatch(t.Pattern, t.Path, caseSensitive: false)
     });
     
     var failed = actual
@@ -78,17 +78,17 @@ void Main()
     // expected.Dump();
     // actual.Dump();
     
-    //failed.Dump();
+    failed.Dump();
     
     // Util.Dif(expected, actual).Dump();
     
-    Match(pattern: @"**[!te]", path: @"ten").Dump();
+    IsMatch(pattern: @"**[!te]", path: @"ten").Dump();
 }
 
-public bool Match(string pattern, string path, bool caseSensitive = true)
+public static bool IsMatch(string pattern, string path, bool caseSensitive = true)
 {
     var literalsToEscapeInRegex = new[] { ".", "$", "{", "}", "(", "|", ")", "+" };
-    
+
     var charClassSubstitutions = new Dictionary<string, string> {
         { "[:alnum:]", @"a-zA-Z0-9" },
         { "[:alpha:]", @"a-zA-Z" },
@@ -107,9 +107,9 @@ public bool Match(string pattern, string path, bool caseSensitive = true)
     };
 
     var charClasses = charClassSubstitutions.Keys.ToArray();
-    
+
     var patternCharClasses = Regex.Matches(pattern, @"\[\:[a-z]+\:\]").Cast<Match>().Select(m => m.Groups[0].Value);
-    
+
     if (patternCharClasses.Any(pcc => !charClasses.Any(cc => cc == pcc)))
     {
         // Malformed character class
@@ -118,8 +118,11 @@ public bool Match(string pattern, string path, bool caseSensitive = true)
 
     var rx = new StringBuilder(pattern);
 
-    Array.ForEach(literalsToEscapeInRegex, l => rx.Replace(l, @"\" + l));
-    Array.ForEach(charClasses, k => rx.Replace(k, charClassSubstitutions[k]));
+    foreach(var literal in literalsToEscapeInRegex)
+        rx.Replace(literal, @"\" + literal);
+
+    foreach(var k in charClasses)
+        rx.Replace(k, charClassSubstitutions[k]);
 
     rx.Replace("!", "^");
 
@@ -137,7 +140,7 @@ public bool Match(string pattern, string path, bool caseSensitive = true)
 
     try
     {
-        return !caseSensitive 
+        return !caseSensitive
             ? Regex.IsMatch(path, rxs, RegexOptions.IgnoreCase)
             : Regex.IsMatch(path, rxs);
     }
@@ -147,7 +150,7 @@ public bool Match(string pattern, string path, bool caseSensitive = true)
     }
 }
 
-public class Test
+public class GitTest
 {
     public int ID { get; set; }
     public string Pattern { get; set; }

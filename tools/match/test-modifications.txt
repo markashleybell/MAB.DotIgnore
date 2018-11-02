@@ -1,0 +1,22 @@
+The tests are taken from:
+
+https://github.com/git/git/blob/master/t/t3070-wildmatch.sh
+
+We then strip off the C functions so we're just left with the test lines.
+
+All tests which span two lines using '\' are then moved onto a single line.
+
+The test expectations are as follows:
+
+match 0 0 0 0 path pattern
+
+The first pair of numbers are the expected results with glob matching 
+enabled (case sensitive and insensitive respectively), and the second pair 
+are the expected results with glob matching disabled (GIT_NOGLOB_PATHSPECS=1).
+
+wildmatch returns zero for a match, so the expected result will be 0 if the
+test should pass or 1 if it should fail (with a few exceptions where it is
+expected to throw an error).
+
+GIT_GLOB_PATHSPECS is the default, and as the whole point of this library is
+to match using wildcards, we can just ignore the second result pair for now.
