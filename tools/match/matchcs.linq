@@ -178,21 +178,23 @@ public static string GetRegex(string pattern, bool caseSensitive = true)
     rx.Replace("!", "^");
     rx.Replace("**", "[:STARSTAR:]");
     rx.Replace("*", "[:STAR:]");
-    
+    rx.Replace("?", "[:QM:]");
+
     rx.Insert(0, "^");
     rx.Append("$");
 
     var rxs = rx.ToString();
 
-    // Non-escaped question mark should match any single char except slash
-    rxs = Regex.Replace(rxs, @"(?<!\\)\?", "[^/]");
-    
     // Character class patterns shouldn't match slashes, so we prefix them with 
     // negative lookaheads. This is rather harder than it seems, because class 
     // patterns can also contain unescaped square brackets...
     
     // TODO: is this only true if PATHMATCH isn't specified?
     rxs = NonPathMatchCharClasses(rxs);
+    
+    // Non-escaped question mark should match any single char except slash
+    rxs = Regex.Replace(rxs, @"\\\[:QM:\]", @"\?");
+    rxs = Regex.Replace(rxs, @"(?<!\\)\[\:QM\:\]", "[^/]");
     
     // Replace star patterns with equivalent regex patterns
     rxs = Regex.Replace(rxs, @"(\[\:STARSTAR\:\]/?)+", ".*");
@@ -223,6 +225,7 @@ public static string NonPathMatchCharClasses(string p)
                 {
                     o.Append(@"(?!/)");
                 }
+                
                 inBrackets = true;
             }
         }
