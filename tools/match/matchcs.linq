@@ -133,6 +133,16 @@ public static string GetRegex(string pattern, bool caseSensitive = true)
         // Malformed character class
         return null;
     }
+    
+    // Double-star is only valid:
+    // - at the beginning of a pattern, immediately followed by a slash ('**/c')
+    // - at the end of a pattern, immediately preceded by a slash ('a/**')
+    // - anywhere in the pattern with a slash immediately before and after ('a/**/c')
+    // https://git-scm.com/docs/gitignore#_pattern_format
+    if (Regex.IsMatch(pattern, @"\*\*[^/\s]|[^/\s]\*\*"))
+    {
+        return null;
+    }
 
     // Remove single backslashes before alphanumeric chars 
     // (escaping these in a glob pattern should have no effect)
