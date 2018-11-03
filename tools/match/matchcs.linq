@@ -103,6 +103,13 @@ public static bool TryMatch(string rxPattern, string path, bool caseSensitive = 
     }
 }
 
+// https://git-scm.com/docs/gitignore#_pattern_format
+
+// FNM_PATHNAME
+// If this flag is set, match a slash in string only with a slash in pattern 
+// and not by an asterisk (*) or a question mark (?) metacharacter, nor by a 
+// bracket expression ([]) containing a slash.
+
 public static string GetRegex(string pattern, bool caseSensitive = true)
 {
     var literalsToEscapeInRegex = new[] { ".", "$", "{", "}", "(", "|", ")", "+" };
@@ -138,7 +145,6 @@ public static string GetRegex(string pattern, bool caseSensitive = true)
     // - at the beginning of a pattern, immediately followed by a slash ('**/c')
     // - at the end of a pattern, immediately preceded by a slash ('a/**')
     // - anywhere in the pattern with a slash immediately before and after ('a/**/c')
-    // https://git-scm.com/docs/gitignore#_pattern_format
     if (Regex.IsMatch(pattern, @"\*\*[^/\s]|[^/\s]\*\*"))
     {
         return null;
@@ -151,13 +157,17 @@ public static string GetRegex(string pattern, bool caseSensitive = true)
     var rx = new StringBuilder(pattern);
 
     foreach(var literal in literalsToEscapeInRegex)
+    {
         rx.Replace(literal, @"\" + literal);
+    }
 
     foreach(var k in charClasses)
+    {
         rx.Replace(k, charClassSubstitutions[k]);
+    }
 
     rx.Replace("!", "^");
-    rx.Replace("**", "[:GLOBSTAR:]");
+    rx.Replace("**", "[:STARSTAR:]");
     rx.Replace("*", "[:STAR:]");
 
     rx.Insert(0, "^");
@@ -169,7 +179,7 @@ public static string GetRegex(string pattern, bool caseSensitive = true)
     rxs = Regex.Replace(rxs, @"(?<!\\)\[\:STAR:\]", "[^/]*");
     rxs = Regex.Replace(rxs, @"\\\[\:STAR:\]", @"\*");
     rxs = Regex.Replace(rxs, @"(?<!\\)\?", "[^/]");
-    rxs = Regex.Replace(rxs, @"(\[\:GLOBSTAR\:\]/?)+", ".*");
+    rxs = Regex.Replace(rxs, @"(\[\:STARSTAR\:\]/?)+", ".*");
 
     return rxs;
 }
