@@ -91,6 +91,11 @@ public static bool IsMatch(string pattern, string path, bool caseSensitive = tru
 
 public static bool TryMatch(string rxPattern, string path, bool caseSensitive = true)
 {
+    if (rxPattern == null)
+    {
+        return false;
+    }
+    
     try
     {
         return !caseSensitive
