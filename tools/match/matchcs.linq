@@ -17,9 +17,9 @@ void Main()
             // character, so we tack the extra element created by the split onto the end
             var pattern = l[6].Trim('\'', '"') + (l.Length == 8 ? " " + l[7].Trim('\'', '"') : "");
         
-            // Manually hack around the fact that test 80 passes in a space as the path, which makes 
+            // Manually hack around the fact that test 82 passes in a space as the path, which makes 
             // both the pattern and path differ from the test file and causes the test to fail 
-            if (i == 80)
+            if (i == 82)
             {
                 path = " ";
                 pattern = pattern.TrimStart(' ');
@@ -56,6 +56,7 @@ void Main()
         ID = t.ID,
         Pattern = t.Pattern,
         Path = t.Path,
+        Regex = GetRegex(t.Pattern),
         Result = IsMatch(t.Pattern, t.Path),
         ResultCI = IsMatch(t.Pattern, t.Path, caseSensitive: false)
     });
@@ -69,6 +70,7 @@ void Main()
             a.ID, 
             a.Pattern, 
             a.Path, 
+            Regex = a.Regex,
             Expected = !a.Result, 
             Actual = a.Result, 
             ExpectedCI = !a.ResultCI,
@@ -85,23 +87,40 @@ void Main()
     IsMatch(pattern: @"**[!te]", path: @"ten").Dump();
 }
 
-public static bool IsMatch(string pattern, string path, bool caseSensitive = true)
+public static bool IsMatch(string pattern, string path, bool caseSensitive = true) =>
+    TryMatch(GetRegex(pattern), path, caseSensitive);
+
+public static bool TryMatch(string rxPattern, string path, bool caseSensitive = true)
+{
+    try
+    {
+        return !caseSensitive
+            ? Regex.IsMatch(path, rxPattern, RegexOptions.IgnoreCase)
+            : Regex.IsMatch(path, rxPattern);
+    }
+    catch
+    {
+        return false;
+    }
+}
+
+public static string GetRegex(string pattern, bool caseSensitive = true)
 {
     var literalsToEscapeInRegex = new[] { ".", "$", "{", "}", "(", "|", ")", "+" };
 
+    // Match POSIX char classes with .NET unicode equivalents
+    // https://www.regular-expressions.info/posixbrackets.html
     var charClassSubstitutions = new Dictionary<string, string> {
         { "[:alnum:]", @"a-zA-Z0-9" },
         { "[:alpha:]", @"a-zA-Z" },
-        { "[:blank:]", @" \t" },
-        { "[:cntrl:]", @"\x00-\x1F\x7F" },
-        { "[:digit:]", @"0-9" },
-        { "[:graph:]", @"\x21-\x7E" },
+        { "[:blank:]", @"\p{Zs}\t" },
+        { "[:cntrl:]", @"\p{Cc}" },
+        { "[:digit:]", @"\d" },
+        { "[:graph:]", @"^\p{Z}\p{C}" },
         { "[:lower:]", @"a-z" },
-        { "[:print:]", @"\x20-\x7E" },
-        // Note that this has twice the amount of backslashes before the escaped backslash
-        // This is because we later replace \\ with \ when building the regex pattern
-        { "[:punct:]", @"!""\#$%&'()*+,\-./:;<=>?@\[\\\]^_`{|}~" },
-        { "[:space:]", @" \t\r\n\v\f" },
+        { "[:print:]", @"\p{C}" },
+        { "[:punct:]", @"\p{P}" },
+        { "[:space:]", @"\s" },
         { "[:upper:]", @"A-Z" },
         { "[:xdigit:]", @"A-Fa-f0-9" }
     };
@@ -113,8 +132,12 @@ public static bool IsMatch(string pattern, string path, bool caseSensitive = tru
     if (patternCharClasses.Any(pcc => !charClasses.Any(cc => cc == pcc)))
     {
         // Malformed character class
-        return false;
+        return null;
     }
+
+    // Remove single backslashes before alphanumeric chars 
+    // (escaping these in a glob pattern should have no effect)
+    pattern = Regex.Replace(pattern, @"(?<!\\)\\([a-zA-Z0-9])", "$1");
 
     var rx = new StringBuilder(pattern);
 
@@ -125,29 +148,21 @@ public static bool IsMatch(string pattern, string path, bool caseSensitive = tru
         rx.Replace(k, charClassSubstitutions[k]);
 
     rx.Replace("!", "^");
+    rx.Replace("**", "[:GLOBSTAR:]");
+    rx.Replace("*", "[:STAR:]");
 
     rx.Insert(0, "^");
     rx.Append("$");
 
     var rxs = rx.ToString();
 
-    // Remove single backslashes before alphanumeric chars (escaping these should have no effect)
-    rxs = Regex.Replace(rxs, @"(?<!\\)\\([a-zA-Z0-9])", "$1");
-
     // Replace non-escaped star and question mark chars with equivalent regex patterns
-    rxs = Regex.Replace(rxs, @"(?<!\\)\*", ".*");
-    rxs = Regex.Replace(rxs, @"(?<!\\)\?", ".");
+    rxs = Regex.Replace(rxs, @"(?<!\\)\[\:STAR:\]", "[^/]*");
+    rxs = Regex.Replace(rxs, @"\\\[\:STAR:\]", @"\*");
+    rxs = Regex.Replace(rxs, @"(?<!\\)\?", "[^/]");
+    rxs = Regex.Replace(rxs, @"(\[\:GLOBSTAR\:\]/?)+", ".*");
 
-    try
-    {
-        return !caseSensitive
-            ? Regex.IsMatch(path, rxs, RegexOptions.IgnoreCase)
-            : Regex.IsMatch(path, rxs);
-    }
-    catch
-    {
-        return false;
-    }
+    return rxs;
 }
 
 public class GitTest
@@ -166,6 +181,7 @@ public class Check
     public int ID { get; set; }
     public string Pattern { get; set; }
     public string Path { get; set; }
+    public string Regex { get; set; }
     public bool Result { get; set; }
     public bool ResultCI { get; set; }
 }
