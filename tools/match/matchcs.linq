@@ -3,11 +3,10 @@
 </Query>
 
 void Main()
-{
-    // https://github.com/git/git/blob/master/t/t3070-wildmatch.sh
-    
+{    
     var workingDirectory = Path.GetDirectoryName(Util.CurrentQueryPath);
 
+    // https://github.com/git/git/blob/master/t/t3070-wildmatch.sh
     var tests = File.ReadAllLines(workingDirectory + @"\tests.txt")
         .Where(l => !l.StartsWith("#") && !string.IsNullOrWhiteSpace(l))
         .Select(l => l.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
@@ -84,7 +83,7 @@ void Main()
     
     // Util.Dif(expected, actual).Dump();
     
-    IsMatch(pattern: @"**[!te]", path: @"ten").Dump();
+    // IsMatch(pattern: @"**[!te]", path: @"ten").Dump();
 }
 
 public static bool IsMatch(string pattern, string path, bool caseSensitive = true) =>
