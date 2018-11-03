@@ -47,6 +47,7 @@ void Main()
         ID = t.ID,
         Pattern = t.Pattern,
         Path = t.Path,
+        Regex = GetRegex(t.Pattern),
         Result = t.ExpectGlobMatch,
         ResultCI = t.ExpectGlobMatchCI
     });
@@ -81,9 +82,12 @@ void Main()
     
     failed.Dump();
     
+    // failed.Select(f => f.Pattern).Dump();
+    
     // Util.Dif(expected, actual).Dump();
     
-    // IsMatch(pattern: @"**[!te]", path: @"ten").Dump();
+    IsMatch(pattern: @"test[^A-Z]end", path: @"test/end").Dump();
+    IsMatch(pattern: @"test[^A-Z]end", path: @"test1end").Dump();
 }
 
 public static bool IsMatch(string pattern, string path, bool caseSensitive = true) =>
@@ -138,7 +142,7 @@ public static string GetRegex(string pattern, bool caseSensitive = true)
 
     var charClasses = charClassSubstitutions.Keys.ToArray();
 
-    var patternCharClasses = Regex.Matches(pattern, @"\[\:[a-z]+\:\]").Cast<Match>().Select(m => m.Groups[0].Value);
+    var patternCharClasses = Regex.Matches(pattern, @"\[\:[a-z]*\:\]").Cast<Match>().Select(m => m.Groups[0].Value);
 
     if (patternCharClasses.Any(pcc => !charClasses.Any(cc => cc == pcc)))
     {
@@ -174,19 +178,66 @@ public static string GetRegex(string pattern, bool caseSensitive = true)
     rx.Replace("!", "^");
     rx.Replace("**", "[:STARSTAR:]");
     rx.Replace("*", "[:STAR:]");
-
+    
     rx.Insert(0, "^");
     rx.Append("$");
 
     var rxs = rx.ToString();
 
-    // Replace non-escaped star and question mark chars with equivalent regex patterns
-    rxs = Regex.Replace(rxs, @"(?<!\\)\[\:STAR:\]", "[^/]*");
-    rxs = Regex.Replace(rxs, @"\\\[\:STAR:\]", @"\*");
+    // Non-escaped question mark should match any single char except slash
     rxs = Regex.Replace(rxs, @"(?<!\\)\?", "[^/]");
+    
+    // Character class patterns shouldn't match slashes, so we prefix them with 
+    // negative lookaheads. This is rather harder than it seems, because class 
+    // patterns can also contain unescaped square brackets...
+    
+    // TODO: is this only true if PATHMATCH isn't specified?
+    rxs = NonPathMatchCharClasses(rxs);
+    
+    // Replace star patterns with equivalent regex patterns
     rxs = Regex.Replace(rxs, @"(\[\:STARSTAR\:\]/?)+", ".*");
+    rxs = Regex.Replace(rxs, @"\\\[\:STAR:\]", @"\*");
+    rxs = Regex.Replace(rxs, @"(?<!\\)\[\:STAR:\]", "[^/]*");
 
     return rxs;
+}
+
+public static string NonPathMatchCharClasses(string p)
+{
+    var o = new StringBuilder();
+    var inBrackets = false;
+    
+    for (var i = 0; i < p.Length;)
+    {
+        var escaped = i != 0 && p[i - 1] == '\\';
+        
+        if (p[i] == '[' && !escaped)
+        {
+            if (inBrackets)
+            {
+                o.Append(@"\");    
+            }
+            else
+            {
+                if (i < p.Length && p[i + 1] != ':')
+                {
+                    o.Append(@"(?!/)");
+                }
+                inBrackets = true;
+            }
+        }
+        else if (p[i] == ']' && !escaped)
+        {
+            if (inBrackets && p.IndexOf(']', i + 1) >= p.IndexOf('[', i + 1))
+            {
+                inBrackets = false;
+            }
+        }
+
+        o.Append(p[i++]);
+    }
+    
+    return o.ToString();
 }
 
 public class GitTest
