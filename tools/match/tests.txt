@@ -185,8 +185,6 @@ match 0 0 1 1 foo/bba/arr 'foo/**arr'
 match 0 0 0 0 foo/bba/arr 'foo/*z'
 match 0 0 0 0 foo/bba/arr 'foo/**z'
 match 0 0 1 1 foo/bar 'foo?bar'
-match 0 0 1 1 foo/bar 'foo[/]bar'
-match 0 0 1 1 foo/bar 'foo[^a-z]bar'
 match 0 0 1 1 ab/cXd/efXg/hi '*Xg*i'
 
 # Extra case-sensitivity tests
