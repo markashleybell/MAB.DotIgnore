@@ -1,1 +1,0 @@
-tcc\tcc.exe wm.c wildmatch.c

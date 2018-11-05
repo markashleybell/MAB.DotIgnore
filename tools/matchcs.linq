@@ -7,32 +7,20 @@ void Main()
     var workingDirectory = Path.GetDirectoryName(Util.CurrentQueryPath);
 
     // https://github.com/git/git/blob/master/t/t3070-wildmatch.sh
-    var tests = File.ReadAllLines(workingDirectory + @"\tests.txt")
-        .Where(l => !l.StartsWith("#") && !string.IsNullOrWhiteSpace(l))
-        .Select(l => l.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
-        .Select((l, i) => {
-            var path = l[5].Trim('\'', '"');
-            // This weirdness is because a few of the test patterns actually contain a space
-            // character, so we tack the extra element created by the split onto the end
-            var pattern = l[6].Trim('\'', '"') + (l.Length == 8 ? " " + l[7].Trim('\'', '"') : "");
-        
-            // Manually hack around the fact that test 82 passes in a space as the path, which makes 
-            // both the pattern and path differ from the test file and causes the test to fail 
-            if (i == 82)
-            {
-                path = " ";
-                pattern = pattern.TrimStart(' ');
-            }
-        
-            return new GitTest { 
-                ID = i,
-                Pattern = pattern,
-                Path = path,
-                ExpectGlobMatch = l[1] == "1",
-                ExpectGlobMatchCI = l[2] == "1",
-                ExpectPathMatch = l[3] == "1",
-                ExpectPathMatchCI = l[4] == "1"
-            };
+    var testLineRx = new Regex(@"^match ([01]) ([01]) ([01]) ([01]) ('.+?'|.+?) ('.+?'|.+?)$", RegexOptions.IgnoreCase);
+
+    var tests = File.ReadAllLines(workingDirectory + @"\..\MAB.DotIgnore.Test\test_content\git-tests\tests-current-fixed.txt")
+        .Select((s, i) => (content: s, number: i))
+        .Where(line => !line.content.StartsWith("#") && !string.IsNullOrWhiteSpace(line.content))
+        .Select(line => (match: testLineRx.Match(line.content), lineNo: line.number))
+        .Select(test =>  new GitTest { 
+            LineNumber = test.lineNo,
+            Pattern = test.match.Groups[6].Value,
+            Path = test.match.Groups[5].Value,
+            ExpectGlobMatch = test.match.Groups[1].Value == "1",
+            ExpectGlobMatchCI = test.match.Groups[2].Value == "1",
+            ExpectPathMatch = test.match.Groups[3].Value == "1",
+            ExpectPathMatchCI = test.match.Groups[4].Value == "1"
         });
         
     // tests.Dump();
@@ -43,31 +31,41 @@ void Main()
     
     // tests = tests.Where(t => filter.Any(f => f == t.ID));
     
-    var expected = tests.Select(t => new Check {
-        ID = t.ID,
-        Pattern = t.Pattern,
-        Path = t.Path,
-        Regex = GetRegex(t.Pattern),
-        Result = t.ExpectGlobMatch,
-        ResultCI = t.ExpectGlobMatchCI
+    var expected = tests.Select(t => {
+        var pattern = TrimQuotes(t.Pattern);
+        var path = TrimQuotes(t.Path);
+        
+        return new Check {
+            LineNumber = t.LineNumber,
+            Pattern = pattern,
+            Path = path,
+            Regex = GetRegex(pattern),
+            Result = t.ExpectGlobMatch,
+            ResultCI = t.ExpectGlobMatchCI
+        };
     });
     
-    var actual = tests.Select(t => new Check {
-        ID = t.ID,
-        Pattern = t.Pattern,
-        Path = t.Path,
-        Regex = GetRegex(t.Pattern),
-        Result = IsMatch(t.Pattern, t.Path),
-        ResultCI = IsMatch(t.Pattern, t.Path, caseSensitive: false)
+    var actual = tests.Select(t => {
+        var pattern = TrimQuotes(t.Pattern);
+        var path = TrimQuotes(t.Path);
+        
+        return new Check {
+            LineNumber = t.LineNumber,
+            Pattern = pattern,
+            Path = path,
+            Regex = GetRegex(pattern),
+            Result = IsMatch(pattern, path),
+            ResultCI = IsMatch(pattern, path, caseSensitive: false)
+        };
     });
     
     var failed = actual
         .Where(a => {
-            var ex = expected.Single(e => e.ID == a.ID);
+            var ex = expected.Single(e => e.LineNumber == a.LineNumber);
             return a.Result != ex.Result || a.ResultCI != ex.ResultCI;
         })
         .Select(a => new { 
-            a.ID, 
+            a.LineNumber, 
             a.Pattern, 
             a.Path, 
             Regex = a.Regex,
@@ -90,12 +88,15 @@ void Main()
     // IsMatch(pattern: @"test[^A-Z]end", path: @"test1end").Dump();
 }
 
+public static string TrimQuotes(string s) =>
+    s.Trim('\'', '"');
+
 public static bool IsMatch(string pattern, string path, bool caseSensitive = true) =>
     TryMatch(GetRegex(pattern), path, caseSensitive);
 
 public static bool TryMatch(string rxPattern, string path, bool caseSensitive = true)
 {
-    if (rxPattern == null)
+    if (string.IsNullOrEmpty(rxPattern))
     {
         return false;
     }
@@ -245,7 +246,7 @@ public static string NonPathMatchCharClasses(string p)
 
 public class GitTest
 {
-    public int ID { get; set; }
+    public int LineNumber { get; set; }
     public string Pattern { get; set; }
     public string Path { get; set; }
     public bool ExpectGlobMatch { get; set; }
@@ -256,7 +257,7 @@ public class GitTest
 
 public class Check
 {
-    public int ID { get; set; }
+    public int LineNumber { get; set; }
     public string Pattern { get; set; }
     public string Path { get; set; }
     public string Regex { get; set; }

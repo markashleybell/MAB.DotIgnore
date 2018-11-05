@@ -13,7 +13,7 @@ namespace MAB.DotIgnore
 
         public static bool TryMatch(string rxPattern, string path, bool caseSensitive = true)
         {
-            if (rxPattern == null)
+            if (string.IsNullOrEmpty(rxPattern))
             {
                 return false;
             }

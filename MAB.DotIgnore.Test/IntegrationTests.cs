@@ -4,18 +4,29 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace MAB.DotIgnore.Tests
 {
     internal class GitTest
     {
-        public int ID { get; set; }
+        public int LineNumber { get; set; }
         public string Pattern { get; set; }
         public string Path { get; set; }
         public bool ExpectGlobMatch { get; set; }
         public bool ExpectGlobMatchCI { get; set; }
         public bool ExpectPathMatch { get; set; }
         public bool ExpectPathMatchCI { get; set; }
+    }
+
+    internal class MatchTestResult
+    {
+        public int LineNumber { get; set; }
+        public string Pattern { get; set; }
+        public string Path { get; set; }
+        public string Regex { get; set; }
+        public bool Result { get; set; }
+        public bool ResultCI { get; set; }
     }
 
     [TestFixture(Category = "Integration Tests")]
@@ -36,87 +47,78 @@ namespace MAB.DotIgnore.Tests
         }
 
         [Test]
-        public void Compare_Matcher_Output_With_C_Function()
+        public void Compare_Matcher_Results_With_Wildmatch_Expectations()
         {
+            var testLineRx = new Regex(@"^match ([01]) ([01]) ([01]) ([01]) ('.+?'|.+?) ('.+?'|.+?)$", RegexOptions.IgnoreCase);
+
             var tests = File.ReadAllLines(_basePath + @"\git-tests\tests-current-fixed.txt")
-                .Where(l => !l.StartsWith("#") && !string.IsNullOrWhiteSpace(l))
-                .Select(l => l.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
-                .Select((l, i) => {
-                    var path = l[5].Trim('\'', '"');
-                    // This weirdness is because a few of the test patterns actually contain a space
-                    // character, so we tack the extra element created by the split onto the end
-                    var pattern = l[6].Trim('\'', '"') + (l.Length == 8 ? " " + l[7].Trim('\'', '"') : "");
+                .Select((s, i) => (content: s, number: i))
+                .Where(line => !line.content.StartsWith("#") && !string.IsNullOrWhiteSpace(line.content))
+                .Select(line => (match: testLineRx.Match(line.content), lineNo: line.number))
+                .Select(test => new GitTest {
+                    LineNumber = test.lineNo,
+                    Pattern = test.match.Groups[6].Value,
+                    Path = test.match.Groups[5].Value,
+                    ExpectGlobMatch = test.match.Groups[1].Value == "1",
+                    ExpectGlobMatchCI = test.match.Groups[2].Value == "1",
+                    ExpectPathMatch = test.match.Groups[3].Value == "1",
+                    ExpectPathMatchCI = test.match.Groups[4].Value == "1"
+                });
 
-                    // Manually hack around the fact that test 82 passes in a space as the path, which makes 
-                    // both the pattern and path differ from the test file and causes the test to fail 
-                    if (i == 82)
-                    {
-                        path = " ";
-                        pattern = pattern.TrimStart(' ');
-                    }
+            var expected = tests.Select(t => {
+                var pattern = TrimQuotes(t.Pattern);
+                var path = TrimQuotes(t.Path);
 
-                    return new GitTest {
-                        ID = i,
-                        Pattern = pattern,
-                        Path = path,
-                        ExpectGlobMatch = l[1] == "1",
-                        ExpectGlobMatchCI = l[2] == "1",
-                        ExpectPathMatch = l[3] == "1",
-                        ExpectPathMatchCI = l[4] == "1"
-                    };
-                })
-                .ToList();
-
-
-            tests.ForEach(t => {
-                Console.WriteLine(string.Format("{0} {1}", t.Path, t.Pattern));
-                var referenceReturnValue = ReferenceMatchPattern(t.Pattern, t.Path, false);
-                var referenceResult = referenceReturnValue == 0;
-                var testResult = Matcher.IsMatch(t.Pattern, t.Path);
-                Assert.AreEqual(referenceResult, testResult);
+                return new MatchTestResult {
+                    LineNumber = t.LineNumber,
+                    Pattern = pattern,
+                    Path = path,
+                    Regex = Matcher.GetRegex(pattern),
+                    Result = t.ExpectGlobMatch,
+                    ResultCI = t.ExpectGlobMatchCI
+                };
             });
-        }
 
-        private Process CreateProcess(string executableFilename, string arguments, string workingDirectory)
-        {
-            return new Process {
-                EnableRaisingEvents = true,
-                StartInfo = new ProcessStartInfo {
-                    FileName = executableFilename,
-                    Arguments = arguments,
-                    WorkingDirectory = workingDirectory,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                }
-            };
-        }
+            var actual = tests.Select(t => {
+                var pattern = TrimQuotes(t.Pattern);
+                var path = TrimQuotes(t.Path);
 
-        private int ReferenceMatchPattern(string pattern, string text, bool caseFold)
-        {
-            var workingDirectory = _basePath + @"\git-wildmatch";
-    
-            var log = new List<string>();
-    
-            var arguments = pattern + " " + text + " " + (caseFold ? 1 : 0);
-    
-            using (var build = CreateProcess(workingDirectory + @"\wm.exe", arguments, workingDirectory))
+                return new MatchTestResult {
+                    LineNumber = t.LineNumber,
+                    Pattern = pattern,
+                    Path = path,
+                    Regex = Matcher.GetRegex(pattern),
+                    Result = Matcher.IsMatch(pattern, path),
+                    ResultCI = Matcher.IsMatch(pattern, path, caseSensitive: false)
+                };
+            });
+
+            var failed = actual
+                .Where(a => {
+                    var ex = expected.Single(e => e.LineNumber == a.LineNumber);
+                    return a.Result != ex.Result || a.ResultCI != ex.ResultCI;
+                })
+                .Select(a => new {
+                    a.LineNumber,
+                    a.Pattern,
+                    a.Path,
+                    a.Regex,
+                    Expected = !a.Result,
+                    Actual = a.Result,
+                    ExpectedCI = !a.ResultCI,
+                    ActualCI = a.ResultCI
+                });
+
+            Assert.That(failed.Count() == 0);
+
+            foreach (var t in failed)
             {
-                build.Start();
-
-                build.OutputDataReceived += (sender, e) => log.Add("0> " + e.Data);
-                build.BeginOutputReadLine();
-
-                build.ErrorDataReceived += (sender, e) => log.Add("1> " + e.Data);
-                build.BeginErrorReadLine();
-
-                build.WaitForExit();
-        
-                return build.ExitCode;
+                Console.WriteLine($"{t.Path} {t.Pattern} {t.Regex}");
             }
         }
-        
+
+        public static string TrimQuotes(string s) => s.Trim('\'', '"');
+
         [Test]
         public void Copy_Non_Ignored_Solution_Files()
         {
