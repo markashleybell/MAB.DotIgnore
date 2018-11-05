@@ -14,7 +14,7 @@ main(int argc, char **argv)
     if(strcmp(argv[3], "1") == 0)
         flags = WM_PATHNAME | WM_CASEFOLD;
 
-    int match = wildmatch(argv[1], argv[2], flags, NULL);
+    int match = wildmatch(argv[1], argv[2], flags);
     printf("%i\n", match);
 
     return match;
