@@ -1,5 +1,5 @@
 <Query Kind="Program">
-  <Reference Relative="previous\MAB.DotIgnore.dll">C:\Src\MAB.DotIgnore\tools\benchmark\previous\MAB.DotIgnore.dll</Reference>
+  <Reference Relative="current-pre\MAB.DotIgnore.dll">C:\Src\MAB.DotIgnore\tools\benchmark\current-pre\MAB.DotIgnore.dll</Reference>
   <Namespace>MAB.DotIgnore</Namespace>
 </Query>
 

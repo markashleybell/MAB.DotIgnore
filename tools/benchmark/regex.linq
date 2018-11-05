@@ -7,19 +7,10 @@
 
 void Main()
 {
-    var workingDirectory = Path.GetDirectoryName(Util.CurrentQueryPath);
+    var rx = new Regex(@"\[\:[a-z]*\:\]", RegexOptions.Compiled);
+    var pattern = "[[:alnum:][:alpha:][:blank:][:cntrl:][:digit:][:graph:][:lower:][:print:][:punct:][:space:][:upper:][:xdigit:]]";
     
-    // This gives us an array of ~1500 file paths
-    var fileList = File.ReadAllLines($@"{workingDirectory}\filelist.txt")
-        .Select(l => l.Trim('"').Replace(@"C:\", "").Replace(@"\", "/"))
-        .Where(l => !string.IsNullOrWhiteSpace(l))
-        .ToList();
-
-    var ignoreList = new IgnoreList($@"{workingDirectory}\.ignores");
-
-    Action action = () => fileList.ForEach(f => ignoreList.IsIgnored(f, pathIsDirectory: false));
-
-    var ms = Benchmark.Perform(action, 10);
+    var ms = Benchmark.Perform(() => rx.Matches(pattern).Cast<Match>().Select(m => m.Groups[0].Value), 1000000);
     
     $"Completed in {ms}ms".Dump("Result");
 }
