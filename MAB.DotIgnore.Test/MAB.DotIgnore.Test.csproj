@@ -30,6 +30,9 @@
         <ProjectReference Include="..\MAB.DotIgnore\MAB.DotIgnore.csproj" />
     </ItemGroup>
     <ItemGroup>
+        <None Update="test_content\git-tests\tests-fixed.txt">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
         <None Update="test_content\git-wildmatch\wm.exe">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>

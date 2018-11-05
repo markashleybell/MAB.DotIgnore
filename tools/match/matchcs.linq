@@ -84,10 +84,10 @@ void Main()
     
     // failed.Select(f => f.Pattern).Dump();
     
-    // Util.Dif(expected, actual).Dump();
+    Util.Dif(expected, actual).Dump();
     
-    IsMatch(pattern: @"test[^A-Z]end", path: @"test/end").Dump();
-    IsMatch(pattern: @"test[^A-Z]end", path: @"test1end").Dump();
+    // IsMatch(pattern: @"test[^A-Z]end", path: @"test/end").Dump();
+    // IsMatch(pattern: @"test[^A-Z]end", path: @"test1end").Dump();
 }
 
 public static bool IsMatch(string pattern, string path, bool caseSensitive = true) =>

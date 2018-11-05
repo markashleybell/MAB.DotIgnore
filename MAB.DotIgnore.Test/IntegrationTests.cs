@@ -7,10 +7,15 @@ using System.Linq;
 
 namespace MAB.DotIgnore.Tests
 {
-    internal class Test
+    internal class GitTest
     {
-        public string Text { get; set; }
+        public int ID { get; set; }
         public string Pattern { get; set; }
+        public string Path { get; set; }
+        public bool ExpectGlobMatch { get; set; }
+        public bool ExpectGlobMatchCI { get; set; }
+        public bool ExpectPathMatch { get; set; }
+        public bool ExpectPathMatchCI { get; set; }
     }
 
     [TestFixture(Category = "Integration Tests")]
@@ -31,19 +36,43 @@ namespace MAB.DotIgnore.Tests
         }
 
         [Test]
-        public void Compare_Wildmatch_Output_With_C_Function()
+        public void Compare_Matcher_Output_With_C_Function()
         {
-            var tests = File.ReadAllLines(_basePath + @"\tests.txt")
-                    .Where(l => !l.StartsWith("#") && !string.IsNullOrWhiteSpace(l))
-                    .Select(l => l.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
-                    .Select(l => new Test { Text = l[2], Pattern = l[3] })
-                    .ToList();
+            var tests = File.ReadAllLines(_basePath + @"\git-tests\tests-current-fixed.txt")
+                .Where(l => !l.StartsWith("#") && !string.IsNullOrWhiteSpace(l))
+                .Select(l => l.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
+                .Select((l, i) => {
+                    var path = l[5].Trim('\'', '"');
+                    // This weirdness is because a few of the test patterns actually contain a space
+                    // character, so we tack the extra element created by the split onto the end
+                    var pattern = l[6].Trim('\'', '"') + (l.Length == 8 ? " " + l[7].Trim('\'', '"') : "");
+
+                    // Manually hack around the fact that test 82 passes in a space as the path, which makes 
+                    // both the pattern and path differ from the test file and causes the test to fail 
+                    if (i == 82)
+                    {
+                        path = " ";
+                        pattern = pattern.TrimStart(' ');
+                    }
+
+                    return new GitTest {
+                        ID = i,
+                        Pattern = pattern,
+                        Path = path,
+                        ExpectGlobMatch = l[1] == "1",
+                        ExpectGlobMatchCI = l[2] == "1",
+                        ExpectPathMatch = l[3] == "1",
+                        ExpectPathMatchCI = l[4] == "1"
+                    };
+                })
+                .ToList();
+
 
             tests.ForEach(t => {
-                Console.WriteLine(string.Format("{0} {1}", t.Text, t.Pattern));
-                var referenceReturnValue = ReferenceMatchPattern(t.Pattern, t.Text, false);
+                Console.WriteLine(string.Format("{0} {1}", t.Path, t.Pattern));
+                var referenceReturnValue = ReferenceMatchPattern(t.Pattern, t.Path, false);
                 var referenceResult = referenceReturnValue == 0;
-                var testResult = Matcher.IsMatch(t.Pattern, t.Text);
+                var testResult = Matcher.IsMatch(t.Pattern, t.Path);
                 Assert.AreEqual(referenceResult, testResult);
             });
         }
