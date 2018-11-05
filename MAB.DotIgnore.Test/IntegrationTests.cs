@@ -83,13 +83,25 @@ namespace MAB.DotIgnore.Tests
                 var pattern = TrimQuotes(t.Pattern);
                 var path = TrimQuotes(t.Path);
 
+                var rxPattern = Matcher.GetRegex(pattern);
+
+                Regex rx = null;
+                Regex rxCI = null;
+
+                try
+                {
+                    rx = new Regex(rxPattern);
+                    rxCI = new Regex(rxPattern, RegexOptions.IgnoreCase);
+                }
+                catch { }
+
                 return new MatchTestResult {
                     LineNumber = t.LineNumber,
                     Pattern = pattern,
                     Path = path,
-                    Regex = Matcher.GetRegex(pattern),
-                    Result = Matcher.IsMatch(pattern, path),
-                    ResultCI = Matcher.IsMatch(pattern, path, caseSensitive: false)
+                    Regex = rxPattern,
+                    Result = Matcher.TryMatch(rx, path),
+                    ResultCI = Matcher.TryMatch(rxCI, path)
                 };
             });
 

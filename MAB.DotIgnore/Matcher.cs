@@ -6,23 +6,18 @@ using System.Text.RegularExpressions;
 
 namespace MAB.DotIgnore
 {
-    internal static class Matcher
+    public static class Matcher
     {
-        public static bool IsMatch(string pattern, string path, bool caseSensitive = true) =>
-            TryMatch(GetRegex(pattern), path, caseSensitive);
-
-        public static bool TryMatch(string rxPattern, string path, bool caseSensitive = true)
+        public static bool TryMatch(Regex rx, string path)
         {
-            if (string.IsNullOrEmpty(rxPattern))
+            if (rx == null)
             {
                 return false;
             }
 
             try
             {
-                return !caseSensitive
-                    ? Regex.IsMatch(path, rxPattern, RegexOptions.IgnoreCase)
-                    : Regex.IsMatch(path, rxPattern);
+                return rx.IsMatch(path);
             }
             catch
             {

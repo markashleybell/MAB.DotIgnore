@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace MAB.DotIgnore
 {
@@ -11,6 +12,8 @@ namespace MAB.DotIgnore
         private int _wildcardIndex;
 
         private StringComparison sc = StringComparison.Ordinal;
+
+        private readonly Regex rx;
 
         internal int? LineNumber { get; set; }
 
@@ -91,6 +94,16 @@ namespace MAB.DotIgnore
 
             // TODO: Currently, we are just setting PATHNAME for every rule, because it seems to match the original behaviour
             // See here for a clue: https://github.com/git/git/blob/c2c5f6b1e479f2c38e0e01345350620944e3527f/dir.c#L99
+
+            var rxPattern = Matcher.GetRegex(Pattern);
+
+            // If GetRegex returns null, it was passed an invalid pattern so it cannot match
+            if (!string.IsNullOrEmpty(rxPattern))
+            {
+                var rxOptions = MatchFlags.HasFlag(MatchFlags.CASEFOLD) ? RegexOptions.IgnoreCase : RegexOptions.None;
+
+                rx = new Regex(rxPattern, rxOptions);
+            }
         }
 
         // PATTERN FORMAT
@@ -190,7 +203,7 @@ namespace MAB.DotIgnore
                 return false;
 
             // If we got this far, we can't figure out the match with simple string matching, so use our wildmatch implementation
-            
+
             // If the pattern does not contain any slashes it should match *any* occurence, *anywhere* within the path 
             // (e.g. '*.jpg' should match 'a.jpg', 'a/b.jpg', 'a/b/c.jpg'), so try matching before each slash
             if (!Pattern.Contains("/") && path.Contains("/"))
@@ -199,7 +212,7 @@ namespace MAB.DotIgnore
 
                 foreach(var segment in segments)
                 {
-                    if (Matcher.IsMatch(Pattern, segment, !MatchFlags.HasFlag(MatchFlags.CASEFOLD)))
+                    if (Matcher.TryMatch(rx, segment))
                         return true;
                 }
 
@@ -207,7 +220,7 @@ namespace MAB.DotIgnore
             }
 
             // If the *path* doesn't contain any slashes, we should skip over the conditional above
-            return Matcher.IsMatch(Pattern, path, !MatchFlags.HasFlag(MatchFlags.CASEFOLD));
+            return Matcher.TryMatch(rx, path);
         }
 
         /// <summary>
