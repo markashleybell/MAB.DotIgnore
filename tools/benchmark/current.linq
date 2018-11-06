@@ -1,5 +1,5 @@
 <Query Kind="Program">
-  <Reference Relative="..\..\MAB.DotIgnore\bin\Release\netstandard1.3\MAB.DotIgnore.dll">C:\Src\MAB.DotIgnore\MAB.DotIgnore\bin\Release\netstandard1.3\MAB.DotIgnore.dll</Reference>
+  <Reference Relative="..\..\MAB.DotIgnore\bin\Release\netstandard1.3\MAB.DotIgnore.dll">E:\Src\MAB.DotIgnore\MAB.DotIgnore\bin\Release\netstandard1.3\MAB.DotIgnore.dll</Reference>
   <Namespace>MAB.DotIgnore</Namespace>
 </Query>
 
@@ -7,6 +7,8 @@
 
 void Main()
 {
+    Util.NewProcess = true;
+    
     var workingDirectory = Path.GetDirectoryName(Util.CurrentQueryPath);
     
     // This gives us an array of ~1500 file paths

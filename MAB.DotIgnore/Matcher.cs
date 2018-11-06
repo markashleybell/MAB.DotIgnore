@@ -40,6 +40,15 @@ namespace MAB.DotIgnore
 
         public static string GetRegex(string pattern, bool caseSensitive = true)
         {
+            // Double-star is only valid:
+            // - at the beginning of a pattern, immediately followed by a slash ('**/c')
+            // - at the end of a pattern, immediately preceded by a slash ('a/**')
+            // - anywhere in the pattern with a slash immediately before and after ('a/**/c')
+            if (InvalidStarStarRx.IsMatch(pattern))
+            {
+                return null;
+            }
+
             var literalsToEscapeInRegex = new[] { ".", "$", "{", "}", "(", "|", ")", "+" };
 
             // Match POSIX char classes with .NET unicode equivalents
@@ -69,15 +78,6 @@ namespace MAB.DotIgnore
                 return null;
             }
 
-            // Double-star is only valid:
-            // - at the beginning of a pattern, immediately followed by a slash ('**/c')
-            // - at the end of a pattern, immediately preceded by a slash ('a/**')
-            // - anywhere in the pattern with a slash immediately before and after ('a/**/c')
-            if (InvalidStarStarRx.IsMatch(pattern))
-            {
-                return null;
-            }
-
             // Remove single backslashes before alphanumeric chars 
             // (escaping these in a glob pattern should have no effect)
             pattern = EscapedAlphaNumRx.Replace(pattern, "$1");
@@ -102,27 +102,23 @@ namespace MAB.DotIgnore
             rx.Insert(0, "^");
             rx.Append("$");
 
-            var rxs = rx.ToString();
-
             // Character class patterns shouldn't match slashes, so we prefix them with 
             // negative lookaheads. This is rather harder than it seems, because class 
             // patterns can also contain unescaped square brackets...
 
             // TODO: is this only true if PATHMATCH isn't specified?
-            rxs = NonPathMatchCharClasses(rxs);
 
-            // TODO: first of these can be a StringBuilder replace with preceding slash, second can then just do a replace
+            var rx2 = new StringBuilder(NonPathMatchCharClasses(rx.ToString()));
+
             // Non-escaped question mark should match any single char except slash
-            rxs = Regex.Replace(rxs, @"\\\[:QM:\]", @"\?");
-            rxs = Regex.Replace(rxs, @"(?<!\\)\[\:QM\:\]", "[^/]");
+            rx2.Replace(@"\[:QM:]", @"\?");
+            rx2.Replace(@"[:QM:]", @"[^/]");
 
             // Replace star patterns with equivalent regex patterns
-            rxs = Regex.Replace(rxs, @"\\\[\:STAR:\]", @"\*");
-            rxs = Regex.Replace(rxs, @"(?<!\\)\[\:STAR:\]", "[^/]*");
+            rx2.Replace(@"\[:STAR:]", @"\*");
+            rx2.Replace(@"[:STAR:]", @"[^/]*");
 
-            rxs = Regex.Replace(rxs, @"(\[\:STARSTAR\:\]/?)+", ".*");
-
-            return rxs;
+            return Regex.Replace(rx2.ToString(), @"(?>\[:STARSTAR:\]/?)+", ".*");
         }
 
         private static string NonPathMatchCharClasses(string p)
