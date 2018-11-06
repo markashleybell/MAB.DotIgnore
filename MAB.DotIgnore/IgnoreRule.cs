@@ -100,7 +100,10 @@ namespace MAB.DotIgnore
             // If GetRegex returns null, it was passed an invalid pattern so it cannot match
             if (!string.IsNullOrEmpty(rxPattern))
             {
-                var rxOptions = MatchFlags.HasFlag(MatchFlags.CASEFOLD) ? RegexOptions.IgnoreCase : RegexOptions.None;
+                var rxOptions = RegexOptions.Compiled;
+
+                if (MatchFlags.HasFlag(MatchFlags.CASEFOLD))
+                    rxOptions |= RegexOptions.IgnoreCase;
 
                 rx = new Regex(rxPattern, rxOptions);
             }
