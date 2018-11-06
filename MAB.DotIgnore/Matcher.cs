@@ -110,9 +110,10 @@ namespace MAB.DotIgnore
             rxs = Regex.Replace(rxs, @"(?<!\\)\[\:QM\:\]", "[^/]");
 
             // Replace star patterns with equivalent regex patterns
-            rxs = Regex.Replace(rxs, @"(\[\:STARSTAR\:\]/?)+", ".*");
             rxs = Regex.Replace(rxs, @"\\\[\:STAR:\]", @"\*");
             rxs = Regex.Replace(rxs, @"(?<!\\)\[\:STAR:\]", "[^/]*");
+
+            rxs = Regex.Replace(rxs, @"(\[\:STARSTAR\:\]/?)+", ".*");
 
             return rxs;
         }
