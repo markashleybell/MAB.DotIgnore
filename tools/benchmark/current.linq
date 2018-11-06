@@ -1,5 +1,6 @@
 <Query Kind="Program">
   <Reference Relative="..\..\MAB.DotIgnore\bin\Release\netstandard1.3\MAB.DotIgnore.dll">E:\Src\MAB.DotIgnore\MAB.DotIgnore\bin\Release\netstandard1.3\MAB.DotIgnore.dll</Reference>
+  <Reference>&lt;RuntimeDirectory&gt;\System.IO.FileSystem.dll</Reference>
   <Namespace>MAB.DotIgnore</Namespace>
 </Query>
 
@@ -18,6 +19,8 @@ void Main()
         .ToList();
 
     var ignoreList = new IgnoreList($@"{workingDirectory}\.ignores");
+    
+    ignoreList.IsIgnored("TEST", false);
 
     Action action = () => fileList.ForEach(f => ignoreList.IsIgnored(f, pathIsDirectory: false));
 
