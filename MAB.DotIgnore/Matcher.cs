@@ -14,6 +14,26 @@ namespace MAB.DotIgnore
 
         private static readonly Regex EscapedAlphaNumRx = new Regex(@"(?<!\\)\\([a-zA-Z0-9])", RegexOptions.Compiled);
 
+        private static readonly string[] LiteralsToEscapeInRegex = new[] { ".", "$", "{", "}", "(", "|", ")", "+" };
+
+        // Match POSIX char classes with .NET unicode equivalents
+        // https://www.regular-expressions.info/posixbrackets.html
+        private static readonly Dictionary<string, string> CharClassSubstitutions = 
+            new Dictionary<string, string> {
+                { "[:alnum:]", @"a-zA-Z0-9" },
+                { "[:alpha:]", @"a-zA-Z" },
+                { "[:blank:]", @"\p{Zs}\t" },
+                { "[:cntrl:]", @"\p{Cc}" },
+                { "[:digit:]", @"\d" },
+                { "[:graph:]", @"^\p{Z}\p{C}" },
+                { "[:lower:]", @"a-z" },
+                { "[:print:]", @"\p{C}" },
+                { "[:punct:]", @"\p{P}" },
+                { "[:space:]", @"\s" },
+                { "[:upper:]", @"A-Z" },
+                { "[:xdigit:]", @"A-Fa-f0-9" }
+            };
+
         public static bool TryMatch(Regex rx, string path)
         {
             if (rx == null)
@@ -49,26 +69,7 @@ namespace MAB.DotIgnore
                 return null;
             }
 
-            var literalsToEscapeInRegex = new[] { ".", "$", "{", "}", "(", "|", ")", "+" };
-
-            // Match POSIX char classes with .NET unicode equivalents
-            // https://www.regular-expressions.info/posixbrackets.html
-            var charClassSubstitutions = new Dictionary<string, string> {
-                { "[:alnum:]", @"a-zA-Z0-9" },
-                { "[:alpha:]", @"a-zA-Z" },
-                { "[:blank:]", @"\p{Zs}\t" },
-                { "[:cntrl:]", @"\p{Cc}" },
-                { "[:digit:]", @"\d" },
-                { "[:graph:]", @"^\p{Z}\p{C}" },
-                { "[:lower:]", @"a-z" },
-                { "[:print:]", @"\p{C}" },
-                { "[:punct:]", @"\p{P}" },
-                { "[:space:]", @"\s" },
-                { "[:upper:]", @"A-Z" },
-                { "[:xdigit:]", @"A-Fa-f0-9" }
-            };
-
-            var charClasses = charClassSubstitutions.Keys.ToArray();
+            var charClasses = CharClassSubstitutions.Keys.ToArray();
 
             var patternCharClasses = CharClassRx.Matches(pattern).Cast<Match>().Select(m => m.Groups[0].Value);
 
@@ -84,14 +85,14 @@ namespace MAB.DotIgnore
 
             var rx = new StringBuilder(pattern);
 
-            foreach (var literal in literalsToEscapeInRegex)
+            foreach (var literal in LiteralsToEscapeInRegex)
             {
                 rx.Replace(literal, @"\" + literal);
             }
 
             foreach (var k in charClasses)
             {
-                rx.Replace(k, charClassSubstitutions[k]);
+                rx.Replace(k, CharClassSubstitutions[k]);
             }
 
             rx.Replace("!", "^");
