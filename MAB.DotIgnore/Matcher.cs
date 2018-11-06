@@ -117,7 +117,7 @@ namespace MAB.DotIgnore
             return rxs;
         }
 
-        public static string NonPathMatchCharClasses(string p)
+        private static string NonPathMatchCharClasses(string p)
         {
             var o = new StringBuilder();
             var inBrackets = false;
