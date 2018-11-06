@@ -8,7 +8,7 @@ namespace MAB.DotIgnore
 {
     public static class Matcher
     {
-        private static readonly Regex CharClassRx = new Regex(@"\[\:[a-z]*\:\]", RegexOptions.Compiled);
+        private static readonly Regex CharClassRx = new Regex(@"\[:(?>[a-z]*?):\]", RegexOptions.Compiled);
 
         private static readonly Regex InvalidStarStarRx = new Regex(@"\*\*[^/\s]|[^/\s]\*\*", RegexOptions.Compiled);
 
