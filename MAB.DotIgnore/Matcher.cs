@@ -8,6 +8,12 @@ namespace MAB.DotIgnore
 {
     public static class Matcher
     {
+        private static readonly Regex CharClassRx = new Regex(@"\[\:[a-z]*\:\]", RegexOptions.Compiled);
+
+        private static readonly Regex InvalidStarStarRx = new Regex(@"\*\*[^/\s]|[^/\s]\*\*", RegexOptions.Compiled);
+
+        private static readonly Regex EscapedAlphaNumRx = new Regex(@"(?<!\\)\\([a-zA-Z0-9])", RegexOptions.Compiled);
+
         public static bool TryMatch(Regex rx, string path)
         {
             if (rx == null)
@@ -55,7 +61,7 @@ namespace MAB.DotIgnore
 
             var charClasses = charClassSubstitutions.Keys.ToArray();
 
-            var patternCharClasses = Regex.Matches(pattern, @"\[\:[a-z]*\:\]").Cast<Match>().Select(m => m.Groups[0].Value);
+            var patternCharClasses = CharClassRx.Matches(pattern).Cast<Match>().Select(m => m.Groups[0].Value);
 
             if (patternCharClasses.Any(pcc => !charClasses.Any(cc => cc == pcc)))
             {
@@ -67,14 +73,14 @@ namespace MAB.DotIgnore
             // - at the beginning of a pattern, immediately followed by a slash ('**/c')
             // - at the end of a pattern, immediately preceded by a slash ('a/**')
             // - anywhere in the pattern with a slash immediately before and after ('a/**/c')
-            if (Regex.IsMatch(pattern, @"\*\*[^/\s]|[^/\s]\*\*"))
+            if (InvalidStarStarRx.IsMatch(pattern))
             {
                 return null;
             }
 
             // Remove single backslashes before alphanumeric chars 
             // (escaping these in a glob pattern should have no effect)
-            pattern = Regex.Replace(pattern, @"(?<!\\)\\([a-zA-Z0-9])", "$1");
+            pattern = EscapedAlphaNumRx.Replace(pattern, "$1");
 
             var rx = new StringBuilder(pattern);
 
@@ -105,6 +111,7 @@ namespace MAB.DotIgnore
             // TODO: is this only true if PATHMATCH isn't specified?
             rxs = NonPathMatchCharClasses(rxs);
 
+            // TODO: first of these can be a StringBuilder replace with preceding slash, second can then just do a replace
             // Non-escaped question mark should match any single char except slash
             rxs = Regex.Replace(rxs, @"\\\[:QM:\]", @"\?");
             rxs = Regex.Replace(rxs, @"(?<!\\)\[\:QM\:\]", "[^/]");
