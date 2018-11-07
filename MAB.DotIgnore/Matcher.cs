@@ -132,11 +132,9 @@ namespace MAB.DotIgnore
                 return null;
             }
 
-            var charClasses = CharClassSubstitutions.Keys.ToArray();
-
             var patternCharClasses = CharClassRx.Matches(pattern).Cast<Match>().Select(m => m.Groups[0].Value);
 
-            if (patternCharClasses.Any(pcc => !charClasses.Any(cc => cc == pcc)))
+            if (patternCharClasses.Any(pcc => !CharClassSubstitutions.Keys.Contains(pcc)))
             {
                 // Malformed character class
                 return null;
@@ -153,7 +151,7 @@ namespace MAB.DotIgnore
                 rx.Replace(literal, @"\" + literal);
             }
 
-            foreach (var k in charClasses)
+            foreach (var k in CharClassSubstitutions.Keys)
             {
                 rx.Replace(k, CharClassSubstitutions[k]);
             }
