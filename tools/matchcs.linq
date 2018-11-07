@@ -13,7 +13,7 @@ void Main()
 
     var tests = File.ReadAllLines(workingDirectory + @"\..\MAB.DotIgnore.Test\test_content\git-tests\tests-current-fixed.txt")
         .Select((s, i) => (content: s, number: i))
-        .Where(line => !line.content.StartsWith("#") && !string.IsNullOrWhiteSpace(line.content))
+        .Where(line => !line.content.StartsWith("#", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrWhiteSpace(line.content))
         .Select(line => (match: testLineRx.Match(line.content), lineNo: line.number))
         .Select(test =>  new GitTest { 
             LineNumber = test.lineNo,
@@ -41,7 +41,7 @@ void Main()
             LineNumber = t.LineNumber,
             Pattern = pattern,
             Path = path,
-            Regex = Matcher.GetRegex(pattern),
+            Regex = Matcher.ToRegex(pattern),
             Result = t.ExpectGlobMatch,
             ResultCI = t.ExpectGlobMatchCI
         };
@@ -51,7 +51,7 @@ void Main()
         var pattern = TrimQuotes(t.Pattern);
         var path = TrimQuotes(t.Path);
         
-        var rxPattern = Matcher.GetRegex(pattern);
+        var rxPattern = Matcher.ToRegex(pattern);
 
         Regex rx = null;
         Regex rxCI = null;

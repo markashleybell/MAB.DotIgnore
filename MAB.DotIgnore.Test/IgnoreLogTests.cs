@@ -1,6 +1,6 @@
-﻿using NUnit.Framework;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
+using NUnit.Framework;
 
 namespace MAB.DotIgnore.Tests
 {
@@ -10,15 +10,12 @@ namespace MAB.DotIgnore.Tests
         private string _basePath;
 
         [OneTimeSetUp]
-        public void OneTimeSetUp()
-        {
+        public void OneTimeSetUp() =>
             _basePath = TestContext.CurrentContext.TestDirec‌​tory + @"\test_content";
-        }
 
         [SetUp]
         public void SetUp()
         {
-
         }
 
         [Test]
@@ -58,7 +55,7 @@ namespace MAB.DotIgnore.Tests
             Assert.IsTrue(log[directory.FullName].Count == 1);
             Assert.IsTrue(log[directory.FullName][0] == "IGNORED by test");
         }
-        
+
         [Test]
         public void Log_ToString()
         {
@@ -84,7 +81,7 @@ two
         {
             var log = new IgnoreLog();
             var ignoreList = new IgnoreList(new string[] { "*.cs" });
-            ignoreList.AddRules( _basePath + @"\multiplematch.gitignore");
+            ignoreList.AddRules(_basePath + @"\multiplematch.gitignore");
             var paths = new List<string> { "test/test1.cs", "test/test2.cs" };
             paths.ForEach(path => ignoreList.IsIgnored(path, true, log));
             var expectedResult = @"test/test1.cs
@@ -103,13 +100,11 @@ test/test2.cs
         [TearDown]
         public void TearDown()
         {
-
         }
 
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-
         }
     }
 }

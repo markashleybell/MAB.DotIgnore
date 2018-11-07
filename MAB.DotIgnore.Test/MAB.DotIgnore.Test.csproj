@@ -8,30 +8,39 @@
         <AssemblyOriginatorKeyFile>MAB.DotIgnore.Test.snk</AssemblyOriginatorKeyFile>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-      <DebugType>full</DebugType>
-      <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <DebugSymbols>true</DebugSymbols>
+        <DocumentationFile>bin\Debug\netcoreapp2.0\MAB.DotIgnore.Test.xml</DocumentationFile>
+        <NoWarn>1591</NoWarn>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-      <DebugType>full</DebugType>
-      <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <DebugSymbols>true</DebugSymbols>
+        <DocumentationFile>bin\Release\netcoreapp2.0\MAB.DotIgnore.Test.xml</DocumentationFile>
+        <NoWarn>1591</NoWarn>
     </PropertyGroup>
     <ItemGroup>
-      <Compile Remove="WildMatchTests.cs" />
-    </ItemGroup>
-    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.2">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
         <PackageReference Include="NUnit" Version="3.11.0" />
         <PackageReference Include="NUnit.ConsoleRunner" Version="3.9.0" />
         <PackageReference Include="NUnit3TestAdapter" Version="3.11.0" />
         <PackageReference Include="OpenCover" Version="4.6.519" />
         <PackageReference Include="ReportGenerator" Version="4.0.2" />
+        <PackageReference Include="StyleCop.Analyzers" Version="1.1.0-beta008">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\MAB.DotIgnore\MAB.DotIgnore.csproj" />
     </ItemGroup>
     <ItemGroup>
         <None Update="test_content\git-tests\tests-current-fixed.txt">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="test_content\loadfromfile.gitignore">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>

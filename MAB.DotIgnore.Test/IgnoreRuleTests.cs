@@ -1,6 +1,6 @@
-﻿using NUnit.Framework;
-using System;
+﻿using System;
 using System.IO;
+using NUnit.Framework;
 
 namespace MAB.DotIgnore.Tests
 {
@@ -10,22 +10,16 @@ namespace MAB.DotIgnore.Tests
         private string _basePath;
 
         [OneTimeSetUp]
-        public void OneTimeSetUp()
-        {
+        public void OneTimeSetUp() =>
             _basePath = TestContext.CurrentContext.TestDirec‌​tory + @"\test_content";
-        }
 
         [SetUp]
         public void SetUp()
         {
-
         }
 
         [Test]
-        public void Null_Pattern_Throws_Exception()
-        {
-            Assert.Throws<ArgumentNullException>(() => new IgnoreRule(null));
-        }
+        public void Null_Pattern_Throws_Exception() => Assert.Throws<ArgumentNullException>(() => new IgnoreRule(null));
 
         [Test]
         public void Null_Path_Throws_Exception()
@@ -35,10 +29,7 @@ namespace MAB.DotIgnore.Tests
         }
 
         [Test]
-        public void Empty_Pattern_Throws_Exception()
-        {
-            Assert.Throws<ArgumentException>(() => new IgnoreRule("  "));
-        }
+        public void Empty_Pattern_Throws_Exception() => Assert.Throws<ArgumentException>(() => new IgnoreRule("  "));
 
         [Test]
         public void Empty_Path_Throws_Exception()
@@ -51,6 +42,7 @@ namespace MAB.DotIgnore.Tests
         public void ToString_Returns_Correct_Pattern_Info()
         {
             var rule = new IgnoreRule("sub2/**.txt");
+
             // Should return original glob pattern > modified glob pattern
             Assert.IsTrue(rule.ToString() == "sub2/**.txt");
         }
@@ -109,6 +101,7 @@ namespace MAB.DotIgnore.Tests
             Assert.IsFalse(rule.IsMatch("/test.txt2", false));
             Assert.IsTrue(rule.IsMatch("/sub1/test.txt", false));
             Assert.IsTrue(rule.IsMatch("/sub1/sub2/test.txt", false));
+
             // Should match directory as well
             Assert.IsTrue(rule.IsMatch("/test.txt", true));
             Assert.IsFalse(rule.IsMatch("/test.txt2", true));
@@ -123,6 +116,7 @@ namespace MAB.DotIgnore.Tests
             Assert.IsFalse(rule.IsMatch("/test.txt2", false));
             Assert.IsFalse(rule.IsMatch("/sub1/test.txt", false));
             Assert.IsFalse(rule.IsMatch("/sub1/sub2/test.txt", false));
+
             // Should match directory as well
             Assert.IsTrue(rule.IsMatch("/test.txt", true));
             Assert.IsFalse(rule.IsMatch("/test.txt2", true));
@@ -137,6 +131,7 @@ namespace MAB.DotIgnore.Tests
             Assert.IsFalse(rule.IsMatch("/test2", true));
             Assert.IsTrue(rule.IsMatch("/sub1/test", true));
             Assert.IsTrue(rule.IsMatch("/sub1/sub2/test", true));
+
             // Should not match file called 'test' with no extension
             Assert.IsFalse(rule.IsMatch("/test", false));
         }
@@ -150,6 +145,7 @@ namespace MAB.DotIgnore.Tests
             Assert.IsFalse(rule.IsMatch("/test2", true));
             Assert.IsFalse(rule.IsMatch("/sub1/test", true));
             Assert.IsFalse(rule.IsMatch("/sub1/sub2/test", true));
+
             // Should not match file called 'test' with no extension
             Assert.IsFalse(rule.IsMatch("/test", false));
         }
@@ -163,6 +159,7 @@ namespace MAB.DotIgnore.Tests
             Assert.IsFalse(rule.IsMatch("/test.txt2", false));
             Assert.IsTrue(rule.IsMatch("/sub1/test.txt", false));
             Assert.IsTrue(rule.IsMatch("/sub1/sub2/test.txt", false));
+
             // Should match directory as well
             Assert.IsTrue(rule.IsMatch("/test.txt", true));
             Assert.IsFalse(rule.IsMatch("/test.txt2", true));
@@ -177,6 +174,7 @@ namespace MAB.DotIgnore.Tests
             Assert.IsFalse(rule.IsMatch("/test.txt2", false));
             Assert.IsFalse(rule.IsMatch("/sub1/test.txt", false));
             Assert.IsFalse(rule.IsMatch("/sub1/sub2/test.txt", false));
+
             // Should match directory as well
             Assert.IsTrue(rule.IsMatch("/test.txt", true));
             Assert.IsFalse(rule.IsMatch("/test.txt2", true));
@@ -191,6 +189,7 @@ namespace MAB.DotIgnore.Tests
             Assert.IsFalse(rule.IsMatch("/test2", true));
             Assert.IsTrue(rule.IsMatch("/sub1/test", true));
             Assert.IsTrue(rule.IsMatch("/sub1/sub2/test", true));
+
             // Should not match file called 'test' with no extension
             Assert.IsFalse(rule.IsMatch("/test", false));
         }
@@ -204,6 +203,7 @@ namespace MAB.DotIgnore.Tests
             Assert.IsFalse(rule.IsMatch("/test2", true));
             Assert.IsFalse(rule.IsMatch("/sub1/test", true));
             Assert.IsFalse(rule.IsMatch("/sub1/sub2/test", true));
+
             // Should not match file called 'test' with no extension
             Assert.IsFalse(rule.IsMatch("/test", false));
         }
@@ -217,6 +217,7 @@ namespace MAB.DotIgnore.Tests
             Assert.IsFalse(rule.IsMatch("/test.txt2", false));
             Assert.IsTrue(rule.IsMatch("/sub1/test.txt", false));
             Assert.IsTrue(rule.IsMatch("/sub1/sub2/test.txt", false));
+
             // Should match directory as well
             Assert.IsTrue(rule.IsMatch("/test.txt", true));
             Assert.IsFalse(rule.IsMatch("/test.txt2", true));
@@ -231,6 +232,7 @@ namespace MAB.DotIgnore.Tests
             Assert.IsFalse(rule.IsMatch("/test.txt2", false));
             Assert.IsTrue(rule.IsMatch("/sub1/test.txt", false));
             Assert.IsTrue(rule.IsMatch("/sub1/sub2/test.txt", false));
+
             // Should match directory as well
             Assert.IsTrue(rule.IsMatch("/test.txt", true));
             Assert.IsFalse(rule.IsMatch("/test.txt2", true));
@@ -245,6 +247,7 @@ namespace MAB.DotIgnore.Tests
             Assert.IsFalse(rule.IsMatch("/test2", true));
             Assert.IsTrue(rule.IsMatch("/sub1/test", true));
             Assert.IsTrue(rule.IsMatch("/sub1/sub2/test", true));
+
             // Should match directory as well
             Assert.IsTrue(rule.IsMatch("/sub1/sub2/test", false));
         }
@@ -258,6 +261,7 @@ namespace MAB.DotIgnore.Tests
             Assert.IsTrue(rule.IsMatch("/sub1/test.txt", false));
             Assert.IsTrue(rule.IsMatch("/sub1/sub2/test.txt", false));
             Assert.IsTrue(rule.IsMatch("/sub1/test.jpg", false));
+
             // Should match directory as well
             Assert.IsTrue(rule.IsMatch("/sub1/test.txt", true));
         }
@@ -271,6 +275,7 @@ namespace MAB.DotIgnore.Tests
             Assert.IsTrue(rule.IsMatch("/sub1/test", true));
             Assert.IsTrue(rule.IsMatch("/sub1/sub2/test", true));
             Assert.IsFalse(rule.IsMatch("/sub1/sub2/test2", true));
+
             // Should not match file
             Assert.IsFalse(rule.IsMatch("/sub1/sub2/test", false));
         }
@@ -284,6 +289,7 @@ namespace MAB.DotIgnore.Tests
             Assert.IsTrue(rule.IsMatch("/sub1/test.txt", true));
             Assert.IsTrue(rule.IsMatch("/sub1/sub2/test.txt", true));
             Assert.IsTrue(rule.IsMatch("/sub1/test.jpg", true));
+
             // Should not match file
             Assert.IsFalse(rule.IsMatch("/sub1/test.txt", false));
         }
@@ -297,6 +303,7 @@ namespace MAB.DotIgnore.Tests
             Assert.IsFalse(rule.IsMatch("/test2", true));
             Assert.IsTrue(rule.IsMatch("/sub1/test", true));
             Assert.IsTrue(rule.IsMatch("/sub1/sub2/test", true));
+
             // Should match directory as well
             Assert.IsTrue(rule.IsMatch("/sub1/sub2/test", false));
             Assert.IsFalse(rule.IsMatch("/sub1/sub2/test2", false));
@@ -311,6 +318,7 @@ namespace MAB.DotIgnore.Tests
             Assert.IsTrue(rule.IsMatch("/sub1/test.txt", false));
             Assert.IsTrue(rule.IsMatch("/sub1/sub2/test.txt", false));
             Assert.IsTrue(rule.IsMatch("/sub1/test.jpg", false));
+
             // Should match directory as well
             Assert.IsTrue(rule.IsMatch("/sub1/test.txt", true));
         }
@@ -324,6 +332,7 @@ namespace MAB.DotIgnore.Tests
             Assert.IsTrue(rule.IsMatch("/sub1/test", true));
             Assert.IsTrue(rule.IsMatch("/sub1/sub2/test", true));
             Assert.IsFalse(rule.IsMatch("/sub1/sub2/test2", true));
+
             // Should not match file
             Assert.IsFalse(rule.IsMatch("/sub1/sub2/test", false));
         }
@@ -337,6 +346,7 @@ namespace MAB.DotIgnore.Tests
             Assert.IsTrue(rule.IsMatch("/sub1/test.txt", true));
             Assert.IsTrue(rule.IsMatch("/sub1/sub2/test.txt", true));
             Assert.IsTrue(rule.IsMatch("/sub1/test.jpg", true));
+
             // Should not match file
             Assert.IsFalse(rule.IsMatch("/sub1/test.txt", false));
         }
@@ -558,13 +568,11 @@ namespace MAB.DotIgnore.Tests
         [TearDown]
         public void TearDown()
         {
-
         }
 
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-
         }
     }
 }

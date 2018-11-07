@@ -6,6 +6,9 @@ using System.Text.RegularExpressions;
 
 namespace MAB.DotIgnore
 {
+    /// <summary>
+    /// Regular expression matching of paths against ignore patterns.
+    /// </summary>
     public static class Matcher
     {
         private static readonly Regex CharClassRx = new Regex(@"\[:(?>[a-z]*?):\]", RegexOptions.Compiled);
@@ -18,7 +21,7 @@ namespace MAB.DotIgnore
 
         // Match POSIX char classes with .NET unicode equivalents
         // https://www.regular-expressions.info/posixbrackets.html
-        private static readonly Dictionary<string, string> CharClassSubstitutions = 
+        private static readonly Dictionary<string, string> CharClassSubstitutions =
             new Dictionary<string, string> {
                 { "[:alnum:]", @"a-zA-Z0-9" },
                 { "[:alpha:]", @"a-zA-Z" },
@@ -31,9 +34,16 @@ namespace MAB.DotIgnore
                 { "[:punct:]", @"\p{P}" },
                 { "[:space:]", @"\s" },
                 { "[:upper:]", @"A-Z" },
-                { "[:xdigit:]", @"A-Fa-f0-9" }
+                { "[:xdigit:]", @"A-Fa-f0-9" },
             };
 
+        /// <summary>
+        /// Check if a path matches a regular expression.
+        /// Assumes no match if the match cannot be performed (e.g an exception is thrown).
+        /// </summary>
+        /// <param name="rx">A <see cref="Regex"/> instance.</param>
+        /// <param name="path">The path to try and match.</param>
+        /// <returns>True if the path matches the regular expression.</returns>
         public static bool TryMatch(Regex rx, string path)
         {
             if (rx == null)
@@ -52,13 +62,66 @@ namespace MAB.DotIgnore
         }
 
         // https://git-scm.com/docs/gitignore#_pattern_format
-
+        //
         // FNM_PATHNAME
-        // If this flag is set, match a slash in string only with a slash in pattern 
-        // and not by an asterisk (*) or a question mark (?) metacharacter, nor by a 
+        //
+        // If this flag is set, match a slash in string only with a slash in pattern
+        // and not by an asterisk (*) or a question mark (?) metacharacter, nor by a
         // bracket expression ([]) containing a slash.
+        //
+        // PATTERN FORMAT
+        //
+        // - A blank line matches no files, so it can serve as a separator for readability.
+        //
+        // - A line starting with # serves as a comment. Put a backslash ("\") in front of the first
+        //   hash for patterns that begin with a hash.
+        //
+        // - Trailing spaces are ignored unless they are quoted with backslash("\").
+        //
+        // - An optional prefix "!" which negates the pattern; any matching file excluded by a previous
+        //   pattern will become included again. It is not possible to re-include a file if a parent
+        //   directory of that file is excluded. Git doesn’t list excluded directories for performance
+        //   reasons, so any patterns on contained files have no effect, no matter where they are defined.
+        //   Put a backslash("\") in front of the first "!" for patterns that begin with a literal "!",
+        //   for example: "\!important!.txt".
+        //
+        // - If the pattern ends with a slash, it is removed for the purpose of the following description,
+        //   but it would only find a match with a directory. In other words, foo/ will match a directory
+        //   foo and paths underneath it, but will not match a regular file or a symbolic link foo (this is
+        //   consistent with the way how pathspec works in general in Git).
+        //
+        // - If the pattern does not contain a slash /, Git treats it as a shell glob pattern and checks
+        //   for a match against the pathname relative to the location of the.gitignore file (relative to
+        //   the toplevel of the work tree if not from a.gitignore file).
+        //
+        // - Otherwise, Git treats the pattern as a shell glob suitable for consumption by fnmatch(3) with
+        //   the FNM_PATHNAME flag: wildcards in the pattern will not match a / in the pathname.
+        //   For example, "Documentation/*.html" matches "Documentation/git.html" but not
+        //   "Documentation/ppc/ppc.html" or "tools/perf/Documentation/perf.html".
+        //
+        // - A leading slash matches the beginning of the pathname.
+        //   For example, "/*.c" matches "cat-file.c" but not "mozilla-sha1/sha1.c".
+        //
+        // Two consecutive asterisks("**") in patterns matched against full pathname may have special meaning:
+        //
+        // - A leading "**" followed by a slash means match in all directories.For example, "**/foo"
+        //   matches file or directory "foo" anywhere, the same as pattern "foo". "**/foo/bar" matches
+        //   file or directory "bar" anywhere that is directly under directory "foo".
+        //
+        // - A trailing "/**" matches everything inside.For example, "abc/**" matches all files inside
+        //   directory "abc", relative to the location of the.gitignore file, with infinite depth.
+        //
+        // - A slash followed by two consecutive asterisks then a slash matches zero or more directories.
+        //   For example, "a/**/b" matches "a/b", "a/x/b", "a/x/y/b" and so on.
+        //
+        // - Other consecutive asterisks are considered invalid.
 
-        public static string GetRegex(string pattern, bool caseSensitive = true)
+        /// <summary>
+        /// Converts an ignore pattern into a .NET regular expression pattern.
+        /// </summary>
+        /// <param name="pattern">The ignore pattern to convert.</param>
+        /// <returns>A valid .NET regular expression pattern string, or null if the original pattern was invalid.</returns>
+        public static string ToRegex(string pattern)
         {
             // Double-star is only valid:
             // - at the beginning of a pattern, immediately followed by a slash ('**/c')
@@ -79,7 +142,7 @@ namespace MAB.DotIgnore
                 return null;
             }
 
-            // Remove single backslashes before alphanumeric chars 
+            // Remove single backslashes before alphanumeric chars
             // (escaping these in a glob pattern should have no effect)
             pattern = EscapedAlphaNumRx.Replace(pattern, "$1");
 
@@ -103,12 +166,10 @@ namespace MAB.DotIgnore
             rx.Insert(0, "^");
             rx.Append("$");
 
-            // Character class patterns shouldn't match slashes, so we prefix them with 
-            // negative lookaheads. This is rather harder than it seems, because class 
-            // patterns can also contain unescaped square brackets...
-
             // TODO: is this only true if PATHMATCH isn't specified?
-
+            // Character class patterns shouldn't match slashes, so we prefix them with
+            // negative lookaheads. This is rather harder than it seems, because class
+            // patterns can also contain unescaped square brackets...
             var rx2 = new StringBuilder(NonPathMatchCharClasses(rx.ToString()));
 
             // Non-escaped question mark should match any single char except slash

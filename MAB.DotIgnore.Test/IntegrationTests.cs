@@ -1,50 +1,31 @@
-﻿using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using MAB.DotIgnore.Test.Support;
+using NUnit.Framework;
 
 namespace MAB.DotIgnore.Tests
 {
-    internal class GitTest
-    {
-        public int LineNumber { get; set; }
-        public string Pattern { get; set; }
-        public string Path { get; set; }
-        public bool ExpectGlobMatch { get; set; }
-        public bool ExpectGlobMatchCI { get; set; }
-        public bool ExpectPathMatch { get; set; }
-        public bool ExpectPathMatchCI { get; set; }
-    }
-
-    internal class MatchTestResult
-    {
-        public int LineNumber { get; set; }
-        public string Pattern { get; set; }
-        public string Path { get; set; }
-        public string Regex { get; set; }
-        public bool Result { get; set; }
-        public bool ResultCI { get; set; }
-    }
-
     [TestFixture(Category = "Integration Tests")]
     public class IntegrationTests
     {
         private string _basePath;
 
-        [OneTimeSetUp]
-        public void OneTimeSetUp()
+        public static void CopyWithIgnores(DirectoryInfo source, DirectoryInfo target, IgnoreList ignores)
         {
-            _basePath = TestContext.CurrentContext.TestDirec‌​tory + @"\test_content";
+            foreach (var dir in source.GetDirectories().Where(d => !ignores.IsIgnored(d)))
+            {
+                CopyWithIgnores(dir, target.CreateSubdirectory(dir.Name), ignores);
+            }
+
+            foreach (var file in source.GetFiles().Where(f => !ignores.IsIgnored(f)))
+            {
+                file.CopyTo(Path.Combine(target.FullName, file.Name));
+            }
         }
 
-        [SetUp]
-        public void SetUp()
-        {
-
-        }
+        public static string TrimQuotes(string s) => s.Trim('\'', '"');
 
         [Test]
         public void Compare_Matcher_Results_With_Wildmatch_Expectations()
@@ -53,7 +34,7 @@ namespace MAB.DotIgnore.Tests
 
             var tests = File.ReadAllLines(_basePath + @"\git-tests\tests-current-fixed.txt")
                 .Select((s, i) => (content: s, number: i))
-                .Where(line => !line.content.StartsWith("#") && !string.IsNullOrWhiteSpace(line.content))
+                .Where(line => !line.content.StartsWith("#", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrWhiteSpace(line.content))
                 .Select(line => (match: testLineRx.Match(line.content), lineNo: line.number))
                 .Select(test => new GitTest {
                     LineNumber = test.lineNo,
@@ -62,7 +43,7 @@ namespace MAB.DotIgnore.Tests
                     ExpectGlobMatch = test.match.Groups[1].Value == "1",
                     ExpectGlobMatchCI = test.match.Groups[2].Value == "1",
                     ExpectPathMatch = test.match.Groups[3].Value == "1",
-                    ExpectPathMatchCI = test.match.Groups[4].Value == "1"
+                    ExpectPathMatchCI = test.match.Groups[4].Value == "1",
                 });
 
             var expected = tests.Select(t => {
@@ -73,9 +54,9 @@ namespace MAB.DotIgnore.Tests
                     LineNumber = t.LineNumber,
                     Pattern = pattern,
                     Path = path,
-                    Regex = Matcher.GetRegex(pattern),
+                    Regex = Matcher.ToRegex(pattern),
                     Result = t.ExpectGlobMatch,
-                    ResultCI = t.ExpectGlobMatchCI
+                    ResultCI = t.ExpectGlobMatchCI,
                 };
             });
 
@@ -83,7 +64,7 @@ namespace MAB.DotIgnore.Tests
                 var pattern = TrimQuotes(t.Pattern);
                 var path = TrimQuotes(t.Path);
 
-                var rxPattern = Matcher.GetRegex(pattern);
+                var rxPattern = Matcher.ToRegex(pattern);
 
                 Regex rx = null;
                 Regex rxCI = null;
@@ -93,7 +74,9 @@ namespace MAB.DotIgnore.Tests
                     rx = new Regex(rxPattern);
                     rxCI = new Regex(rxPattern, RegexOptions.IgnoreCase);
                 }
-                catch { }
+                catch
+                {
+                }
 
                 return new MatchTestResult {
                     LineNumber = t.LineNumber,
@@ -101,7 +84,7 @@ namespace MAB.DotIgnore.Tests
                     Path = path,
                     Regex = rxPattern,
                     Result = Matcher.TryMatch(rx, path),
-                    ResultCI = Matcher.TryMatch(rxCI, path)
+                    ResultCI = Matcher.TryMatch(rxCI, path),
                 };
             });
 
@@ -118,7 +101,7 @@ namespace MAB.DotIgnore.Tests
                     Expected = !a.Result,
                     Actual = a.Result,
                     ExpectedCI = !a.ResultCI,
-                    ActualCI = a.ResultCI
+                    ActualCI = a.ResultCI,
                 });
 
             Assert.That(failed.Count() == 0);
@@ -129,16 +112,16 @@ namespace MAB.DotIgnore.Tests
             }
         }
 
-        public static string TrimQuotes(string s) => s.Trim('\'', '"');
-
         [Test]
         public void Copy_Non_Ignored_Solution_Files()
         {
             var sourceFolder = Directory.GetParent(TestContext.CurrentContext.TestDirec‌​tory).Parent.Parent.Parent.FullName;
             var destinationFolder = _basePath + @"\copy";
 
-            if(Directory.Exists(destinationFolder))
+            if (Directory.Exists(destinationFolder))
+            {
                 Directory.Delete(destinationFolder, true);
+            }
 
             Directory.CreateDirectory(destinationFolder);
 
@@ -147,6 +130,7 @@ namespace MAB.DotIgnore.Tests
 
             // Load the solution .gitignore file
             var ignores = new IgnoreList(sourceFolder + @"\.gitignore");
+
             // Add an additional rule to ignore the .git folder
             ignores.AddRule(".git/");
 
@@ -158,25 +142,23 @@ namespace MAB.DotIgnore.Tests
             Assert.IsFalse(Directory.Exists(destinationFolder + @"\MAB.DotIgnore\bin"));
         }
 
-        public static void CopyWithIgnores(DirectoryInfo source, DirectoryInfo target, IgnoreList ignores)
-        {
-            foreach (DirectoryInfo dir in source.GetDirectories().Where(d => !ignores.IsIgnored(d)))
-                CopyWithIgnores(dir, target.CreateSubdirectory(dir.Name), ignores);
+        [OneTimeSetUp]
+        public void OneTimeSetUp() =>
+            _basePath = TestContext.CurrentContext.TestDirec‌​tory + @"\test_content";
 
-            foreach (FileInfo file in source.GetFiles().Where(f => !ignores.IsIgnored(f)))
-                file.CopyTo(Path.Combine(target.FullName, file.Name));
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+        }
+
+        [SetUp]
+        public void SetUp()
+        {
         }
 
         [TearDown]
         public void TearDown()
         {
-
-        }
-
-        [OneTimeTearDown]
-        public void OneTimeTearDown()
-        {
-
         }
     }
 }
