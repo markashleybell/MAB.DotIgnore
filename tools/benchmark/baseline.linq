@@ -8,6 +8,8 @@
 
 void Main()
 {
+    Util.NewProcess = true;
+    
     var workingDirectory = Path.GetDirectoryName(Util.CurrentQueryPath);
     
     // This gives us an array of ~1500 file paths
@@ -24,24 +26,28 @@ void Main()
 
     Benchmark.Perform(action, 1);
 
-    var ms = Benchmark.Perform(action, 100);
+    var result = Benchmark.Perform(action, 500);
     
-    $"Completed in {ms}ms".Dump("Result");
+    $"Completed in {result.total}ms (average {result.average})".Dump("Result");
 }
 
 public class Benchmark
 {
-	public static long Perform(Action action, int iterations = 1)
+	public static (double average, long total) Perform(Action action, int iterations = 1)
 	{
-		var stopwatch = Stopwatch.StartNew();
+		var timings = new List<long>();
         
 		for (int i = 0; i < iterations; i++)
 		{
-			action();
+            var stopwatch = Stopwatch.StartNew();
+			
+            action();
+            
+            stopwatch.Stop();
+            
+            timings.Add(stopwatch.ElapsedMilliseconds);
 		}
-        
-		stopwatch.Stop();
-        
-		return stopwatch.ElapsedMilliseconds;
+
+		return (timings.Average(), timings.Sum());
 	}
 }
