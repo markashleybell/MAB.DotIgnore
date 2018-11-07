@@ -11,6 +11,8 @@ namespace MAB.DotIgnore
     /// </summary>
     public class IgnoreList
     {
+        private readonly List<IgnoreRule> _rules = new List<IgnoreRule>();
+
         private readonly Action<string, IgnoreRule, IgnoreLog> _logAction =
             (path, rule, log) => {
                 if (!log.ContainsKey(path))
@@ -26,7 +28,12 @@ namespace MAB.DotIgnore
         private readonly Action<string, IgnoreRule, IgnoreLog> _noAction =
             (path, rule, log) => { };
 
-        private List<IgnoreRule> _rules = new List<IgnoreRule>();
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IgnoreList"/> class.
+        /// </summary>
+        public IgnoreList()
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="IgnoreList"/> class.
@@ -80,7 +87,7 @@ namespace MAB.DotIgnore
         /// <returns>An exact copy of the ignore list.</returns>
         public IgnoreList Clone()
         {
-            var clone = new IgnoreList(new string[0]);
+            var clone = new IgnoreList();
 
             _rules.ForEach(r => clone.AddRule(r.OriginalPattern, r.MatchFlags));
 
