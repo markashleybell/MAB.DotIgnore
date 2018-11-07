@@ -26,7 +26,7 @@ void Main()
 
     Benchmark.Perform(action, 1);
 
-    var ms = Benchmark.Perform(action, 500);
+    var ms = Benchmark.Perform(action, 100);
     
     $"Completed in {ms}ms".Dump("Result");
 }
