@@ -132,7 +132,10 @@ namespace MAB.DotIgnore
                 return null;
             }
 
-            var patternCharClasses = CharClassRx.Matches(pattern).Cast<Match>().Select(m => m.Groups[0].Value);
+            var patternCharClasses = CharClassRx
+                .Matches(pattern)
+                .Cast<Match>()
+                .Select(m => m.Groups[0].Value);
 
             if (patternCharClasses.Any(pcc => !CharClassSubstitutions.Keys.Contains(pcc)))
             {
