@@ -19,13 +19,13 @@ namespace MAB.DotIgnore.Tests
         }
 
         [Test]
-        public void Null_Pattern_Throws_Exception() => Assert.Throws<ArgumentNullException>(() => new IgnoreRule(null));
+        public void Null_Pattern_Throws_Exception() => Assert.Throws<ArgumentException>(() => new IgnoreRule(null));
 
         [Test]
         public void Null_Path_Throws_Exception()
         {
             var rule = new IgnoreRule("test.txt");
-            Assert.Throws<ArgumentNullException>(() => rule.IsMatch(null, false));
+            Assert.Throws<ArgumentException>(() => rule.IsMatch(null, false));
         }
 
         [Test]

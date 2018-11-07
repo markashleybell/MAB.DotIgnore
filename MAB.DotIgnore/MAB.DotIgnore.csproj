@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>netstandard1.3;net35</TargetFrameworks>
+        <TargetFrameworks>netstandard1.3;net4</TargetFrameworks>
         <PackageId>MAB.DotIgnore</PackageId>
         <PackageLicenseUrl>https://github.com/markashleybell/MAB.DotIgnore/blob/master/LICENSE.md</PackageLicenseUrl>
         <PackageProjectUrl>https://github.com/markashleybell/MAB.DotIgnore</PackageProjectUrl>
@@ -25,11 +25,11 @@
         <DebugType>full</DebugType>
         <DebugSymbols>true</DebugSymbols>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net35|AnyCPU'">
-        <DocumentationFile>bin\Debug\net35\MAB.DotIgnore.xml</DocumentationFile>
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net4|AnyCPU'">
+        <DocumentationFile>bin\Debug\net4\MAB.DotIgnore.xml</DocumentationFile>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net35|AnyCPU'">
-        <DocumentationFile>bin\Release\net35\MAB.DotIgnore.xml</DocumentationFile>
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net4|AnyCPU'">
+        <DocumentationFile>bin\Release\net4\MAB.DotIgnore.xml</DocumentationFile>
     </PropertyGroup>
     <ItemGroup>
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
