@@ -24,7 +24,9 @@ void Main()
 
     Action action = () => fileList.ForEach(f => ignoreList.IsIgnored(f, pathIsDirectory: false));
 
-    var ms = Benchmark.Perform(action, 100);
+    Benchmark.Perform(action, 1);
+
+    var ms = Benchmark.Perform(action, 500);
     
     $"Completed in {ms}ms".Dump("Result");
 }

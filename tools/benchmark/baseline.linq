@@ -1,5 +1,6 @@
 <Query Kind="Program">
-  <Reference Relative="current-pre\MAB.DotIgnore.dll">C:\Src\MAB.DotIgnore\tools\benchmark\current-pre\MAB.DotIgnore.dll</Reference>
+  <Reference Relative="baseline\MAB.DotIgnore.dll">C:\Src\MAB.DotIgnore\tools\benchmark\baseline\MAB.DotIgnore.dll</Reference>
+  <Reference>&lt;RuntimeDirectory&gt;\System.IO.FileSystem.dll</Reference>
   <Namespace>MAB.DotIgnore</Namespace>
 </Query>
 
@@ -17,9 +18,13 @@ void Main()
 
     var ignoreList = new IgnoreList($@"{workingDirectory}\.ignores");
 
+    ignoreList.IsIgnored("TEST", false);
+
     Action action = () => fileList.ForEach(f => ignoreList.IsIgnored(f, pathIsDirectory: false));
 
-    var ms = Benchmark.Perform(action, 50);
+    Benchmark.Perform(action, 1);
+
+    var ms = Benchmark.Perform(action, 500);
     
     $"Completed in {ms}ms".Dump("Result");
 }
