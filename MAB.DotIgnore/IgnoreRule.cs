@@ -39,14 +39,14 @@ namespace MAB.DotIgnore
             // If the pattern starts with an exclamation mark, it's a negation pattern
             // Once we know that, we can remove the exclamation mark (so the pattern behaves just like any other),
             // then just negate the match result when we return it
-            if (Pattern.StartsWith("!", _sc))
+            if (Pattern.StartsWithCI("!"))
             {
                 PatternFlags |= PatternFlags.NEGATION;
                 Pattern = Pattern.Substring(1);
             }
 
             // If the pattern starts with a forward slash, it should only match an absolute path
-            if (Pattern.StartsWith("/", _sc))
+            if (Pattern.StartsWithCI("/"))
             {
                 PatternFlags |= PatternFlags.ABSOLUTE_PATH;
                 Pattern = Pattern.Substring(1);
@@ -54,7 +54,7 @@ namespace MAB.DotIgnore
 
             // If the pattern ends with a forward slash, it should only match a directory
             // Again though, once we know that we can remove the slash to normalise the pattern
-            if (Pattern.EndsWith("/", _sc))
+            if (Pattern.EndsWithCI("/"))
             {
                 PatternFlags |= PatternFlags.DIRECTORY;
                 Pattern = Pattern.Substring(0, Pattern.Length - 1);
@@ -147,9 +147,7 @@ namespace MAB.DotIgnore
             }
 
             // .gitignore files use Unix paths (with a forward slash separator), so make sure our input also uses forward slashes
-            path = Utils.NormalisePath(path);
-
-            path = path.TrimStart('/');
+            path = path.NormalisePath().TrimStart('/');
 
             // Shortcut return if the pattern is directory-only and the path isn't a directory
             // This has to be determined by the OS (at least that's the only reliable way),

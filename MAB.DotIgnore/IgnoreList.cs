@@ -170,21 +170,24 @@ namespace MAB.DotIgnore
         public void RemoveRule(string rule) =>
             _rules.RemoveAll(r => r.OriginalPattern == rule.Trim());
 
-        private void AddRules(IEnumerable<string> rules, MatchFlags flags, bool loadedFromFile) =>
-            _rules.AddRange(GetRuleLines(rules, loadedFromFile)
-                .Select(line => new IgnoreRule(line.Pattern, flags, line.LineNumber)));
+        // Exclude all comment or whitespace lines
+        // Note that we store the line numbers (if flag set) *before* filtering out
+        // comments and whitespace, otherwise they don't match up with the source file
+        private static IEnumerable<RuleLine> GetValidRuleLines(IEnumerable<string> rules, bool lineNumbers) =>
+            rules.Select((line, i) => new RuleLine(lineNumbers ? (i + 1) : default(int?), line.Trim()))
+                .Where(line => line.Pattern.Length > 0 && !line.Pattern.StartsWithCI("#"));
 
-        private IEnumerable<RuleLine> GetRuleLines(IEnumerable<string> rules, bool lineNumbers) =>
+        private void AddRules(IEnumerable<string> rules, MatchFlags flags, bool loadedFromFile)
+        {
+            var ruleList = GetValidRuleLines(rules, loadedFromFile)
+                .Select(line => new IgnoreRule(line.Pattern, flags, line.LineNumber));
 
-            // Exclude all comment or whitespace lines
-            // Note that we store the line numbers (if flag set) *before* filtering out
-            // comments and whitespace, otherwise they don't match up with the source file
-            rules.Select((line, index) => new RuleLine { LineNumber = lineNumbers ? (index + 1) : default(int?), Pattern = line.Trim() })
-                        .Where(line => line.Pattern.Length > 0 && !line.Pattern.StartsWith("#", StringComparison.OrdinalIgnoreCase));
+            _rules.AddRange(ruleList);
+        }
 
         private bool IsAnyParentDirectoryIgnored(string path, IgnoreLog log)
         {
-            var segments = Utils.NormalisePath(path).Split('/').ToList();
+            var segments = path.NormalisePath().Split('/').ToList();
 
             segments.RemoveAt(segments.Count - 1);
 

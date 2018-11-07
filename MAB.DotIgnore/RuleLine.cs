@@ -3,16 +3,27 @@
     /// <summary>
     /// Represents a line specifying a rule in an ignore file.
     /// </summary>
-    internal class RuleLine
+    internal struct RuleLine
     {
         /// <summary>
-        /// Gets or sets the line number.
+        /// Initializes a new instance of the <see cref="RuleLine"/> struct.
         /// </summary>
-        public int? LineNumber { get; set; }
+        /// <param name="lineNumber">The line number.</param>
+        /// <param name="pattern">The ignore rule pattern.</param>
+        public RuleLine(int? lineNumber, string pattern)
+        {
+            LineNumber = lineNumber;
+            Pattern = pattern;
+        }
 
         /// <summary>
-        /// Gets or sets the ignore rule pattern.
+        /// Gets the line number.
         /// </summary>
-        public string Pattern { get; set; }
+        public int? LineNumber { get; }
+
+        /// <summary>
+        /// Gets the ignore rule pattern.
+        /// </summary>
+        public string Pattern { get; }
     }
 }
