@@ -6,6 +6,7 @@
         <Authors>Mark Ashley Bell</Authors>
         <SignAssembly>true</SignAssembly>
         <AssemblyOriginatorKeyFile>MAB.DotIgnore.Test.snk</AssemblyOriginatorKeyFile>
+        <LangVersion>latest</LangVersion>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
         <DebugType>full</DebugType>
