@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace MAB.DotIgnore
@@ -37,8 +38,8 @@ namespace MAB.DotIgnore
             PatternFlags = PatternFlags.NONE;
 
             // If the pattern starts with an exclamation mark, it's a negation pattern
-            // Once we know that, we can remove the exclamation mark (so the pattern behaves just like any other),
-            // then just negate the match result when we return it
+            // Once we know that, we can remove the exclamation mark (so the pattern behaves
+            // just like any other), then just negate the match result when we return it
             if (Pattern.StartsWithCI("!"))
             {
                 PatternFlags |= PatternFlags.NEGATION;
@@ -146,7 +147,8 @@ namespace MAB.DotIgnore
                 throw new ArgumentException("Path cannot be null or empty", nameof(path));
             }
 
-            // .gitignore files use Unix paths (with a forward slash separator), so make sure our input also uses forward slashes
+            // .gitignore files use Unix paths (with a forward slash separator),
+            // so make sure our input also uses forward slashes
             path = path.NormalisePath().TrimStart('/');
 
             // Shortcut return if the pattern is directory-only and the path isn't a directory
@@ -159,30 +161,24 @@ namespace MAB.DotIgnore
 
             // If the pattern is an absolute path pattern, the path must start with the part of the pattern
             // before any wildcards occur. If it doesn't, we can just return a negative match
-            var patternBeforeFirstWildcard = _wildcardIndex != -1 ? Pattern.Substring(0, _wildcardIndex) : Pattern;
+            var patternBeforeFirstWildcard = _wildcardIndex != -1
+                ? Pattern.Substring(0, _wildcardIndex)
+                : Pattern;
 
             if (PatternFlags.HasFlag(PatternFlags.ABSOLUTE_PATH) && !path.StartsWith(patternBeforeFirstWildcard, _sc))
             {
                 return false;
             }
 
-            // If we got this far, we can't figure out the match with simple string matching, so use our wildmatch implementation
+            // If we got this far, we can't figure out the match with simple
+            // string matching, so use our regex match function
 
-            // If the pattern does not contain any slashes it should match *any* occurence, *anywhere* within the path
-            // (e.g. '*.jpg' should match 'a.jpg', 'a/b.jpg', 'a/b/c.jpg'), so try matching before each slash
+            // If the *pattern* does not contain any slashes, it should match *any*
+            // occurence, *anywhere* within the path (e.g. '*.jpg' should match
+            // 'a.jpg', 'a/b.jpg', 'a/b/c.jpg'), so try matching before each slash
             if (!Pattern.Contains("/") && path.Contains("/"))
             {
-                var segments = path.Split('/');
-
-                foreach (var segment in segments)
-                {
-                    if (Matcher.TryMatch(_rx, segment))
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
+                return path.Split('/').Any(segment => Matcher.TryMatch(_rx, segment));
             }
 
             // If the *path* doesn't contain any slashes, we should skip over the conditional above
@@ -190,7 +186,8 @@ namespace MAB.DotIgnore
         }
 
         /// <summary>
-        /// Gets a string representation showing the original pattern (plus the line number if present).
+        /// Gets a string representation showing the original pattern
+        /// (plus the line number if present).
         /// </summary>
         /// <returns>The original pattern, plus the line number if present.</returns>
         public override string ToString()
