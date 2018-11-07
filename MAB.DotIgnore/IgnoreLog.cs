@@ -20,8 +20,11 @@ namespace MAB.DotIgnore
         public override string ToString()
         {
             var nl = Environment.NewLine;
-            var prefix = nl + "    ";
-            return string.Join(nl + nl, Keys.Select(k => k + prefix + string.Join(prefix, base[k].ToArray())).ToArray());
+            var indent = nl + "    ";
+
+            var paths = Keys.Select(k => k + indent + string.Join(indent, this[k]));
+
+            return string.Join(nl + nl, paths);
         }
     }
 }
