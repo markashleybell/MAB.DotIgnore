@@ -174,7 +174,7 @@ namespace MAB.DotIgnore
         // Note that we store the line numbers (if flag set) *before* filtering out
         // comments and whitespace, otherwise they don't match up with the source file
         private static IEnumerable<RuleLine> GetValidRuleLines(IEnumerable<string> rules, bool lineNumbers) =>
-            rules.Select((line, i) => new RuleLine(lineNumbers ? (i + 1) : default(int?), line.Trim()))
+            rules.Select((r, i) => lineNumbers ? new RuleLine(i + 1, r) : new RuleLine(r))
                 .Where(line => line.Pattern.Length > 0 && !line.Pattern.StartsWithCI("#"));
 
         private void AddRules(IEnumerable<string> rules, MatchFlags flags, bool loadedFromFile)

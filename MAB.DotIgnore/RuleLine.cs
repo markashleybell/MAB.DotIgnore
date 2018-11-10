@@ -8,12 +8,21 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="RuleLine"/> struct.
         /// </summary>
+        /// <param name="pattern">The ignore rule pattern.</param>
+        public RuleLine(string pattern)
+            : this(null, pattern)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RuleLine"/> struct.
+        /// </summary>
         /// <param name="lineNumber">The line number.</param>
         /// <param name="pattern">The ignore rule pattern.</param>
         public RuleLine(int? lineNumber, string pattern)
         {
             LineNumber = lineNumber;
-            Pattern = pattern;
+            Pattern = pattern.Trim();
         }
 
         /// <summary>
