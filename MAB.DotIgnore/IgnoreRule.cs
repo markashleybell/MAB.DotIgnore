@@ -10,6 +10,8 @@ namespace MAB.DotIgnore
     /// </summary>
     public class IgnoreRule
     {
+        private static readonly char[] _wildcardChars = new char[] { '*', '[', '?' };
+
         private readonly int _wildcardIndex;
         private readonly Regex _rx;
         private readonly StringComparison _sc = StringComparison.Ordinal;
@@ -61,7 +63,7 @@ namespace MAB.DotIgnore
                 Pattern = Pattern.Substring(0, Pattern.Length - 1);
             }
 
-            _wildcardIndex = Pattern.IndexOfAny(new char[] { '*', '[', '?' });
+            _wildcardIndex = Pattern.IndexOfAny(_wildcardChars);
 
             // If CASEFOLD is set, string comparisons should ignore case too
             if (MatchFlags.HasFlag(MatchFlags.CASEFOLD))
