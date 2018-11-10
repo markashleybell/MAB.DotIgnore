@@ -69,8 +69,10 @@ namespace MAB.DotIgnore
                 _sc = StringComparison.OrdinalIgnoreCase;
             }
 
-            // TODO: Currently, we are just setting PATHNAME for every rule, because it seems to match the original behaviour
-            // See here for a clue: https://github.com/git/git/blob/c2c5f6b1e479f2c38e0e01345350620944e3527f/dir.c#L99
+            // TODO: Currently, we are just setting PATHNAME for every rule
+            // This is because it seems to match the original behaviour:
+            // https://github.com/git/git/blob/c2c5f6b1e479f2c38e0e01345350620944e3527f/dir.c#L99
+
             // If PATHNAME is set, single asterisks should not match slashes
             if (!MatchFlags.HasFlag(MatchFlags.PATHNAME))
             {
@@ -138,7 +140,8 @@ namespace MAB.DotIgnore
         /// Check if a path matches the rule pattern.
         /// </summary>
         /// <param name="path">String representing the path to check.</param>
-        /// <param name="pathIsDirectory">Should be set True if the path represents a directory, False if it represents a file.</param>
+        /// <param name="pathIsDirectory">Should be set True if the path represents
+        /// a directory, False if it represents a file.</param>
         /// <returns>True if the file or directory path matches the rule pattern.</returns>
         public bool IsMatch(string path, bool pathIsDirectory)
         {
@@ -165,7 +168,8 @@ namespace MAB.DotIgnore
                 ? Pattern.Substring(0, _wildcardIndex)
                 : Pattern;
 
-            if (PatternFlags.HasFlag(PatternFlags.ABSOLUTE_PATH) && !path.StartsWith(patternBeforeFirstWildcard, _sc))
+            if (PatternFlags.HasFlag(PatternFlags.ABSOLUTE_PATH)
+                && !path.StartsWith(patternBeforeFirstWildcard, _sc))
             {
                 return false;
             }
