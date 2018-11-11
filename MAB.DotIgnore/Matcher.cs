@@ -171,7 +171,9 @@ namespace MAB.DotIgnore
             // Character class patterns shouldn't match slashes, so we prefix them with
             // negative lookaheads. This is rather harder than it seems, because class
             // patterns can also contain unescaped square brackets...
-            var rx2 = new StringBuilder(NonPathMatchCharClasses(rx.ToString()));
+            var rx2 = pattern.Contains('[')
+                ? new StringBuilder(NonPathMatchCharClasses(rx.ToString()))
+                : rx;
 
             // Non-escaped question mark should match any single char except slash
             rx2.Replace(@"\[:QM:]", @"\?");
