@@ -196,12 +196,4 @@ FakesAssemblies/
 *.opt
 
 # Opencover reports
-TestResult.xml
-reports
-
-# Util scripts
-push_package.cmd
-
-# NuGet package output
-dist
-publish.cmd
+coverage/
