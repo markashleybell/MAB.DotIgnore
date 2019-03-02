@@ -1,6 +1,0 @@
-*.sample
-WebRazorPages/**/obj/
-images/products/[[:digit:]].png
-[Bb]in/**/netcoreapp2.1/*.pdb
-.vs/
-**/*.nuget.g.*
