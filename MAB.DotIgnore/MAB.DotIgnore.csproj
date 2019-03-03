@@ -14,6 +14,7 @@
         <AssemblyOriginatorKeyFile>MAB.DotIgnore.snk</AssemblyOriginatorKeyFile>
         <DelaySign>false</DelaySign>
         <LangVersion>latest</LangVersion>
+        <Version>3.0.0-alpha2</Version>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard1.3|AnyCPU'">
         <DocumentationFile>bin\Debug\netstandard1.3\MAB.DotIgnore.xml</DocumentationFile>

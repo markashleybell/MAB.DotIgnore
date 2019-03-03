@@ -183,7 +183,7 @@ namespace MAB.DotIgnore
             rx2.Replace(@"\[:STAR:]", @"\*");
             rx2.Replace(@"[:STAR:]", @"[^/]*");
 
-            return Regex.Replace(rx2.ToString(), @"(?>\[:STARSTAR:\]/?)+", ".*");
+            return Regex.Replace(rx2.ToString(), @"(?>\[:STARSTAR:\]/?)+?", ".*?");
         }
 
         private static string NonPathMatchCharClasses(string p)

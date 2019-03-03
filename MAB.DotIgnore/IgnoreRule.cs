@@ -83,7 +83,7 @@ namespace MAB.DotIgnore
 
             var rxPattern = Matcher.ToRegex(Pattern);
 
-            // If GetRegex returns null, it was passed an invalid pattern so it cannot match
+            // If rxPattern is null, an invalid pattern was passed to ToRegex, so it cannot match
             if (!string.IsNullOrEmpty(rxPattern))
             {
                 var rxOptions = RegexOptions.Compiled;
