@@ -1,5 +1,5 @@
 <Query Kind="Program">
-  <Reference Relative="..\MAB.DotIgnore\bin\Debug\netstandard1.3\MAB.DotIgnore.dll">E:\Src\MAB.DotIgnore\MAB.DotIgnore\bin\Debug\netstandard1.3\MAB.DotIgnore.dll</Reference>
+  <Reference Relative="..\MAB.DotIgnore\bin\Debug\netstandard1.3\MAB.DotIgnore.dll">C:\Src\MAB.DotIgnore\MAB.DotIgnore\bin\Debug\netstandard1.3\MAB.DotIgnore.dll</Reference>
   <Namespace>MAB.DotIgnore</Namespace>
 </Query>
 
@@ -18,13 +18,13 @@ void Main()
     };
     
     var log = new IgnoreLog();
-    
+
     var ignoreList = new IgnoreList(ignorePatterns, MatchFlags.PATHNAME | MatchFlags.CASEFOLD);
     paths.ForEach(path => ignoreList.IsIgnored(path.Path, path.IsDirectory, log).Dump("Ignore '" + path.Path + "'"));
-    
-//	var ignoreRule = new IgnoreRule(ignorePatterns[0], MatchFlags.PATHNAME | MatchFlags.CASEFOLD);
-//  paths.ForEach(path => ignoreRule.IsMatch(path.Path, path.IsDirectory).Dump("Ignore '" + path.Path + "'"));
-    
+
+    // var ignoreRule = new IgnoreRule(ignorePatterns[0], MatchFlags.PATHNAME | MatchFlags.CASEFOLD);
+    // paths.ForEach(path => ignoreRule.IsMatch(path.Path, path.IsDirectory).Dump("Ignore '" + path.Path + "'"));
+
     log.Dump();
     log.ToString().Dump();
 }
