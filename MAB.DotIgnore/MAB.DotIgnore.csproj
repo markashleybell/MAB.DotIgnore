@@ -2,8 +2,8 @@
     <PropertyGroup>
         <TargetFrameworks>netstandard1.3;net35</TargetFrameworks>
         <PackageId>MAB.DotIgnore</PackageId>
-        <Version>2.0.0</Version>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <Version>2.0.1</Version>
+        <AssemblyVersion>2.0.1.0</AssemblyVersion>
         <Authors>Mark Ashley Bell</Authors>
         <Company />
         <PackageLicenseUrl>https://github.com/markashleybell/MAB.DotIgnore/blob/master/LICENSE.md</PackageLicenseUrl>
@@ -18,7 +18,7 @@
         <SignAssembly>true</SignAssembly>
         <AssemblyOriginatorKeyFile>MAB.DotIgnore.snk</AssemblyOriginatorKeyFile>
         <DelaySign>false</DelaySign>
-        <FileVersion>2.0.0.0</FileVersion>
+        <FileVersion>2.0.1.0</FileVersion>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard1.3|AnyCPU'">
         <DocumentationFile>bin\Debug\netstandard1.3\MAB.DotIgnore.xml</DocumentationFile>
@@ -28,14 +28,14 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard1.3|AnyCPU'">
         <DocumentationFile>bin\Release\netstandard1.3\MAB.DotIgnore.xml</DocumentationFile>
-        <DebugType>full</DebugType>
-        <DebugSymbols>true</DebugSymbols>
+        <Optimize>true</Optimize>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net35|AnyCPU'">
         <DocumentationFile>bin\Debug\net35\MAB.DotIgnore.xml</DocumentationFile>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net35|AnyCPU'">
         <DocumentationFile>bin\Release\net35\MAB.DotIgnore.xml</DocumentationFile>
+        <Optimize>true</Optimize>
     </PropertyGroup>
     <ItemGroup>
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
