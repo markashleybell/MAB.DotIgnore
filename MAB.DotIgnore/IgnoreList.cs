@@ -199,7 +199,7 @@ namespace MAB.DotIgnore
             {
                 directory.Add(segment);
 
-                if (IsPathIgnored(string.Join("/", directory.ToArray()), true, log))
+                if (IsPathIgnored(string.Join("/", directory), true, log))
                 {
                     return true;
                 }
