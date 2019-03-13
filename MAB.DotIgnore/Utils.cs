@@ -3,38 +3,37 @@ using System.IO;
 
 namespace MAB.DotIgnore
 {
-    // Re-implement a couple of convenience functions introduced in .NET 4, so we can support 3.5
-
+    /// <summary>
+    /// Utility functions.
+    /// </summary>
     internal static class Utils
     {
-        internal static bool IsWhiteSpace(string value)
-        {
-            if (value == null) return false;
+        /// <summary>
+        /// Converts a path to a UNIX-style path (with forward-slash directory separators).
+        /// </summary>
+        /// <param name="path">The path to convert.</param>
+        /// <returns>A UNIX-style path string.</returns>
+        internal static string NormalisePath(this string path) =>
+            path.Replace(":", string.Empty)
+                .Replace(char.ToString(Path.DirectorySeparatorChar), "/")
+                .Trim();
 
-            for (int i = 0; i < value.Length; i++)
-            {
-                if (!char.IsWhiteSpace(value[i])) return false;
-            }
+        /// <summary>
+        /// Determines whether the beginning of this string instance matches the specified string.
+        /// </summary>
+        /// <param name="s">The string instance.</param>
+        /// <param name="value">The string to compare.</param>
+        /// <returns>true if value matches the beginning of this string; otherwise, false.</returns>
+        internal static bool StartsWithCI(this string s, string value) =>
+            s.StartsWith(value, StringComparison.OrdinalIgnoreCase);
 
-            return true;
-        }
-
-        internal static bool IsNullOrWhiteSpace(string value)
-        {
-            if (value == null) return true;
- 
-            return IsWhiteSpace(value);
-        }
-
-        internal static bool HasFlag(this Enum variable, Enum value)
-        {
-            ulong num = Convert.ToUInt64(value);
-            return ((Convert.ToUInt64(variable) & num) == num);
-        }
-
-        internal static string NormalisePath(string path)
-        {
-            return path.Replace(":", "").Replace(Path.DirectorySeparatorChar.ToString(), "/").Trim();
-        }
+        /// <summary>
+        /// Determines whether the end of this string instance matches the specified string.
+        /// </summary>
+        /// <param name="s">The string instance.</param>
+        /// <param name="value">The string to compare.</param>
+        /// <returns>true if value matches the end of this string; otherwise, false.</returns>
+        internal static bool EndsWithCI(this string s, string value) =>
+            s.EndsWith(value, StringComparison.OrdinalIgnoreCase);
     }
 }

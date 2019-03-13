@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="data\.ignores" />
+        <EmbeddedResource Include="data\filelist.txt" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="BenchmarkDotNet" Version="0.11.4" />
+    </ItemGroup>
+    
+</Project>

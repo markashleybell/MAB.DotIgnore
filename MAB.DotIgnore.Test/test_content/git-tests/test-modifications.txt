@@ -1,0 +1,30 @@
+The tests are taken from:
+
+https://github.com/git/git/blob/master/t/t3070-wildmatch.sh
+
+We then strip off the C functions so we're just left with the test lines.
+
+The git test expectations are formatted as follows:
+
+match 0 0 0 0 path pattern
+
+The four numbers are the test expectations. The expected result will be 1 
+if the pattern should match the specified path and 0 if it should not.
+
+The first pair of numbers are the expected results with glob matching 
+enabled (case sensitive and insensitive respectively), and the second pair 
+are the expected results with glob matching disabled (GIT_NOGLOB_PATHSPECS=1).
+
+GIT_GLOB_PATHSPECS is the default, and as the whole point of this library is
+to match using wildcards, we can just ignore the second result pair for now.
+
+Five of the tests span two lines (using '\'), and have eight expected results 
+instead of four. These are cases where the match result differs depending on 
+whether or not the match function is called by the git-ls-files command.
+
+This commit details the exact cases:
+https://github.com/git/git/commit/de8bada2bf63d274b8f7759f0ffd0b7669e52eca
+
+Currently we just remove the extra four git-ls cases, as the goal for this 
+library is only to replicate the wildmatch behaviour, not that of every code 
+path in git.

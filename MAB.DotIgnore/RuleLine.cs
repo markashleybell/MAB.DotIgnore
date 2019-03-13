@@ -1,8 +1,38 @@
 ﻿namespace MAB.DotIgnore
 {
-    internal class RuleLine
+    /// <summary>
+    /// Represents a line specifying a rule in an ignore file.
+    /// </summary>
+    internal struct RuleLine
     {
-        public int? LineNumber { get; set; }
-        public string Pattern { get; set; }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RuleLine"/> struct.
+        /// </summary>
+        /// <param name="pattern">The ignore rule pattern.</param>
+        public RuleLine(string pattern)
+            : this(null, pattern)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RuleLine"/> struct.
+        /// </summary>
+        /// <param name="lineNumber">The line number.</param>
+        /// <param name="pattern">The ignore rule pattern.</param>
+        public RuleLine(int? lineNumber, string pattern)
+        {
+            LineNumber = lineNumber;
+            Pattern = pattern.Trim();
+        }
+
+        /// <summary>
+        /// Gets the line number.
+        /// </summary>
+        public int? LineNumber { get; }
+
+        /// <summary>
+        /// Gets the ignore rule pattern.
+        /// </summary>
+        public string Pattern { get; }
     }
 }

@@ -1,6 +1,6 @@
-﻿using NUnit.Framework;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
+using NUnit.Framework;
 
 namespace MAB.DotIgnore.Tests
 {
@@ -10,15 +10,12 @@ namespace MAB.DotIgnore.Tests
         private string _basePath;
 
         [OneTimeSetUp]
-        public void OneTimeSetUp()
-        {
+        public void OneTimeSetUp() =>
             _basePath = TestContext.CurrentContext.TestDirec‌​tory + @"\test_content";
-        }
 
         [SetUp]
         public void SetUp()
         {
-
         }
 
         [Test]
@@ -86,6 +83,7 @@ namespace MAB.DotIgnore.Tests
             var clone = original.Clone();
             Assert.IsTrue(clone.Rules[0].MatchFlags == (MatchFlags.PATHNAME | MatchFlags.CASEFOLD));
             Assert.IsTrue(clone.Rules[1].MatchFlags == (MatchFlags.PATHNAME | MatchFlags.CASEFOLD));
+
             // Should use PATHNAME because we assign this internally if it's not set
             Assert.IsTrue(clone.Rules[2].MatchFlags == MatchFlags.PATHNAME);
         }
@@ -121,8 +119,10 @@ namespace MAB.DotIgnore.Tests
         public void Constructor_Flags_Respected()
         {
             var directory = new DirectoryInfo(_basePath + @"\TEST");
+
             // Case sensitive list, should not match
             var list1 = new IgnoreList(new string[] { "test" });
+
             // Case insensitive, should match
             var list2 = new IgnoreList(new string[] { "test" }, MatchFlags.CASEFOLD);
             Assert.IsFalse(list1.IsIgnored(directory));
@@ -158,13 +158,11 @@ namespace MAB.DotIgnore.Tests
         [TearDown]
         public void TearDown()
         {
-
         }
 
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-
         }
     }
 }

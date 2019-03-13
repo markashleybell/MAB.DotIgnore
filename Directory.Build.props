@@ -1,0 +1,11 @@
+<Project>
+    <PropertyGroup>
+        <Version>3.0.0-alpha1</Version>
+        <FileVersion>3.0.0.0</FileVersion>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <Copyright>© Mark Ashley Bell 2018</Copyright>
+        <Authors>Mark Ashley Bell</Authors>
+        <Company />
+        <CodeAnalysisRuleSet>$(SolutionDir)\MAB.DotIgnore.ruleset</CodeAnalysisRuleSet>
+    </PropertyGroup>
+</Project>

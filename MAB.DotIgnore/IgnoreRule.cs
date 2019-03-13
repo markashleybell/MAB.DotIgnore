@@ -1,222 +1,208 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace MAB.DotIgnore
 {
     /// <summary>
-    /// A rule which can be used to determine whether a file path should be ignored
+    /// A rule which can be used to determine whether a file path should be ignored.
     /// </summary>
     public class IgnoreRule
     {
-        private int _wildcardIndex;
+        private static readonly char[] _wildcardChars = new char[] { '*', '[', '?' };
 
-        private StringComparison sc = StringComparison.Ordinal;
-
-        internal int? LineNumber { get; set; }
-
-        /// <summary>
-        /// The original pattern string passed into the constructor
-        /// </summary>
-        public string OriginalPattern { get; private set; }
-        /// <summary>
-        /// The pre-processed pattern string after basic parsing
-        /// </summary>
-        public string Pattern { get; private set; }
-        /// <summary>
-        /// The <see cref="MatchFlags"/> set for this rule
-        /// </summary>
-        public MatchFlags MatchFlags { get; private set; }
-        /// <summary>
-        /// The <see cref="PatternFlags"/> set for the parsed rule pattern
-        /// </summary>
-        public PatternFlags PatternFlags { get; private set; }
+        private readonly int _wildcardIndex;
+        private readonly Regex _rx;
+        private readonly StringComparison _sc = StringComparison.Ordinal;
 
         /// <summary>
-        /// Create an individual ignore rule for the specified pattern
+        /// Initializes a new instance of the <see cref="IgnoreRule"/> class.
         /// </summary>
-        /// <param name="pattern">A glob pattern specifying file(s) this rule should ignore</param>
-        /// <param name="flags">Optional flags determining pattern matching behaviour</param>
-        /// <param name="lineNumber">Optional line number for logging purposes</param>
+        /// <param name="pattern">A glob pattern specifying file(s) this rule should ignore.</param>
+        /// <param name="flags">Optional flags determining pattern matching behaviour.</param>
+        /// <param name="lineNumber">Optional line number for logging purposes.</param>
         public IgnoreRule(string pattern, MatchFlags flags = MatchFlags.PATHNAME, int? lineNumber = null)
         {
-            if (pattern == null)
-                throw new ArgumentNullException(nameof(pattern));
-
-            if (Utils.IsWhiteSpace(pattern))
-                throw new ArgumentException("Pattern is empty", nameof(pattern));
+            if (string.IsNullOrWhiteSpace(pattern))
+            {
+                throw new ArgumentException("Pattern cannot be null or empty", nameof(pattern));
+            }
 
             LineNumber = lineNumber;
-            
+
             // Keep track of the original pattern before modifications (for display purposes)
             OriginalPattern = pattern;
             Pattern = pattern;
             MatchFlags = flags;
-            
+
             // First, let's figure out some things about the pattern and set flags to pass to our match function
             PatternFlags = PatternFlags.NONE;
-    
+
             // If the pattern starts with an exclamation mark, it's a negation pattern
-            // Once we know that, we can remove the exclamation mark (so the pattern behaves just like any other),
-            // then just negate the match result when we return it
-            if(Pattern.StartsWith("!", sc))
-            { 
+            // Once we know that, we can remove the exclamation mark (so the pattern behaves
+            // just like any other), then just negate the match result when we return it
+            if (Pattern.StartsWithCI("!"))
+            {
                 PatternFlags |= PatternFlags.NEGATION;
                 Pattern = Pattern.Substring(1);
             }
 
             // If the pattern starts with a forward slash, it should only match an absolute path
-            if (Pattern.StartsWith("/", sc))
-            { 
+            if (Pattern.StartsWithCI("/"))
+            {
                 PatternFlags |= PatternFlags.ABSOLUTE_PATH;
                 Pattern = Pattern.Substring(1);
             }
-    
+
             // If the pattern ends with a forward slash, it should only match a directory
             // Again though, once we know that we can remove the slash to normalise the pattern
-            if (Pattern.EndsWith("/", sc))
+            if (Pattern.EndsWithCI("/"))
             {
                 PatternFlags |= PatternFlags.DIRECTORY;
                 Pattern = Pattern.Substring(0, Pattern.Length - 1);
             }
 
-            _wildcardIndex = Pattern.IndexOfAny(new char[] { '*','[','?' });
-            
+            _wildcardIndex = Pattern.IndexOfAny(_wildcardChars);
+
             // If CASEFOLD is set, string comparisons should ignore case too
             if (MatchFlags.HasFlag(MatchFlags.CASEFOLD))
-                sc = StringComparison.OrdinalIgnoreCase;
+            {
+                _sc = StringComparison.OrdinalIgnoreCase;
+            }
+
+            // TODO: Currently, we are just setting PATHNAME for every rule
+            // This is because it seems to match the original behaviour:
+            // https://github.com/git/git/blob/c2c5f6b1e479f2c38e0e01345350620944e3527f/dir.c#L99
 
             // If PATHNAME is set, single asterisks should not match slashes
-            if(!MatchFlags.HasFlag(MatchFlags.PATHNAME))
-                MatchFlags |= MatchFlags.PATHNAME;
-
-            // TODO: Currently, we are just setting PATHNAME for every rule, because it seems to match the original behaviour
-            // See here for a clue: https://github.com/git/git/blob/c2c5f6b1e479f2c38e0e01345350620944e3527f/dir.c#L99
-        }
-
-        // PATTERN FORMAT
-        // 
-        // - A blank line matches no files, so it can serve as a separator for readability.
-        // 
-        // - A line starting with # serves as a comment. Put a backslash ("\") in front of the first 
-        //   hash for patterns that begin with a hash.
-        // 
-        // - Trailing spaces are ignored unless they are quoted with backslash("\").
-        // 
-        // - An optional prefix "!" which negates the pattern; any matching file excluded by a previous 
-        //   pattern will become included again. It is not possible to re-include a file if a parent 
-        //   directory of that file is excluded. Git doesn’t list excluded directories for performance 
-        //   reasons, so any patterns on contained files have no effect, no matter where they are defined.
-        //   Put a backslash("\") in front of the first "!" for patterns that begin with a literal "!", 
-        //   for example: "\!important!.txt".
-        // 
-        // - If the pattern ends with a slash, it is removed for the purpose of the following description, 
-        //   but it would only find a match with a directory. In other words, foo/ will match a directory 
-        //   foo and paths underneath it, but will not match a regular file or a symbolic link foo (this is 
-        //   consistent with the way how pathspec works in general in Git).
-        // 
-        // - If the pattern does not contain a slash /, Git treats it as a shell glob pattern and checks 
-        //   for a match against the pathname relative to the location of the.gitignore file (relative to
-        //   the toplevel of the work tree if not from a.gitignore file).
-        // 
-        // - Otherwise, Git treats the pattern as a shell glob suitable for consumption by fnmatch(3) with 
-        //   the FNM_PATHNAME flag: wildcards in the pattern will not match a / in the pathname.
-        //   For example, "Documentation/*.html" matches "Documentation/git.html" but not 
-        //   "Documentation/ppc/ppc.html" or "tools/perf/Documentation/perf.html".
-        // 
-        // - A leading slash matches the beginning of the pathname.
-        //   For example, "/*.c" matches "cat-file.c" but not "mozilla-sha1/sha1.c".
-        // 
-        // Two consecutive asterisks("**") in patterns matched against full pathname may have special meaning:
-        // 
-        // - A leading "**" followed by a slash means match in all directories.For example, "**/foo" 
-        //   matches file or directory "foo" anywhere, the same as pattern "foo". "**/foo/bar" matches 
-        //   file or directory "bar" anywhere that is directly under directory "foo".
-        // 
-        // - A trailing "/**" matches everything inside.For example, "abc/**" matches all files inside 
-        //   directory "abc", relative to the location of the.gitignore file, with infinite depth.
-        // 
-        // - A slash followed by two consecutive asterisks then a slash matches zero or more directories.
-        //   For example, "a/**/b" matches "a/b", "a/x/b", "a/x/y/b" and so on.
-        // 
-        // - Other consecutive asterisks are considered invalid.
-
-        /// <summary>
-        /// Check if a file path matches the rule glob pattern
-        /// </summary>
-        /// <param name="file">FileInfo representing the file to check</param>
-        public bool IsMatch(FileInfo file)
-        {
-            return IsMatch(file.FullName, false);
-        }
-
-        /// <summary>
-        /// Check if a directory path matches the rule glob pattern
-        /// </summary>
-        /// <param name="directory">DirectoryInfo representing the directory to check</param>
-        public bool IsMatch(DirectoryInfo directory)
-        {
-            return IsMatch(directory.FullName, true);
-        }
-
-        /// <summary>
-        /// Check if a path matches the rule glob pattern
-        /// </summary>
-        /// <param name="path">String representing the path to check</param>
-        /// <param name="pathIsDirectory">Should be set True if the path represents a directory, False if it represents a file</param>
-        public bool IsMatch(string path, bool pathIsDirectory)
-        {
-            if(path == null)
-                throw new ArgumentNullException(nameof(path));
-
-            if (Utils.IsWhiteSpace(path))
-                throw new ArgumentException("Path is empty", nameof(path));
-
-            // .gitignore files use Unix paths (with a forward slash separator), so make sure our input also uses forward slashes
-            path = Utils.NormalisePath(path);
-
-            path = path.TrimStart('/');
-
-            // Shortcut return if the pattern is directory-only and the path isn't a directory
-            // This has to be determined by the OS (at least that's the only reliable way), 
-            // so we pass that information in as a boolean so the consuming code can provide it
-            if (PatternFlags.HasFlag(PatternFlags.DIRECTORY) && pathIsDirectory == false)
-                return false;
-
-            // If the pattern is an absolute path pattern, the path must start with the part of the pattern
-            // before any wildcards occur. If it doesn't, we can just return a negative match
-            var patternBeforeFirstWildcard = _wildcardIndex != -1 ? Pattern.Substring(0, _wildcardIndex) : Pattern;
-    
-            if (PatternFlags.HasFlag(PatternFlags.ABSOLUTE_PATH) && !path.StartsWith(patternBeforeFirstWildcard, sc))
-                return false;
-
-            // If we got this far, we can't figure out the match with simple string matching, so use our wildmatch implementation
-            
-            // If the pattern does not contain any slashes it should match *any* occurence, *anywhere* within the path 
-            // (e.g. '*.jpg' should match 'a.jpg', 'a/b.jpg', 'a/b/c.jpg'), so try matching before each slash
-            if (!Pattern.Contains("/") && path.Contains("/"))
+            if (!MatchFlags.HasFlag(MatchFlags.PATHNAME))
             {
-                string[] segments = path.Split('/');
+                MatchFlags |= MatchFlags.PATHNAME;
+            }
 
-                foreach(var segment in segments)
+            var rxPattern = Matcher.ToRegex(Pattern);
+
+            // If rxPattern is null, an invalid pattern was passed to ToRegex, so it cannot match
+            if (!string.IsNullOrEmpty(rxPattern))
+            {
+                var rxOptions = RegexOptions.Compiled;
+
+                if (MatchFlags.HasFlag(MatchFlags.CASEFOLD))
                 {
-                    if(WildMatch.IsMatch(Pattern, segment, MatchFlags) == WildMatch.MATCH)
-                        return true;
+                    rxOptions |= RegexOptions.IgnoreCase;
                 }
 
+                _rx = new Regex(rxPattern, rxOptions);
+            }
+        }
+
+        /// <summary>
+        /// Gets the <see cref="MatchFlags"/> set for this rule.
+        /// </summary>
+        public MatchFlags MatchFlags { get; private set; }
+
+        /// <summary>
+        /// Gets the original pattern string passed into the constructor.
+        /// </summary>
+        public string OriginalPattern { get; private set; }
+
+        /// <summary>
+        /// Gets the pre-processed pattern string after basic parsing.
+        /// </summary>
+        public string Pattern { get; private set; }
+
+        /// <summary>
+        /// Gets the <see cref="PatternFlags"/> set for the parsed rule pattern.
+        /// </summary>
+        public PatternFlags PatternFlags { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the line number of the pattern if it was loaded from a file.
+        /// </summary>
+        internal int? LineNumber { get; set; }
+
+        /// <summary>
+        /// Check if a file path matches the rule pattern.
+        /// </summary>
+        /// <param name="file">FileInfo representing the file to check.</param>
+        /// <returns>True if the file path matches the rule pattern.</returns>
+        public bool IsMatch(FileInfo file) =>
+            IsMatch(file.FullName, false);
+
+        /// <summary>
+        /// Check if a directory path matches the rule pattern.
+        /// </summary>
+        /// <param name="directory">DirectoryInfo representing the directory to check.</param>
+        /// <returns>True if the directory path matches the rule pattern.</returns>
+        public bool IsMatch(DirectoryInfo directory) =>
+            IsMatch(directory.FullName, true);
+
+        /// <summary>
+        /// Check if a path matches the rule pattern.
+        /// </summary>
+        /// <param name="path">String representing the path to check.</param>
+        /// <param name="pathIsDirectory">Should be set True if the path represents
+        /// a directory, False if it represents a file.</param>
+        /// <returns>True if the file or directory path matches the rule pattern.</returns>
+        public bool IsMatch(string path, bool pathIsDirectory)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                throw new ArgumentException("Path cannot be null or empty", nameof(path));
+            }
+
+            // .gitignore files use Unix paths (with a forward slash separator),
+            // so make sure our input also uses forward slashes
+            path = path.NormalisePath().TrimStart('/');
+
+            // Shortcut return if the pattern is directory-only and the path isn't a directory
+            // This has to be determined by the OS (at least that's the only reliable way),
+            // so we pass that information in as a boolean so the consuming code can provide it
+            if (PatternFlags.HasFlag(PatternFlags.DIRECTORY) && pathIsDirectory == false)
+            {
                 return false;
             }
 
+            // If the pattern is an absolute path pattern, the path must start with the part of the pattern
+            // before any wildcards occur. If it doesn't, we can just return a negative match
+            var patternBeforeFirstWildcard = _wildcardIndex != -1
+                ? Pattern.Substring(0, _wildcardIndex)
+                : Pattern;
+
+            if (PatternFlags.HasFlag(PatternFlags.ABSOLUTE_PATH)
+                && !path.StartsWith(patternBeforeFirstWildcard, _sc))
+            {
+                return false;
+            }
+
+            // If we got this far, we can't figure out the match with simple
+            // string matching, so use our regex match function
+
+            // If the *pattern* does not contain any slashes, it should match *any*
+            // occurence, *anywhere* within the path (e.g. '*.jpg' should match
+            // 'a.jpg', 'a/b.jpg', 'a/b/c.jpg'), so try matching before each slash
+            if (!Pattern.Contains("/") && path.Contains("/"))
+            {
+                return path.Split('/').Any(segment => Matcher.TryMatch(_rx, segment));
+            }
+
             // If the *path* doesn't contain any slashes, we should skip over the conditional above
-            return WildMatch.IsMatch(Pattern, path, MatchFlags) == WildMatch.MATCH;
+            return Matcher.TryMatch(_rx, path);
         }
 
         /// <summary>
-        /// Return a string representation showing the original pattern (plus the line number if present)
+        /// Gets a string representation showing the original pattern
+        /// (plus the line number if present).
         /// </summary>
+        /// <returns>The original pattern, plus the line number if present.</returns>
         public override string ToString()
         {
-            var lineNumber = LineNumber.HasValue ? string.Format(" (line {0})", LineNumber.Value) : "";
-            return string.Format("{0}{1}", OriginalPattern, lineNumber);
+            var lineNumber = LineNumber.HasValue
+                ? $" (line {LineNumber.Value})"
+                : string.Empty;
+
+            return $"{OriginalPattern}{lineNumber}";
         }
     }
 }
