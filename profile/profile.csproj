@@ -8,12 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="data\.ignores" />
-        <EmbeddedResource Include="data\filelist.txt" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\MAB.DotIgnore\MAB.DotIgnore.csproj" />
+      <ProjectReference Include="..\testdata\testdata.csproj" />
     </ItemGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net472|AnyCPU'">

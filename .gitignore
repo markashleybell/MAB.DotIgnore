@@ -197,3 +197,7 @@ FakesAssemblies/
 
 # Opencover reports
 coverage/
+
+# Benchmark.NET output
+BenchmarkDotNet.Artifacts/
+tools/benchmark-results.html
