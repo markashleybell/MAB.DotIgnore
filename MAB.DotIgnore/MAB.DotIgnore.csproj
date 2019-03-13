@@ -24,14 +24,17 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard1.3|AnyCPU'">
         <DocumentationFile>bin\Release\netstandard1.3\MAB.DotIgnore.xml</DocumentationFile>
-        <DebugType>full</DebugType>
-        <DebugSymbols>true</DebugSymbols>
+        <Optimize>true</Optimize>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net4|AnyCPU'">
         <DocumentationFile>bin\Debug\net4\MAB.DotIgnore.xml</DocumentationFile>
+        <DebugType>full</DebugType>
+        <DebugSymbols>true</DebugSymbols>
+        <WarningLevel>3</WarningLevel>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net4|AnyCPU'">
         <DocumentationFile>bin\Release\net4\MAB.DotIgnore.xml</DocumentationFile>
+        <Optimize>true</Optimize>
     </PropertyGroup>
     <ItemGroup>
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
