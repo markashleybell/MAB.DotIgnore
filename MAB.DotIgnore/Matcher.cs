@@ -182,8 +182,10 @@ namespace MAB.DotIgnore
             // Replace star patterns with equivalent regex patterns
             rx2.Replace(@"\[:STAR:]", @"\*");
             rx2.Replace(@"[:STAR:]", @"[^/]*");
+            rx2.Replace(@"[:STARSTAR:]/", "(?:.*?/)?");
+            rx2.Replace(@"[:STARSTAR:]", "(?:.*?)?");
 
-            return Regex.Replace(rx2.ToString(), @"(?>\[:STARSTAR:\]/?)+?", ".*?");
+            return rx2.ToString();
         }
 
         private static string NonPathMatchCharClasses(string p)
