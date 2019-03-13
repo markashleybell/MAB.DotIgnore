@@ -1,6 +1,6 @@
 <Project>
     <PropertyGroup>
-        <Version>3.0.0-alpha1</Version>
+        <Version>3.0.0</Version>
         <FileVersion>3.0.0.0</FileVersion>
         <AssemblyVersion>3.0.0.0</AssemblyVersion>
         <Copyright>© Mark Ashley Bell 2018</Copyright>

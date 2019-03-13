@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ## [Unreleased]
 
+## [3.0.0] - 2019-03-13
+### Changed
+- Removed C# translation of GPL `wildmatch.c` code (which was technically a license violation)
+- Memory consumption and GC activity have been dramatically reduced
+- Library now passes all current `.gitignore` tests [see here](https://github.com/git/git/blob/master/t/t3070-wildmatch.sh)
+
 ## [2.0.1] - 2019-03-10
 ### Fixed
 - Release library is no longer built in `Debug` configuration.
