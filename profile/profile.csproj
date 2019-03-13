@@ -8,8 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\MAB.DotIgnore\MAB.DotIgnore.csproj" />
-      <ProjectReference Include="..\testdata\testdata.csproj" />
+        <ProjectReference Include="..\MAB.DotIgnore\MAB.DotIgnore.csproj" />
+        <ProjectReference Include="..\testdata\testdata.csproj" />
     </ItemGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net472|AnyCPU'">
