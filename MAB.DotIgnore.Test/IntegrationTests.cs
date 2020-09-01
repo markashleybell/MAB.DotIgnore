@@ -14,6 +14,21 @@ namespace MAB.DotIgnore.Tests
 
         public static void CopyWithIgnores(DirectoryInfo source, DirectoryInfo target, IgnoreList ignores)
         {
+            if (source is null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            if (target is null)
+            {
+                throw new ArgumentNullException(nameof(target));
+            }
+
+            if (ignores is null)
+            {
+                throw new ArgumentNullException(nameof(ignores));
+            }
+
             foreach (var dir in source.GetDirectories().Where(d => !ignores.IsIgnored(d)))
             {
                 CopyWithIgnores(dir, target.CreateSubdirectory(dir.Name), ignores);
@@ -25,7 +40,8 @@ namespace MAB.DotIgnore.Tests
             }
         }
 
-        public static string TrimQuotes(string s) => s.Trim('\'', '"');
+        public static string TrimQuotes(string s) =>
+            s?.Trim('\'', '"');
 
         [Test]
         public void Compare_Matcher_Results_With_Wildmatch_Expectations()
@@ -74,7 +90,9 @@ namespace MAB.DotIgnore.Tests
                     rx = new Regex(rxPattern);
                     rxCI = new Regex(rxPattern, RegexOptions.IgnoreCase);
                 }
+#pragma warning disable CA1031 // Do not catch general exception types
                 catch
+#pragma warning restore CA1031 // Do not catch general exception types
                 {
                 }
 

@@ -127,16 +127,30 @@ namespace MAB.DotIgnore
         /// </summary>
         /// <param name="file">FileInfo representing the file to check.</param>
         /// <returns>True if the file path matches the rule pattern.</returns>
-        public bool IsMatch(FileInfo file) =>
-            IsMatch(file.FullName, false);
+        public bool IsMatch(FileInfo file)
+        {
+            if (file is null)
+            {
+                throw new ArgumentNullException(nameof(file));
+            }
+
+            return IsMatch(file.FullName, false);
+        }
 
         /// <summary>
         /// Check if a directory path matches the rule pattern.
         /// </summary>
         /// <param name="directory">DirectoryInfo representing the directory to check.</param>
         /// <returns>True if the directory path matches the rule pattern.</returns>
-        public bool IsMatch(DirectoryInfo directory) =>
-            IsMatch(directory.FullName, true);
+        public bool IsMatch(DirectoryInfo directory)
+        {
+            if (directory is null)
+            {
+                throw new ArgumentNullException(nameof(directory));
+            }
+
+            return IsMatch(directory.FullName, true);
+        }
 
         /// <summary>
         /// Check if a path matches the rule pattern.

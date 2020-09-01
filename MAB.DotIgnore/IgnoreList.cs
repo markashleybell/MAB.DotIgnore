@@ -110,8 +110,15 @@ namespace MAB.DotIgnore
         /// <param name="file">FileInfo representing the file to check.</param>
         /// <param name="log">List of strings to append log messages to.</param>
         /// <returns>True if the file path is ignored.</returns>
-        public bool IsIgnored(FileInfo file, IgnoreLog log) =>
-            IsIgnored(file.FullName, false, log);
+        public bool IsIgnored(FileInfo file, IgnoreLog log)
+        {
+            if (file is null)
+            {
+                throw new ArgumentNullException(nameof(file));
+            }
+
+            return IsIgnored(file.FullName, false, log);
+        }
 
         /// <summary>
         /// Check if a directory path matches any of the rules in the ignore list.
@@ -127,8 +134,15 @@ namespace MAB.DotIgnore
         /// <param name="directory">DirectoryInfo representing the file to check.</param>
         /// <param name="log">List of strings to append log messages to.</param>
         /// <returns>True if the directory path is ignored.</returns>
-        public bool IsIgnored(DirectoryInfo directory, IgnoreLog log) =>
-            IsIgnored(directory.FullName, true, log);
+        public bool IsIgnored(DirectoryInfo directory, IgnoreLog log)
+        {
+            if (directory is null)
+            {
+                throw new ArgumentNullException(nameof(directory));
+            }
+
+            return IsIgnored(directory.FullName, true, log);
+        }
 
         /// <summary>
         /// Check if a string path matches any of the rules in the ignore list.

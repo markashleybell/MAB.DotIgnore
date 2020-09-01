@@ -55,7 +55,9 @@ namespace MAB.DotIgnore
             {
                 return rx.IsMatch(path);
             }
+#pragma warning disable CA1031 // Do not catch general exception types
             catch
+#pragma warning restore CA1031 // Do not catch general exception types
             {
                 return false;
             }
@@ -165,7 +167,7 @@ namespace MAB.DotIgnore
             rx.Replace("?", "[:QM:]");
 
             rx.Insert(0, "^");
-            rx.Append("$");
+            rx.Append('$');
 
             // TODO: is this only true if PATHMATCH isn't specified?
             // Character class patterns shouldn't match slashes, so we prefix them with
@@ -201,7 +203,7 @@ namespace MAB.DotIgnore
                 {
                     if (inBrackets)
                     {
-                        o.Append(@"\");
+                        o.Append('\\');
                     }
                     else
                     {
