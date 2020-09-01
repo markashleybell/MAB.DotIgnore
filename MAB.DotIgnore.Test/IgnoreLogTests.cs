@@ -11,7 +11,7 @@ namespace MAB.DotIgnore.Tests
 
         [OneTimeSetUp]
         public void OneTimeSetUp() =>
-            _basePath = TestContext.CurrentContext.TestDirec‌​tory + @"\test_content";
+            _basePath = TestContext.CurrentContext.TestDirectory + "/test_content";
 
         [SetUp]
         public void SetUp()
@@ -47,7 +47,7 @@ namespace MAB.DotIgnore.Tests
         [Test]
         public void DirectoryInfo_Match_Log()
         {
-            var directory = new DirectoryInfo(_basePath + @"\test");
+            var directory = new DirectoryInfo(_basePath + "/test");
             var list = new IgnoreList(new string[] { "test" });
             var log = new IgnoreLog();
             Assert.IsTrue(list.IsIgnored(directory, log));
@@ -81,7 +81,7 @@ two
         {
             var log = new IgnoreLog();
             var ignoreList = new IgnoreList(new string[] { "*.cs" });
-            ignoreList.AddRules(_basePath + @"\multiplematch.gitignore");
+            ignoreList.AddRules(_basePath + "/multiplematch.gitignore");
             var paths = new List<string> { "test/test1.cs", "test/test2.cs" };
             paths.ForEach(path => ignoreList.IsIgnored(path, true, log));
             var expectedResult = @"test/test1.cs

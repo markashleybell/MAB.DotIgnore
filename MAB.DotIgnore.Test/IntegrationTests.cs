@@ -32,7 +32,7 @@ namespace MAB.DotIgnore.Tests
         {
             var testLineRx = new Regex(@"^match ([01]) ([01]) ([01]) ([01]) ('.+?'|.+?) ('.+?'|.+?)$", RegexOptions.IgnoreCase);
 
-            var tests = File.ReadAllLines(_basePath + @"\git-tests\tests-current-fixed.txt")
+            var tests = File.ReadAllLines(_basePath + "/git-tests/tests-current-fixed.txt")
                 .Select((s, i) => (content: s, number: i))
                 .Where(line => !line.content.StartsWith("#", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrWhiteSpace(line.content))
                 .Select(line => (match: testLineRx.Match(line.content), lineNo: line.number))
@@ -115,8 +115,8 @@ namespace MAB.DotIgnore.Tests
         [Test]
         public void Copy_Non_Ignored_Solution_Files()
         {
-            var sourceFolder = Directory.GetParent(TestContext.CurrentContext.TestDirec‌​tory).Parent.Parent.Parent.FullName;
-            var destinationFolder = _basePath + @"\copy";
+            var sourceFolder = Directory.GetParent(TestContext.CurrentContext.TestDirectory).Parent.Parent.Parent.FullName;
+            var destinationFolder = _basePath + "/copy";
 
             if (Directory.Exists(destinationFolder))
             {
@@ -129,7 +129,7 @@ namespace MAB.DotIgnore.Tests
             var destination = new DirectoryInfo(destinationFolder);
 
             // Load the solution .gitignore file
-            var ignores = new IgnoreList(sourceFolder + @"\.gitignore");
+            var ignores = new IgnoreList(sourceFolder + "/.gitignore");
 
             // Add an additional rule to ignore the .git folder
             ignores.AddRule(".git/");
@@ -137,14 +137,14 @@ namespace MAB.DotIgnore.Tests
             CopyWithIgnores(source, destination, ignores);
 
             // Do some very minimal checks and then just do some manual checking of the copy folder
-            Assert.IsTrue(File.Exists(destinationFolder + @"\MAB.DotIgnore\MAB.DotIgnore.csproj"));
-            Assert.IsTrue(File.Exists(destinationFolder + @"\MAB.DotIgnore.Test\MAB.DotIgnore.Test.csproj"));
-            Assert.IsFalse(Directory.Exists(destinationFolder + @"\MAB.DotIgnore\bin"));
+            Assert.IsTrue(File.Exists(destinationFolder + "/MAB.DotIgnore/MAB.DotIgnore.csproj"));
+            Assert.IsTrue(File.Exists(destinationFolder + "/MAB.DotIgnore.Test/MAB.DotIgnore.Test.csproj"));
+            Assert.IsFalse(Directory.Exists(destinationFolder + "/MAB.DotIgnore/bin"));
         }
 
         [OneTimeSetUp]
         public void OneTimeSetUp() =>
-            _basePath = TestContext.CurrentContext.TestDirec‌​tory + @"\test_content";
+            _basePath = TestContext.CurrentContext.TestDirectory + "/test_content";
 
         [OneTimeTearDown]
         public void OneTimeTearDown()

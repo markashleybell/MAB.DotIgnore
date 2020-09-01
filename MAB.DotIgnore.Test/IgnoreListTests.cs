@@ -11,7 +11,7 @@ namespace MAB.DotIgnore.Tests
 
         [OneTimeSetUp]
         public void OneTimeSetUp() =>
-            _basePath = TestContext.CurrentContext.TestDirec‌​tory + @"\test_content";
+            _basePath = TestContext.CurrentContext.TestDirectory + "/test_content";
 
         [SetUp]
         public void SetUp()
@@ -21,7 +21,7 @@ namespace MAB.DotIgnore.Tests
         [Test]
         public void Load_Rules_From_File()
         {
-            var ignoreList = new IgnoreList(_basePath + @"\loadfromfile.gitignore");
+            var ignoreList = new IgnoreList(_basePath + "/loadfromfile.gitignore");
             Assert.IsTrue(ignoreList.Rules.Count == 1);
         }
 
@@ -59,7 +59,7 @@ namespace MAB.DotIgnore.Tests
         public void Add_Rules_From_File()
         {
             var ignoreList = new IgnoreList(new string[] { "README.txt" });
-            ignoreList.AddRules(_basePath + @"\loadfromfile.gitignore");
+            ignoreList.AddRules(_basePath + "/loadfromfile.gitignore");
             Assert.IsTrue(ignoreList.IsIgnored("README.txt", true));
             Assert.IsFalse(ignoreList.IsIgnored("test.jpg", true));
             Assert.IsTrue(ignoreList.IsIgnored("test.cs", true));
@@ -110,7 +110,7 @@ namespace MAB.DotIgnore.Tests
         [Test]
         public void DirectoryInfo_Match()
         {
-            var directory = new DirectoryInfo(_basePath + @"\test");
+            var directory = new DirectoryInfo(_basePath + "/test");
             var list = new IgnoreList(new string[] { "test" });
             Assert.IsTrue(list.IsIgnored(directory));
         }
@@ -118,7 +118,7 @@ namespace MAB.DotIgnore.Tests
         [Test]
         public void Constructor_Flags_Respected()
         {
-            var directory = new DirectoryInfo(_basePath + @"\TEST");
+            var directory = new DirectoryInfo(_basePath + "/TEST");
 
             // Case sensitive list, should not match
             var list1 = new IgnoreList(new string[] { "test" });
@@ -132,7 +132,7 @@ namespace MAB.DotIgnore.Tests
         [Test]
         public void Add_Rule_Flags_Respected()
         {
-            var directory = new DirectoryInfo(_basePath + @"\TEST");
+            var directory = new DirectoryInfo(_basePath + "/TEST");
             var list1 = new IgnoreList(new string[] { "x" });
             var list2 = new IgnoreList(new string[] { "x" });
             list1.AddRule("test");
