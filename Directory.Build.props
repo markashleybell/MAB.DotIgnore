@@ -6,6 +6,6 @@
         <Copyright>© Mark Ashley Bell 2018</Copyright>
         <Authors>Mark Ashley Bell</Authors>
         <Company />
-        <CodeAnalysisRuleSet>$(SolutionDir)\MAB.DotIgnore.ruleset</CodeAnalysisRuleSet>
+        <CodeAnalysisRuleSet>..\MAB.DotIgnore.ruleset</CodeAnalysisRuleSet>
     </PropertyGroup>
 </Project>
