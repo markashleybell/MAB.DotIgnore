@@ -155,6 +155,14 @@ namespace MAB.DotIgnore.Tests
             Assert.IsFalse(list.IsIgnored("notignored/one/two/test.txt", false));
         }
 
+        [Test]
+        public void Handle_Non_Relative_Path()
+        {
+            var list = new IgnoreList(new string[] { "ignored/" });
+
+            Assert.IsTrue(list.IsIgnored("/ignored/test/test.txt", false));
+        }
+
         [TearDown]
         public void TearDown()
         {
