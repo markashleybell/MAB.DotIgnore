@@ -23,18 +23,18 @@ namespace MAB.DotIgnore
         // https://www.regular-expressions.info/posixbrackets.html
         private static readonly Dictionary<string, string> CharClassSubstitutions =
             new Dictionary<string, string> {
-                { "[:alnum:]", @"a-zA-Z0-9" },
-                { "[:alpha:]", @"a-zA-Z" },
+                { "[:alnum:]", "a-zA-Z0-9" },
+                { "[:alpha:]", "a-zA-Z" },
                 { "[:blank:]", @"\p{Zs}\t" },
                 { "[:cntrl:]", @"\p{Cc}" },
                 { "[:digit:]", @"\d" },
                 { "[:graph:]", @"^\p{Z}\p{C}" },
-                { "[:lower:]", @"a-z" },
+                { "[:lower:]", "a-z" },
                 { "[:print:]", @"\p{C}" },
                 { "[:punct:]", @"\p{P}" },
                 { "[:space:]", @"\s" },
-                { "[:upper:]", @"A-Z" },
-                { "[:xdigit:]", @"A-Fa-f0-9" },
+                { "[:upper:]", "A-Z" },
+                { "[:xdigit:]", "A-Fa-f0-9" },
             };
 
         /// <summary>
@@ -177,13 +177,13 @@ namespace MAB.DotIgnore
 
             // Non-escaped question mark should match any single char except slash
             rx2.Replace(@"\[:QM:]", @"\?");
-            rx2.Replace(@"[:QM:]", @"[^/]");
+            rx2.Replace("[:QM:]", "[^/]");
 
             // Replace star patterns with equivalent regex patterns
             rx2.Replace(@"\[:STAR:]", @"\*");
-            rx2.Replace(@"[:STAR:]", @"[^/]*");
-            rx2.Replace(@"[:STARSTAR:]/", "(?:.*?/)?");
-            rx2.Replace(@"[:STARSTAR:]", "(?:.*?)?");
+            rx2.Replace("[:STAR:]", "[^/]*");
+            rx2.Replace("[:STARSTAR:]/", "(?:.*?/)?");
+            rx2.Replace("[:STARSTAR:]", "(?:.*?)?");
 
             return rx2.ToString();
         }
@@ -207,7 +207,7 @@ namespace MAB.DotIgnore
                     {
                         if (i < p.Length && p[i + 1] != ':')
                         {
-                            o.Append(@"(?!/)");
+                            o.Append("(?!/)");
                         }
 
                         inBrackets = true;

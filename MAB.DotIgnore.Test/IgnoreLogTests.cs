@@ -63,7 +63,7 @@ namespace MAB.DotIgnore.Tests
             var ignoreList = new IgnoreList(new string[] { "one/", "two/", "!one/two/" });
             var paths = new List<string> { "one", "one/two", "two" };
             paths.ForEach(path => ignoreList.IsIgnored(path, true, log));
-            var expectedResult = @"one
+            const string expectedResult = @"one
     IGNORED by one/
 
 one/two
@@ -84,7 +84,7 @@ two
             ignoreList.AddRules(_basePath + "/multiplematch.gitignore");
             var paths = new List<string> { "test/test1.cs", "test/test2.cs" };
             paths.ForEach(path => ignoreList.IsIgnored(path, true, log));
-            var expectedResult = @"test/test1.cs
+            const string expectedResult = @"test/test1.cs
     IGNORED by *.cs
     INCLUDED by !test/*.cs (line 3)
     IGNORED by test/test*.cs (line 4)

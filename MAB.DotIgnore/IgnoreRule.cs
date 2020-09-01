@@ -100,22 +100,22 @@ namespace MAB.DotIgnore
         /// <summary>
         /// Gets the <see cref="MatchFlags"/> set for this rule.
         /// </summary>
-        public MatchFlags MatchFlags { get; private set; }
+        public MatchFlags MatchFlags { get; }
 
         /// <summary>
         /// Gets the original pattern string passed into the constructor.
         /// </summary>
-        public string OriginalPattern { get; private set; }
+        public string OriginalPattern { get; }
 
         /// <summary>
         /// Gets the pre-processed pattern string after basic parsing.
         /// </summary>
-        public string Pattern { get; private set; }
+        public string Pattern { get; }
 
         /// <summary>
         /// Gets the <see cref="PatternFlags"/> set for the parsed rule pattern.
         /// </summary>
-        public PatternFlags PatternFlags { get; private set; }
+        public PatternFlags PatternFlags { get; }
 
         /// <summary>
         /// Gets or sets the line number of the pattern if it was loaded from a file.
@@ -159,7 +159,7 @@ namespace MAB.DotIgnore
             // Shortcut return if the pattern is directory-only and the path isn't a directory
             // This has to be determined by the OS (at least that's the only reliable way),
             // so we pass that information in as a boolean so the consuming code can provide it
-            if (PatternFlags.HasFlag(PatternFlags.DIRECTORY) && pathIsDirectory == false)
+            if (PatternFlags.HasFlag(PatternFlags.DIRECTORY) && !pathIsDirectory)
             {
                 return false;
             }

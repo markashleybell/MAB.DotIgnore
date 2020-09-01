@@ -365,7 +365,7 @@ namespace MAB.DotIgnore.Tests
         [Test]
         public void Match_Trailing_Star()
         {
-            var rule = new IgnoreRule(@"a/b/*");
+            var rule = new IgnoreRule("a/b/*");
             Assert.IsTrue(rule.IsMatch("a/b/c", true));
             Assert.IsFalse(rule.IsMatch("a/b/c/d", true));
         }
@@ -373,7 +373,7 @@ namespace MAB.DotIgnore.Tests
         [Test]
         public void Match_Character_Choice_Case_Sensitive()
         {
-            var rule = new IgnoreRule(@"[ChM]at.txt");
+            var rule = new IgnoreRule("[ChM]at.txt");
             Assert.IsTrue(rule.IsMatch("/Cat.txt", true));
             Assert.IsTrue(rule.IsMatch("/hat.txt", true));
             Assert.IsTrue(rule.IsMatch("/Mat.txt", true));
@@ -385,7 +385,7 @@ namespace MAB.DotIgnore.Tests
         [Test]
         public void Match_Character_Choice_Case_Insensitive()
         {
-            var rule = new IgnoreRule(@"[chm]at.txt", MatchFlags.CASEFOLD);
+            var rule = new IgnoreRule("[chm]at.txt", MatchFlags.CASEFOLD);
             Assert.IsTrue(rule.IsMatch("/Cat.txt", true));
             Assert.IsTrue(rule.IsMatch("/hat.txt", true));
             Assert.IsTrue(rule.IsMatch("/Mat.txt", true));
@@ -397,7 +397,7 @@ namespace MAB.DotIgnore.Tests
         [Test]
         public void Match_Character_Range_Case_Sensitive()
         {
-            var rule = new IgnoreRule(@"[A-De-z]at.txt");
+            var rule = new IgnoreRule("[A-De-z]at.txt");
             Assert.IsTrue(rule.IsMatch("/Cat.txt", true));
             Assert.IsTrue(rule.IsMatch("/hat.txt", true));
             Assert.IsTrue(rule.IsMatch("/mat.txt", true));
@@ -409,7 +409,7 @@ namespace MAB.DotIgnore.Tests
         [Test]
         public void Match_Character_Range_Case_Insensitive()
         {
-            var rule = new IgnoreRule(@"[A-De-z]at.txt", MatchFlags.CASEFOLD);
+            var rule = new IgnoreRule("[A-De-z]at.txt", MatchFlags.CASEFOLD);
             Assert.IsTrue(rule.IsMatch("/Cat.txt", true));
             Assert.IsTrue(rule.IsMatch("/hat.txt", true));
             Assert.IsTrue(rule.IsMatch("/mat.txt", true));
@@ -421,7 +421,7 @@ namespace MAB.DotIgnore.Tests
         [Test]
         public void Negated_Match_Character_Range()
         {
-            var rule = new IgnoreRule(@"[^C-Dc-d]at.txt", MatchFlags.CASEFOLD);
+            var rule = new IgnoreRule("[^C-Dc-d]at.txt", MatchFlags.CASEFOLD);
             Assert.IsFalse(rule.IsMatch("/Cat.txt", true));
             Assert.IsTrue(rule.IsMatch("/hat.txt", true));
             Assert.IsTrue(rule.IsMatch("/mat.txt", true));
@@ -433,7 +433,7 @@ namespace MAB.DotIgnore.Tests
         [Test]
         public void Match_Character_Class_Alnum()
         {
-            var rule = new IgnoreRule(@"[[:alnum:]]at.txt");
+            var rule = new IgnoreRule("[[:alnum:]]at.txt");
             Assert.IsTrue(rule.IsMatch("/cat.txt", true));
             Assert.IsTrue(rule.IsMatch("/3at.txt", true));
             Assert.IsFalse(rule.IsMatch("/~at.txt", true));
@@ -442,7 +442,7 @@ namespace MAB.DotIgnore.Tests
         [Test]
         public void Match_Character_Class_Alpha()
         {
-            var rule = new IgnoreRule(@"[[:alpha:]]at.txt");
+            var rule = new IgnoreRule("[[:alpha:]]at.txt");
             Assert.IsTrue(rule.IsMatch("/cat.txt", true));
             Assert.IsFalse(rule.IsMatch("/1at.txt", true));
         }
@@ -450,7 +450,7 @@ namespace MAB.DotIgnore.Tests
         [Test]
         public void Match_Character_Class_Blank()
         {
-            var rule = new IgnoreRule(@"[[:blank:]]at.txt");
+            var rule = new IgnoreRule("[[:blank:]]at.txt");
             Assert.IsTrue(rule.IsMatch("/ at.txt", true));
             Assert.IsFalse(rule.IsMatch("/cat.txt", true));
         }
@@ -458,7 +458,7 @@ namespace MAB.DotIgnore.Tests
         [Test]
         public void Match_Character_Class_Cntrl()
         {
-            var rule = new IgnoreRule(@"[[:cntrl:]]at.txt");
+            var rule = new IgnoreRule("[[:cntrl:]]at.txt");
             var controlChar = Convert.ToChar(0x00);
             Assert.IsTrue(rule.IsMatch(controlChar + "at.txt", true));
         }
@@ -466,7 +466,7 @@ namespace MAB.DotIgnore.Tests
         [Test]
         public void Match_Character_Class_Digit()
         {
-            var rule = new IgnoreRule(@"[[:digit:]]at.txt");
+            var rule = new IgnoreRule("[[:digit:]]at.txt");
             Assert.IsTrue(rule.IsMatch("/2at.txt", true));
             Assert.IsFalse(rule.IsMatch("/cat.txt", true));
         }
@@ -474,7 +474,7 @@ namespace MAB.DotIgnore.Tests
         [Test]
         public void Match_Character_Class_Lower()
         {
-            var rule = new IgnoreRule(@"[[:lower:]]at.txt");
+            var rule = new IgnoreRule("[[:lower:]]at.txt");
             Assert.IsTrue(rule.IsMatch("/cat.txt", true));
             Assert.IsFalse(rule.IsMatch("/Cat.txt", true));
         }
@@ -482,7 +482,7 @@ namespace MAB.DotIgnore.Tests
         [Test]
         public void Match_Character_Class_Punct()
         {
-            var rule = new IgnoreRule(@"[[:punct:]]at.txt");
+            var rule = new IgnoreRule("[[:punct:]]at.txt");
             Assert.IsTrue(rule.IsMatch("/.at.txt", true));
             Assert.IsFalse(rule.IsMatch("/cat.txt", true));
         }
@@ -490,7 +490,7 @@ namespace MAB.DotIgnore.Tests
         [Test]
         public void Match_Character_Class_Space()
         {
-            var rule = new IgnoreRule(@"[[:space:]]at.txt");
+            var rule = new IgnoreRule("[[:space:]]at.txt");
             Assert.IsTrue(rule.IsMatch("/ at.txt", true));
             Assert.IsFalse(rule.IsMatch("/cat.txt", true));
         }
@@ -498,7 +498,7 @@ namespace MAB.DotIgnore.Tests
         [Test]
         public void Match_Character_Class_Upper()
         {
-            var rule = new IgnoreRule(@"[[:upper:]]at.txt");
+            var rule = new IgnoreRule("[[:upper:]]at.txt");
             Assert.IsTrue(rule.IsMatch("/Cat.txt", true));
             Assert.IsFalse(rule.IsMatch("/cat.txt", true));
         }
@@ -506,7 +506,7 @@ namespace MAB.DotIgnore.Tests
         [Test]
         public void Match_Character_Class_Upper_Casefold()
         {
-            var rule = new IgnoreRule(@"[[:upper:]]at.txt", MatchFlags.CASEFOLD);
+            var rule = new IgnoreRule("[[:upper:]]at.txt", MatchFlags.CASEFOLD);
             Assert.IsTrue(rule.IsMatch("/Cat.txt", true));
             Assert.IsTrue(rule.IsMatch("/cat.txt", true));
         }
@@ -514,7 +514,7 @@ namespace MAB.DotIgnore.Tests
         [Test]
         public void Match_Character_Class_XDigit()
         {
-            var rule = new IgnoreRule(@"1[[:xdigit:]].txt");
+            var rule = new IgnoreRule("1[[:xdigit:]].txt");
             Assert.IsTrue(rule.IsMatch("/1F.txt", true));
             Assert.IsFalse(rule.IsMatch("/1G.txt", true));
         }
@@ -522,7 +522,7 @@ namespace MAB.DotIgnore.Tests
         [Test]
         public void Match_Malformed_Character_Class()
         {
-            var rule = new IgnoreRule(@"1[[:malformed:]].txt");
+            var rule = new IgnoreRule("1[[:malformed:]].txt");
             Assert.IsFalse(rule.IsMatch("/1F.txt", true));
             Assert.IsFalse(rule.IsMatch("/1G.txt", true));
         }
@@ -530,7 +530,7 @@ namespace MAB.DotIgnore.Tests
         [Test]
         public void Match_Literal_After_Star_Case_Sensitive()
         {
-            var rule = new IgnoreRule(@"A/b/*Cd.txt");
+            var rule = new IgnoreRule("A/b/*Cd.txt");
             Assert.IsTrue(rule.IsMatch("/A/b/dCd.txt", true));
             Assert.IsFalse(rule.IsMatch("/a/b/dcD.txt", true));
         }
@@ -538,7 +538,7 @@ namespace MAB.DotIgnore.Tests
         [Test]
         public void Match_Literal_After_Star_Case_Insensitive()
         {
-            var rule = new IgnoreRule(@"A/b/*Cd.txt", MatchFlags.CASEFOLD);
+            var rule = new IgnoreRule("A/b/*Cd.txt", MatchFlags.CASEFOLD);
             Assert.IsTrue(rule.IsMatch("/A/b/dCd.txt", true));
             Assert.IsTrue(rule.IsMatch("/a/b/dcD.txt", true));
         }
@@ -546,14 +546,14 @@ namespace MAB.DotIgnore.Tests
         [Test]
         public void Abort_Invalid_Pattern()
         {
-            var rule = new IgnoreRule(@"a/te**.txt");
+            var rule = new IgnoreRule("a/te**.txt");
             Assert.IsFalse(rule.IsMatch("a/test.txt", false));
         }
 
         [Test]
         public void Dont_Match_Same_Endings()
         {
-            var rule = new IgnoreRule(@"ignored/");
+            var rule = new IgnoreRule("ignored/");
             Assert.IsTrue(rule.IsMatch("ignored", true));
             Assert.IsFalse(rule.IsMatch("notignored", true));
         }

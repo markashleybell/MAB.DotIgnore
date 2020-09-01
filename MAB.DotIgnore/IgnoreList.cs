@@ -25,8 +25,10 @@ namespace MAB.DotIgnore
                 log[path].Add($"{state} by {rule}");
             };
 
+#pragma warning disable RCS1163 // Unused parameter.
         private readonly Action<string, IgnoreRule, IgnoreLog> _noAction =
             (path, rule, log) => { };
+#pragma warning restore RCS1163 // Unused parameter.
 
         /// <summary>
         /// Initializes a new instance of the <see cref="IgnoreList"/> class.

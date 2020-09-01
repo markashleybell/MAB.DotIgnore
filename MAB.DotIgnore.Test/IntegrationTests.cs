@@ -30,7 +30,7 @@ namespace MAB.DotIgnore.Tests
         [Test]
         public void Compare_Matcher_Results_With_Wildmatch_Expectations()
         {
-            var testLineRx = new Regex(@"^match ([01]) ([01]) ([01]) ([01]) ('.+?'|.+?) ('.+?'|.+?)$", RegexOptions.IgnoreCase);
+            var testLineRx = new Regex("^match ([01]) ([01]) ([01]) ([01]) ('.+?'|.+?) ('.+?'|.+?)$", RegexOptions.IgnoreCase);
 
             var tests = File.ReadAllLines(_basePath + "/git-tests/tests-current-fixed.txt")
                 .Select((s, i) => (content: s, number: i))
@@ -104,7 +104,7 @@ namespace MAB.DotIgnore.Tests
                     ActualCI = a.ResultCI,
                 });
 
-            Assert.That(failed.Count() == 0);
+            Assert.That(!failed.Any());
 
             foreach (var t in failed)
             {

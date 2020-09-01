@@ -92,7 +92,6 @@ namespace MAB.DotIgnore.Tests
         public void Respect_Rule_Overrides()
         {
             var ignoreList = new IgnoreList(new string[] { "*.txt", "!sub1/*.txt", "sub1/README2.txt" });
-            var matched = new List<IgnoreRule>();
             Assert.IsTrue(ignoreList.IsIgnored("README1.txt", true));
             Assert.IsFalse(ignoreList.IsIgnored("sub1/README1.txt", true));
             Assert.IsTrue(ignoreList.IsIgnored("sub1/README2.txt", true));
