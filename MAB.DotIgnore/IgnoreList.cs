@@ -187,7 +187,7 @@ namespace MAB.DotIgnore
 
         private bool IsAnyParentDirectoryIgnored(string path, IgnoreLog log)
         {
-            var segments = path.NormalisePath().Split('/').ToList();
+            var segments = path.NormalisePath().Split('/').Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
 
             segments.RemoveAt(segments.Count - 1);
 
