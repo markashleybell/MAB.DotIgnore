@@ -66,7 +66,7 @@ namespace MAB.DotIgnore
             _wildcardIndex = Pattern.IndexOfAny(_wildcardChars);
 
             // If CASEFOLD is set, string comparisons should ignore case too
-            if (MatchFlags.HasFlag(MatchFlags.CASEFOLD))
+            if ((MatchFlags & MatchFlags.CASEFOLD) != 0)
             {
                 _sc = StringComparison.OrdinalIgnoreCase;
             }
@@ -76,7 +76,7 @@ namespace MAB.DotIgnore
             // https://github.com/git/git/blob/c2c5f6b1e479f2c38e0e01345350620944e3527f/dir.c#L99
 
             // If PATHNAME is set, single asterisks should not match slashes
-            if (!MatchFlags.HasFlag(MatchFlags.PATHNAME))
+            if ((MatchFlags & MatchFlags.PATHNAME) == 0)
             {
                 MatchFlags |= MatchFlags.PATHNAME;
             }
@@ -88,7 +88,7 @@ namespace MAB.DotIgnore
             {
                 var rxOptions = RegexOptions.Compiled;
 
-                if (MatchFlags.HasFlag(MatchFlags.CASEFOLD))
+                if ((MatchFlags & MatchFlags.CASEFOLD) != 0)
                 {
                     rxOptions |= RegexOptions.IgnoreCase;
                 }
@@ -159,7 +159,7 @@ namespace MAB.DotIgnore
             // Shortcut return if the pattern is directory-only and the path isn't a directory
             // This has to be determined by the OS (at least that's the only reliable way),
             // so we pass that information in as a boolean so the consuming code can provide it
-            if (PatternFlags.HasFlag(PatternFlags.DIRECTORY) && !pathIsDirectory)
+            if ((PatternFlags & PatternFlags.DIRECTORY) != 0 && !pathIsDirectory)
             {
                 return false;
             }
@@ -170,7 +170,7 @@ namespace MAB.DotIgnore
                 ? Pattern.Substring(0, _wildcardIndex)
                 : Pattern;
 
-            if (PatternFlags.HasFlag(PatternFlags.ABSOLUTE_PATH)
+            if ((PatternFlags & PatternFlags.ABSOLUTE_PATH) != 0
                 && !path.StartsWith(patternBeforeFirstWildcard, _sc))
             {
                 return false;

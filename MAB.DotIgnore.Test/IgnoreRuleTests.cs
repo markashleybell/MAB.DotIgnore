@@ -2,6 +2,14 @@
 using System.IO;
 using NUnit.Framework;
 
+/*
+The bitwise operation is more performant, but FAR less readable... while I'm willing to make this
+change in the library itself for the sake of performance, it feels like some of the test assertions
+are almost indecipherable when we make it here... so I won't.
+*/
+
+#pragma warning disable RCS1096 // Convert 'HasFlag' call to bitwise operation (or vice versa).
+
 namespace MAB.DotIgnore.Tests
 {
     [TestFixture(Category = "IgnoreRule Tests")]
@@ -569,3 +577,5 @@ namespace MAB.DotIgnore.Tests
         }
     }
 }
+
+#pragma warning restore RCS1096 // Convert 'HasFlag' call to bitwise operation (or vice versa).

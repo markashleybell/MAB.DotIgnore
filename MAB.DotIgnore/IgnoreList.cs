@@ -20,7 +20,7 @@ namespace MAB.DotIgnore
                     log.Add(path, new List<string>());
                 }
 
-                var state = rule.PatternFlags.HasFlag(PatternFlags.NEGATION) ? "INCLUDED" : "IGNORED";
+                var state = (rule.PatternFlags & PatternFlags.NEGATION) != 0 ? "INCLUDED" : "IGNORED";
 
                 log[path].Add($"{state} by {rule}");
             };
@@ -221,7 +221,7 @@ namespace MAB.DotIgnore
             {
                 if (rule.IsMatch(path, pathIsDirectory))
                 {
-                    ignore = !rule.PatternFlags.HasFlag(PatternFlags.NEGATION);
+                    ignore = (rule.PatternFlags & PatternFlags.NEGATION) == 0;
 
                     logAction(path, rule, log);
                 }
