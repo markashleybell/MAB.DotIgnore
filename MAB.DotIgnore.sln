@@ -15,8 +15,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MAB.DotIgnore.Test", "MAB.DotIgnore.Test\MAB.DotIgnore.Test.csproj", "{7BAEDB04-240C-4B68-A4C5-59283F490698}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "testdata", "testdata\testdata.csproj", "{EF0EF7D3-5123-4462-9898-A322E0E79E87}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,10 +29,6 @@ Global
 		{7BAEDB04-240C-4B68-A4C5-59283F490698}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7BAEDB04-240C-4B68-A4C5-59283F490698}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7BAEDB04-240C-4B68-A4C5-59283F490698}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EF0EF7D3-5123-4462-9898-A322E0E79E87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EF0EF7D3-5123-4462-9898-A322E0E79E87}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EF0EF7D3-5123-4462-9898-A322E0E79E87}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EF0EF7D3-5123-4462-9898-A322E0E79E87}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
