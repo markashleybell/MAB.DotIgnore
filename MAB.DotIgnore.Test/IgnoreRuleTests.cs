@@ -67,13 +67,6 @@ namespace MAB.DotIgnore.Tests
         }
 
         [Test]
-        public void Windows_Paths_Converted()
-        {
-            var rule = new IgnoreRule("/c/textfiles/test.txt");
-            Assert.IsTrue(rule.IsMatch(@"c:\textfiles\test.txt", true));
-        }
-
-        [Test]
         public void FileInfo_Match()
         {
             var directory = new DirectoryInfo(_basePath);
