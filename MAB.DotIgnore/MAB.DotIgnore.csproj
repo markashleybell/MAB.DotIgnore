@@ -2,7 +2,6 @@
     <PropertyGroup>
         <TargetFrameworks>netstandard1.3;net4</TargetFrameworks>
         <PackageId>MAB.DotIgnore</PackageId>
-        <PackageLicenseUrl>https://github.com/markashleybell/MAB.DotIgnore/blob/master/LICENSE.md</PackageLicenseUrl>
         <PackageProjectUrl>https://github.com/markashleybell/MAB.DotIgnore</PackageProjectUrl>
         <RepositoryUrl>https://github.com/markashleybell/MAB.DotIgnore.git</RepositoryUrl>
         <Description>Load and parse .gitignore files (or any list of pattern strings using the same pattern syntax) to produce an IgnoreList, which can be used to ignore specific files and folders during (for example) a file copy operation.</Description>
@@ -14,7 +13,7 @@
         <AssemblyOriginatorKeyFile>MAB.DotIgnore.snk</AssemblyOriginatorKeyFile>
         <DelaySign>false</DelaySign>
         <LangVersion>latest</LangVersion>
-        <Version>3.0.0</Version>
+        <PackageLicenseFile>licenses\LICENSE.md</PackageLicenseFile>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard1.3|AnyCPU'">
         <DocumentationFile>bin\Debug\netstandard1.3\MAB.DotIgnore.xml</DocumentationFile>
@@ -40,6 +39,9 @@
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
             <_Parameter1>$(MSBuildProjectName).Test, PublicKey=0024000004800000940000000602000000240000525341310004000001000100c9cb9ee4d4df4ec74aad855975b0a399a3149103af8073114915538b7212d4a005592a38e25d3f54114a7885e2aaae3c05371de551430a5f0f81f9ed9a2ce50f72ad4636676eb619d9abb4175bc5383f94e07fcb85cff9322e0e14fd1c3da9dd98ae0acc30df16a379f342277d40809a93f1e96bec780b21eb8a163dc82c42c6</_Parameter1>
         </AssemblyAttribute>
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="..\LICENSE.md" Pack="true" PackagePath="licenses" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.3">
