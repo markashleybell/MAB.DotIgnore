@@ -21,9 +21,12 @@ namespace MAB.DotIgnore.Tests
         [Test]
         public void Log_Matched_Rules()
         {
-            var ignoreList = new IgnoreList(new string[] { "*.txt", "*.cs", "!sub1/*.txt", "sub1/README2.txt" });
+            var list = new IgnoreList(new string[] { "*.txt", "*.cs", "!sub1/*.txt", "sub1/README2.txt" });
+
             var log = new IgnoreLog();
-            ignoreList.IsIgnored("sub1/README2.txt", true, log);
+
+            list.IsIgnored("sub1/README2.txt", true, log);
+
             Assert.IsTrue(log.Count == 1);
             Assert.IsTrue(log["sub1/README2.txt"].Count == 3);
             Assert.IsTrue(log["sub1/README2.txt"][0] == "IGNORED by *.txt");
@@ -35,9 +38,13 @@ namespace MAB.DotIgnore.Tests
         public void FileInfo_Match_Log()
         {
             var directory = new DirectoryInfo(_basePath);
+
             var file = directory.GetFiles("*.txt")[0];
+
             var list = new IgnoreList(new string[] { "test.txt" });
+
             var log = new IgnoreLog();
+
             Assert.IsTrue(list.IsIgnored(file, log));
             Assert.IsTrue(log.Count == 1);
             Assert.IsTrue(log[file.FullName].Count == 1);
@@ -48,8 +55,11 @@ namespace MAB.DotIgnore.Tests
         public void DirectoryInfo_Match_Log()
         {
             var directory = new DirectoryInfo(_basePath + "/test");
+
             var list = new IgnoreList(new string[] { "test" });
+
             var log = new IgnoreLog();
+
             Assert.IsTrue(list.IsIgnored(directory, log));
             Assert.IsTrue(log.Count == 1);
             Assert.IsTrue(log[directory.FullName].Count == 1);
@@ -60,9 +70,13 @@ namespace MAB.DotIgnore.Tests
         public void Log_ToString()
         {
             var log = new IgnoreLog();
-            var ignoreList = new IgnoreList(new string[] { "one/", "two/", "!one/two/" });
+
+            var list = new IgnoreList(new string[] { "one/", "two/", "!one/two/" });
+
             var paths = new List<string> { "one", "one/two", "two" };
-            paths.ForEach(path => ignoreList.IsIgnored(path, true, log));
+
+            paths.ForEach(path => list.IsIgnored(path, true, log));
+
             const string expectedResult = @"one
     IGNORED by one/
 
@@ -73,6 +87,7 @@ one/two
 
 two
     IGNORED by two/";
+
             Assert.IsTrue(log.ToString() == expectedResult);
         }
 
@@ -80,10 +95,15 @@ two
         public void File_Rule_Line_Numbers_ToString()
         {
             var log = new IgnoreLog();
-            var ignoreList = new IgnoreList(new string[] { "*.cs" });
-            ignoreList.AddRules(_basePath + "/multiplematch.gitignore");
+
+            var list = new IgnoreList(new string[] { "*.cs" });
+
+            list.AddRules(_basePath + "/multiplematch.gitignore");
+
             var paths = new List<string> { "test/test1.cs", "test/test2.cs" };
-            paths.ForEach(path => ignoreList.IsIgnored(path, true, log));
+
+            paths.ForEach(path => list.IsIgnored(path, true, log));
+
             const string expectedResult = @"test/test1.cs
     IGNORED by *.cs
     INCLUDED by !test/*.cs (line 3)
@@ -94,6 +114,7 @@ test/test2.cs
     INCLUDED by !test/*.cs (line 3)
     IGNORED by test/test*.cs (line 4)
     INCLUDED by !test/test2.cs (line 6)";
+
             Assert.IsTrue(log.ToString() == expectedResult);
         }
 
