@@ -186,6 +186,26 @@ namespace MAB.DotIgnore.Tests
             Assert.IsTrue(list.IsIgnored("/ignored/test/test.txt", false));
         }
 
+        [Test]
+        public void Do_Not_Ignore_Nested_File_With_Single_Star()
+        {
+            var list = new IgnoreList(new[] { "foo/*" });
+
+            Assert.IsTrue(list.IsIgnored("foo/bar", pathIsDirectory: true));
+            Assert.IsTrue(list.IsIgnored("foo/test.json", pathIsDirectory: false));
+            Assert.IsFalse(list.IsIgnored("foo/bar/hello.c", pathIsDirectory: false));
+        }
+
+        [Test]
+        public void Do_Ignore_Nested_File_With_Single_Star_And_Double_Star()
+        {
+            var list = new IgnoreList(new[] { "foo/*", "foo/**" });
+
+            Assert.IsTrue(list.IsIgnored("foo/bar", pathIsDirectory: true));
+            Assert.IsTrue(list.IsIgnored("foo/test.json", pathIsDirectory: false));
+            Assert.IsTrue(list.IsIgnored("foo/bar/hello.c", pathIsDirectory: false));
+        }
+
         [TearDown]
         public void TearDown()
         {

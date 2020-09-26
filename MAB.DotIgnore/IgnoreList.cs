@@ -162,11 +162,11 @@ namespace MAB.DotIgnore
         /// <returns>True if the file or directory path is ignored.</returns>
         public bool IsIgnored(string path, bool pathIsDirectory, IgnoreLog log)
         {
-            var pathIgnored = IsPathIgnored(path, pathIsDirectory, log);
+            var test = IsPathIgnored(path, pathIsDirectory, log);
 
             if (pathIsDirectory)
             {
-                return pathIgnored;
+                return test.IsIgnored;
             }
 
             var ancestorIgnored = IsAnyParentDirectoryIgnored(path, log);
@@ -176,7 +176,7 @@ namespace MAB.DotIgnore
                 return true;
             }
 
-            return pathIgnored;
+            return test.IsIgnored;
         }
 
         /// <summary>
@@ -215,7 +215,11 @@ namespace MAB.DotIgnore
             {
                 directory.Add(segment);
 
-                if (IsPathIgnored(string.Join("/", directory), true, log))
+                var test = IsPathIgnored(string.Join("/", directory), true, log);
+
+                // Only ignore this directory if it isn't *only* ignored by a trailing star rule (see issue #21)
+                if (test.IsIgnored
+                    && !test.IgnoredBy.All(r => r.OriginalPattern.EndsWith("/*", StringComparison.OrdinalIgnoreCase)))
                 {
                     return true;
                 }
@@ -224,12 +228,13 @@ namespace MAB.DotIgnore
             return false;
         }
 
-        private bool IsPathIgnored(string path, bool pathIsDirectory, IgnoreLog log)
+        private IsPathIgnoredResult IsPathIgnored(string path, bool pathIsDirectory, IgnoreLog log)
         {
             var logAction = (log != null) ? _logAction : _noAction;
 
             // This pattern modified from https://github.com/henon/GitSharp/blob/master/GitSharp/IgnoreRules.cs
             var ignore = false;
+            var ignoredBy = new List<IgnoreRule>();
 
             foreach (var rule in _rules)
             {
@@ -237,11 +242,26 @@ namespace MAB.DotIgnore
                 {
                     ignore = (rule.PatternFlags & PatternFlags.NEGATION) == 0;
 
+                    if (ignore)
+                    {
+                        ignoredBy.Add(rule);
+                    }
+
                     logAction(path, rule, log);
                 }
             }
 
-            return ignore;
+            return new IsPathIgnoredResult {
+                IsIgnored = ignore,
+                IgnoredBy = ignoredBy,
+            };
+        }
+
+        private class IsPathIgnoredResult
+        {
+            public bool IsIgnored { get; set; }
+
+            public IEnumerable<IgnoreRule> IgnoredBy { get; set; }
         }
     }
 }
