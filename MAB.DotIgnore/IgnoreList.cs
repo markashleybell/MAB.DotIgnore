@@ -233,9 +233,10 @@ namespace MAB.DotIgnore
 
             foreach (var rule in _rules)
             {
-                if (rule.IsMatch(path, pathIsDirectory))
+                var isNegativeRule = rule.PatternFlags.HasFlag(PatternFlags.NEGATION);
+                if (ignore == isNegativeRule && rule.IsMatch(path, pathIsDirectory))
                 {
-                    ignore = (rule.PatternFlags & PatternFlags.NEGATION) == 0;
+                    ignore = !isNegativeRule;
 
                     logAction(path, rule, log);
                 }

@@ -82,7 +82,6 @@ namespace MAB.DotIgnore.Tests
 
 one/two
     IGNORED by one/
-    IGNORED by two/
     INCLUDED by !one/two/
 
 two
