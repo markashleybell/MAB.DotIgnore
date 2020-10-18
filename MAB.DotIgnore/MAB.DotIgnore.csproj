@@ -14,6 +14,8 @@
         <DelaySign>false</DelaySign>
         <LangVersion>latest</LangVersion>
         <PackageLicenseFile>licenses\LICENSE.md</PackageLicenseFile>
+        <Version>3.0.2-pre1</Version>
+        <FileVersion>3.0.2.0</FileVersion>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard1.3|AnyCPU'">
         <DocumentationFile>bin\Debug\netstandard1.3\MAB.DotIgnore.xml</DocumentationFile>

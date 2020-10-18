@@ -1,0 +1,36 @@
+name: .Build / Publish
+
+on: 
+  push:
+    tags:
+    - 'v*' # Only build if tagged v*, i.e. v1.0, v20.15.10
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout Source 
+      uses: actions/checkout@v2
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.301
+
+    - name: Install Dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --no-restore --configuration Release
+
+    - name: Test
+      run: dotnet test --no-restore --verbosity normal
+
+    - name: Pack
+      run: dotnet pack --no-restore MAB.DotIgnore/MAB.DotIgnore.csproj --output dist --configuration Release
+
+    - name: Push
+      run: dotnet nuget push dist/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
